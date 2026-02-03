@@ -42,16 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center">
-      <div className="rounded-xl border border-slate-800 bg-slate-900/80 px-6 py-4 shadow-lg max-w-lg w-full">
-        <h1 className="text-2xl font-semibold">Fullstack Senior Lab</h1>
-        <p className="text-sm text-slate-300 mt-2">
-          Día 1: entorno listo – TS estricto, linting y Tailwind funcionando.
-        </p>
-      </div>
-    </div>
-  );
+  return <Outlet />;
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
