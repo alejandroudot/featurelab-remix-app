@@ -5,3 +5,6 @@
 # React Router
 /.react-router/
 /build/
+
+# SQLite dev DB
+featurelab.db
