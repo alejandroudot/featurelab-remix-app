@@ -1,215 +1,47 @@
-## 🧪 El producto: un **SaaS para equipos que construyen producto**
+# 🧪 FeatureLab: Visión del Producto
 
-Un “mini-Linear / mini-LaunchDarkly / mini-Notion” mezclado, pero mucho más chico:
+**Un SaaS para equipos que construyen producto.**
 
-### Nombre tentativo: **FeatureLab**
+Imagina una mezcla minimalista de Linear, LaunchDarkly y Notion. Una herramienta unificada para gestionar el ciclo de vida de desarrollo de features.
 
-Una app para equipos de producto donde pueden:
+### 💡 La Idea
 
-1. **Gestionar trabajo**
+Los equipos de producto hoy usan demasiadas herramientas desconectadas: un lugar para tickets, otro para feature flags, otro para documentar experimentos. **FeatureLab** unifica esto en un solo lugar.
 
-   * Tasks (lo que ya tenemos como `/tasks`)
-   * Estados, prioridades, tags
-   * Asignar a usuarios (más adelante, cuando tengamos auth)
-
-2. **Activar features y experimentos**
-
-   * **Feature flags** por workspace / usuario
-   * A/B tests simples (ej: dos variantes de un componente o copy)
-
-3. **Cobrar por acceso avanzado**
-
-   * Plan free vs plan pro
-   * Stripe para cobrar suscripción / upgrade
-
-4. **Integrarse con herramientas reales**
-
-   * Slack: notificación cuando se crea una tarea importante, cuando se activa un experimento, etc.
-   * Gemini: sugerencias de descripción de tareas, generación de ideas, resúmenes.
-
-En resumen:
-
-> **Una app donde un equipo de producto puede crear tareas, activar flags/experimentos, cobrar a clientes y recibir notificaciones, todo en un mismo lugar.**
-
-No es un clon de Airbnb ni de Linear, pero **toca casi todos los problemas interesantes** que querés practicar.
+**FeatureLab permite a los equipos:**
+1.  **Gestionar Trabajo:** Crear tareas, priorizar y asignar.
+2.  **Controlar Features:** Activar y desactivar funcionalidades (Feature Flags) en tiempo real.
+3.  **Analizar Impacto:** Correr experimentos A/B simples.
 
 ---
 
-## 🎯 Por qué este producto encaja perfecto con nuestro stack
+## 🚀 Propuesta de Valor
 
-Mirá cómo se enchufa con TODO lo que definimos:
+> **"Una sola app para definir, construir y lanzar."**
 
-### Front / Fullstack
+No buscamos ser un clon complejo de Jira. FeatureLab es para equipos ágiles que quieren moverse rápido y tener control total sobre sus lanzamientos sin overhead.
 
-* **React Router fullstack**
+### Funcionalidades Clave (Visión)
 
-  * Rutas: `/tasks`, `/flags`, `/experiments`, `/billing`, `/settings`.
-  * Loaders/actions para todo: listar tasks, crear/editar, toggle de flags, etc.
-
-* **Tailwind + Radix + shadcn**
-
-  * UI moderna tipo SaaS: sidebar, toolbar, tablas, modales, toasts.
-
-* **Zod**
-
-  * Validación de:
-
-    * creación/edición de tasks
-    * creación de flags
-    * config de experimentos
-    * datos de billing
-
-* **Zustand / Redux / React Query**
-
-  * Zustand → estado de UI (filtros, selección, tema)
-  * Redux → cosas más estructuradas (session, feature toggles)
-  * React Query → integraciones externas (Stripe, Slack, AI), dashboards, etc.
+*   **Gestión de Tareas:** Tableros simples, estados customizables, etiquetas.
+*   **Feature Flags & Rollouts:**
+    *   Flags booleanos simples (On/Off).
+    *   Targeting por usuario o entorno.
+*   **Experimentación (Futuro):**
+    *   A/B testing integrado con las tareas.
+*   **Monetización (Futuro):**
+    *   Modelo Freemium vs Pro (via Stripe).
+    *   Límites de uso para flags/tasks en capa gratuita.
+*   **Integraciones y Automatización (Futuro):**
+    *   Notificaciones a Slack ("Nueva flag creada").
+    *   Asistencia de IA (Gemini) para descripciones de tareas y resumen de cambios.
 
 ---
 
-### Backend / Datos / Infra
+## 🗺️ Roadmap de Alto Nivel
 
-* **Drizzle + Postgres**
+El desarrollo de FeatureLab se divide en fases estratégicas:
 
-  * Tablas:
-
-    * `users`
-    * `workspaces`
-    * `tasks`
-    * `feature_flags`
-    * `experiments`
-    * `subscriptions` (nexo con Stripe)
-  * Repositorios tipados que reemplazan el in-memory que tenemos ahora.
-
-* **Supabase**
-
-  * Auth (email/password u OAuth)
-  * Como alternativa de DB en local si no querés levantar Postgres, o como “env de cloud rápido”.
-
-* **Redis**
-
-  * Cache de dashboards pesados (ej. métricas de uso de flags/experimentos).
-  * Guardar sesiones / tokens breves.
-  * Pub/sub para eventos internos (en una versión más avanzada).
-
----
-
-### Integraciones
-
-* **Stripe**
-
-  * Plan Free vs Pro:
-
-    * Free: X cantidad de tasks / flags
-    * Pro: sin límite, features avanzadas (A/B test, Slack, AI, etc.)
-  * Checkout simple: upgrade de workspace.
-
-* **Slack API**
-
-  * Mandar mensajes tipo:
-
-    * “Nueva tarea creada en workspace X”
-    * “Flag Y fue activado/desactivado”
-    * “Nuevo experimento lanzado”
-
-* **Gemini AI**
-
-  * Botón en el form de task: “Sugerir descripción”
-  * Resumen semanal de cambios (tasks nuevas, flags, etc.)
-  * Sugerencias de experimentos a partir de tareas marcadas como “idea”.
-
----
-
-### Testing, DX, SEO, Perf (metafunciones)
-
-* **Vitest + Testing Library**
-
-  * Tests de:
-
-    * validación de Zod (dominio)
-    * repositorios de Drizzle (infra)
-    * loaders/actions (aplicación)
-    * componentes de UI (forms, listados)
-
-* **Playwright**
-
-  * E2E:
-
-    * login → crear task → activar flag
-    * upgrade de plan → ver features habilitadas
-
-* **GitHub Actions**
-
-  * CI: lint + test + build para cada PR.
-
-* **Core Web Vitals + bundle check**
-
-  * Tenemos tablas, dashboards, UI relativamente pesada → perfecto para practicar:
-
-    * split de bundles
-    * lazy load de páginas “pesadas” (ej. experiments, analytics)
-    * prefetch inteligente con React Router.
-
----
-
-## 🧱 Estructura de features (como si fueran “microservicios internos”)
-
-Pensalo así:
-
-```text
-core/
-  tasks/
-  flags/
-  experiments/
-  billing/
-  auth/
-
-infra/
-  db/
-  tasks/
-  flags/
-  experiments/
-  billing/
-  auth/
-  stripe/
-  slack/
-  ai/
-
-features/
-  tasks/
-  flags/
-  experiments/
-  billing/
-  auth/
-
-routes/
-  home.tsx
-  tasks.tsx
-  flags.tsx
-  experiments.tsx
-  billing.tsx
-  settings.tsx
-```
-
-Cada “bloque” (tasks, flags, experiments, billing, auth) tiene:
-
-* dominio → tipos, schemas Zod, puertos (repositorios)
-* infra → implementación con Drizzle/Stripe/Slack/etc.
-* features → componentes y hooks concretos de UI
-* routes → loader/action/JSX que orquestan la feature.
-
----
-
-> **¿Qué vamos a hacer acá? ¿Qué producto?**
-
-Vamos a construir un **SaaS fullstack para equipos de producto** llamado (nombre tentativo) **FeatureLab**, que les permite:
-
-* gestionar tareas de producto,
-* manejar feature flags y experimentos básicos,
-* tener un plan de pago (Stripe),
-* recibir notificaciones (Slack),
-* usar IA (Gemini) para automatizar pequeñas cosas.
-
-Este producto nos deja usar **todo el stack moderno** que definiste (React Router, Drizzle, Redis, Supabase, Stripe, Slack, Gemini, testing, CI, etc.), pero en un tamaño manejable.
-
----
+1.  **MVP (v0.1):** Core funcional. Tareas personales, Flags básicos y Autenticación. (Ver `MVP.md` para detalles).
+2.  **Fase de Crecimiento (v0.2+):** Workspaces compartidos, Integración con Stripe (Pagos), Notificaciones Slack.
+3.  **Fase de Escala:** Experimentación avanzada, Analytics, API pública.

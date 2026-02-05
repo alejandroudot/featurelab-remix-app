@@ -1,341 +1,187 @@
-# 🏗️ Arquitectura Hexagonal – FeatureLab
+# 🏗️ Arquitectura del Sistema – FeatureLab
 
-Este documento describe cómo está organizada la app FeatureLab a nivel carpetas, capas y entornos.
+Este documento define la arquitectura técnica, la organización del código y la estrategia de datos de **FeatureLab**.
 
-Objetivos:
+## 🧩 Stack Tecnológico
 
-- App fullstack con React Router como “framework backend+frontend”.
-- Separar bien dominio / infraestructura / UI.
-- Poder cambiar de SQLite local a Supabase/Postgres sin romper la app.
-- Tener una base sólida para sumar Stripe, Slack, Redis, AI, etc. más adelante.
-- Mantener una estructura entendible para entrevistas (Hexagonal / Clean Architecture).
+Elegimos un stack moderno enfocado en **tipado estático**, **performance** y **experiencia de desarrollador (DX)**.
 
----
+### Core & Fullstack
+*   **Framework:** React Router v7 (modo fullstack).
+*   **Lenguaje:** TypeScript (estricto).
+*   **Estilos:** TailwindCSS + Shadcn/ui (componentes accesibles).
+*   **Validación:** Zod (para esquemas de dominio y API).
+*   **Estado UI:** React Hooks / URL state (priorizamos la URL como fuente de verdad).
 
-## 🧱 Capas principales
-
-Pensamos la app en 4 capas lógicas:
-
-1. **UI genérica (`app/ui`)**
-   - Design system: componentes visuales reutilizables, sin conocimiento de negocio.
-   - Ej: `Button`, `Input`, `Card`, `Modal`, `EmptyState`, `PageHeader`.
-
-2. **UI por feature (`app/features`)**
-   - Componentes React específicos por feature (Tasks, Flags, Auth, Layout).
-   - Hooks de UI (`useTasks`, `useFlags`, `useAuth`, etc.).
-   - No contiene lógica de persistencia (no habla directo con DB).
-
-3. **Rutas fullstack (`app/routes`)**
-   - Módulos de React Router fullstack:
-     - exportan `loader`, `action` y un componente por ruta.
-   - Funcionan como “controllers”:
-     - traducen HTTP → dominio,
-     - llaman a repositorios/servicios,
-     - devuelven respuestas (redirect, JSON, errores, etc.).
-
-4. **Dominio (`app/core`)**
-   - Reglas de negocio puras, sin React, sin HTTP, sin DB.
-   - Contiene:
-     - tipos (`Task`, `FeatureFlag`, `User`, etc.),
-     - schemas Zod (`taskSchema`, `flagSchema`, `loginSchema`, etc.),
-     - interfaces (ports) como `TaskRepository`, `FeatureFlagRepository`, `AuthService`.
-   - Esta capa **no importa** ni de UI (`features/ui`) ni de adaptadores de infraestructura.
-
-5. **Infraestructura (`app/infra`)**
-   - Implementaciones concretas de los ports del dominio.
-   - Contiene:
-     - repositorios que hablan con Drizzle/SQLite/Postgres,
-     - integraciones con servicios externos (Supabase, Stripe, Slack, AI, Redis).
-   - Depende de `core/` (tipos, interfaces), pero no al revés.
+### Datos & Infraestructura
+*   **ORM:** Drizzle ORM.
+*   **Base de Datos (Local):** SQLite (archivo `local.db` para desarrollo rápido).
+*   **Base de Datos (Cloud):** PostgreSQL (via Supabase).
+*   **Autenticación:**
+    *   *Fase 1 (MVP):* Manual (Cookies + Bcrypt).
+    *   *Fase 2:* Supabase Auth / OAuth.
 
 ---
 
-## 🔄 Reglas de dependencia (en simple)
+## 🏛️ Filosofía: Hexagonal + Clean Architecture
 
-- `core` **no depende de nadie** (solo de librerías puras como `zod`).
-- `infra` puede importar de `core`, pero no de `features` ni de `ui`.
-- `features` puede importar de `core` y usar funciones de `infra` vía interfaces/abstracciones.
-- `ui` **no puede importar** de `features` ni de `core`: es genérico.
-- `routes` puede importar de todos: es el “pegamento” entre HTTP, dominio, infra y UI.
+La arquitectura sigue un enfoque híbrido de **Hexagonal (Ports & Adapters)** y **Clean Architecture**.
 
-Regla mental:
+### 🎯 Objetivo de este diseño
+1.  **Aislamiento:** El dominio (reglas de negocio) no debe saber que existe una base de datos, ni que usamos React, ni que corremos en Vercel.
+2.  **Testabilidad:** Poder testear la lógica de negocio sin levantar un servidor ni una DB real.
+3.  **Evolución a Microservicios:** El diseño por features (`tasks`, `flags`, `auth`) con sus propios puertos y adaptadores permite que, **si en el futuro la escala lo requiere**, se pueda extraer un módulo entero (ej: `app/core/billing`) y convertirlo en un microservicio separado sin tener que reescribir la lógica interna.
 
-> Dominio en el centro → Infra alrededor → Rutas como borde HTTP → UI encima de todo.
+### 🔄 Reglas de Dependencia (Mental Model)
 
-<img src="./images/arquitecture.png" alt="Arquitectura FeatureLab" width="400" />
+> **Dominio en el centro → Infraestructura alrededor → Rutas como borde HTTP → UI encima de todo.**
 
-La arquitectura sigue un enfoque mezcla de **Hexagonal / Clean Architecture**:
-
-- Dominio aislado en `app/core` (reglas de negocio, tipos, puertos/repositorios).
-- Infraestructura en `app/infra` (adaptadores a DB, servicios externos).
-- UI genérica en `app/ui` (design system).
-- UI por feature en `app/features` (React + hooks de UI).
-- Rutas fullstack en `app/routes` (capa de entrada HTTP).
-
-El diseño por features + puertos/adaptadores permite que, si en el futuro se quisiera,
-se pueda extraer `auth`, `tasks` o `flags` a microservicios separados sin reescribir el dominio.
+1.  `app/core` **(Dominio)**: No depende de NADIE. Solo de librerías puras (ej: Zod).
+2.  `app/infra` **(Infraestructura)**: Depende de `core` (implementa sus interfaces). No depende de `ui` ni `features`.
+3.  `app/features` **(UI de Negocio)**: Depende de `core` (usa tipos) y compone componentes de `ui`.
+4.  `app/ui` **(Design System)**: No sabe NADA del negocio. Es pura UI visual agnóstica.
+5.  `app/routes` **(Controladores)**: Es el "pegamento". Conecta el pedido HTTP con el repositorio (`infra`) y devuelve la vista (`features`).
 
 ---
 
-## 🎨 Arquitectura de UI / Frontend
+## 📂 Estructura de Capas Lógicas
 
-La capa de frontend de FeatureLab se organiza en tres niveles:
+Desglosamos la aplicación en 4 capas claras:
 
-1. **Design System genérico** → `app/ui`
-2. **UI por feature** → `app/features/*`
-3. **Páginas fullstack (ruta + loader/action + UI)** → `app/routes/*`
+### 1. Dominio (`app/core`)
+*   **Responsabilidad:** Reglas de negocio puras, tipos, esquemas validación y definición de contratos (interfaces).
+*   **Contenido:** `Task` type, `TaskRepository` interface, `FeatureFlag` logic.
+*   **Contexto:** Aquí vive la "verdad" del negocio.
 
-### 📁 Estructura de UI
+### 2. Infraestructura (`app/infra`)
+*   **Responsabilidad:** Implementación concreta de los contratos del dominio. Hablar con el "mundo exterior" (DBs, APIs).
+*   **Contenido:** `DrizzleTaskRepository`, `StripeService`, `SupabaseClient`.
+*   **Contexto:** Aquí es donde ensuciamos las manos con SQL o fetch calls.
 
-```text
-app/
-  ui/                          # Design system (UI genérica, sin dominio)
-    primitives/                # "átomos" base
-      Button.tsx               # botón genérico (variants, sizes)
-      Input.tsx                # input de texto
-      Textarea.tsx             # textarea
-      Label.tsx                # label accesible
-      Badge.tsx                # pill/badge de estado
-      Spinner.tsx              # indicador de carga
-      Icon.tsx                 # wrapper para íconos
-    surfaces/                  # contenedores visuales
-      Card.tsx                 # tarjeta básica
-      Panel.tsx                # contenedor de secciones
-      PageHeader.tsx           # encabezado de página (título + descripción + actions)
-      Section.tsx              # wrapper para bloques dentro de una página
-    feedback/                  # feedback al usuario
-      Alert.tsx                # mensajes de info/éxito/error
-      EmptyState.tsx           # estado vacío (sin datos)
-      ErrorMessage.tsx         # mensaje de error de campo/form
-    overlay/                   # UI superpuesta
-      Modal.tsx                # diálogo modal
-      Dropdown.tsx             # menú desplegable
-      Popover.tsx              # popover genérico
-    form/                      # patrones de formularios
-      FormField.tsx            # label + control + error
-      FormActions.tsx          # contenedor para botones de submit/cancel
+### 3. UI Genérica (`app/ui`)
+*   **Responsabilidad:** Design System. Componentes visuales reutilizables y consistentes.
+*   **Contenido:** `Button`, `Card`, `Modal`, `Input`.
+*   **Contexto:** Si copiamos esta carpeta a otro proyecto, debería funcionar igual. No contiene lógica de "Tareas" o "Usuarios".
 
-  features/                    # UI específica por feature (usa app/ui)
-    layout/
-      AppShell.tsx             # layout principal (sidebar + contenido)
-      Sidebar.tsx              # navegación lateral
-      Topbar.tsx               # barra superior (usuario, tema, etc.)
-    auth/
-      components/
-        LoginForm.tsx          # formulario de login (usa Input, Button, FormField)
-        RegisterForm.tsx       # formulario de registro
-      hooks/
-        useAuth.ts             # lógica de UI para auth (estado, helpers)
-    tasks/
-      components/
-        TaskForm.tsx           # form de creación/edición de task
-        TaskList.tsx           # listado de tareas (usa Card, Badge, EmptyState)
-        TaskFilters.tsx        # filtros por estado/prioridad (usa Button, Dropdown)
-      hooks/
-        useTasks.ts            # lógica de UI para tasks (filtros locales, etc.)
-    flags/
-      components/
-        FlagForm.tsx           # form de creación/edición de flag
-        FlagList.tsx           # listado de flags (usa Badge, Switch/Button)
-      hooks/
-        useFlags.ts            # lógica de UI para flags
-
-  routes/                      # páginas fullstack (UI + loader + action)
-    home.tsx                   # /      – dashboard simple
-    tasks.tsx                  # /tasks – usa <TaskForm />, <TaskList />, etc.
-    flags.tsx                  # /flags – usa <FlagForm />, <FlagList />
-    auth.login.tsx             # /login  – página que renderiza <LoginForm />
-    auth.register.tsx          # /register – renderiza <RegisterForm />
-    profile.tsx                # /profile – datos del usuario + logout
-````
-
-### 🔍 Responsabilidades por nivel (UI)
-
-* `app/ui/*` (**Design System**)
-
-  * Componentes:
-
-    * No conocen `Task`, `FeatureFlag`, `User`, etc.
-    * Solo trabajan con props genéricas (`variant`, `size`, `state`, `onClick`…).
-  * Implementados con:
-
-    * TailwindCSS.
-    * Radix UI / shadcn/ui debajo cuando aporte accesibilidad/comportamiento.
-
-* `app/features/*` (**UI por feature**)
-
-  * Componentes:
-
-    * Sí conocen conceptos de dominio: Task, FeatureFlag, Auth.
-    * Componen el design system (`app/ui`) para construir pantallas ricas.
-  * Ejemplos:
-
-    * `TaskForm` usa `FormField`, `Input`, `Textarea`, `Button`.
-    * `TaskList` usa `Card`, `Badge`, `EmptyState`.
-    * `FlagList` usa `Card`, `Badge`, `Switch/Button`.
-
-* `app/features/layout/*`
-
-  * Define el **layout general** de la app:
-
-    * sidebar, topbar, shell responsive, etc.
-  * Usa componentes de `app/ui/surfaces` y `app/ui/overlay`.
-
-* `app/routes/*` (**páginas fullstack**)
-
-  * Conectan:
-
-    * UI de `features/*`,
-    * dominio (`core/*`),
-    * infraestructura (`infra/*`).
-  * Responsabilidades:
-
-    * `loader` → obtiene datos (ej: listar tasks desde `TaskRepository`).
-    * `action` → procesa forms (ej: crear task, login).
-    * Componente de página → renderiza layout + componentes de feature.
-
-### 🎯 Reglas simples de uso (UI)
-
-* **Features → UI**:
-
-  * Todas las pantallas y componentes de feature deberían usar `app/ui` cuando se pueda.
-  * No redefinir botones, inputs, cards “a mano” en cada feature.
-
-* **UI → Features**:
-
-  * `app/ui` **no puede importar** nada de `app/features` ni de dominio (`app/core`).
-  * Se mantiene 100% genérico y reutilizable.
-
-* **Routes → UI**:
-
-  * Las rutas deberían componer `AppShell` + componentes de feature + design system.
-  * Se evita tirar Tailwind crudo directamente en todos lados (salvo cosas mínimas).
+### 4. UI de Feature & Rutas (`app/features` y `app/routes`)
+*   **Features (`app/features`):** Componentes "inteligentes" que conocen el dominio.
+    *   Ej: `TaskList` (sabe iterar tareas), `FlagToggle` (sabe llamar una action).
+*   **Rutas (`app/routes`):** Controladores Fullstack.
+    *   Reciben Request -> Llaman Repositorio -> Retornan JSON/HTML.
 
 ---
 
-## 📁 Estructura de carpetas – MVP v0.1 (completa)
+## 📂 Estructura de Carpetas
 
 ```text
 featurelab/
-├── app/                            # App fullstack (React Router framework)
-│   ├── core/                       # Dominio: tipos, reglas, puertos
-│   │   ├── auth/                   # User, login/register, schemas
-│   │   │   ├── auth.types.ts       # User, UserId, etc.
-│   │   │   ├── auth.schema.ts      # loginSchema, registerSchema (Zod)
-│   │   │   └── auth.port.ts        # AuthService, interfaces de auth (v0.2+)
-│   │   ├── tasks/                  # Task, estados, prioridades, reglas
-│   │   │   ├── task.types.ts       # Task, TaskStatus, TaskPriority
-│   │   │   ├── task.schema.ts      # taskCreateSchema, taskUpdateSchema
-│   │   │   └── task.port.ts        # TaskRepository (list, create, update)
-│   │   ├── flags/                  # Feature flags, entornos
-│   │   │   ├── flag.types.ts       # FeatureFlag, Environment
-│   │   │   ├── flag.schema.ts      # flagCreateSchema, flagUpdateSchema
-│   │   │   └── flag.port.ts        # FeatureFlagRepository
-│   │   └── common/                 # Tipos/utilidades compartidas (IDs, Result, etc.)
+├── app/
+│   ├── core/                       # 🧠 DOMINIO (Reglas de negocio puras)
+│   │   ├── auth/                   # Tipos y reglas de Auth
+│   │   ├── tasks/                  # Tipos y reglas de Tareas
+│   │   ├── flags/                  # Tipos y reglas de Feature Flags
+│   │   └── common/                 # Utilidades compartidas (IDs, Results)
 │   │
-│   ├── infra/                      # Infraestructura real (DB, servicios externos)
-│   │   ├── db/                     # Drizzle + conexiones
-│   │   │   ├── schema.ts           # Tablas users, tasks, feature_flags (v0.1: todas aquí)
-│   │   │   ├── client.sqlite.ts    # Cliente Drizzle + SQLite (local dev)
-│   │   │   └── client.supabase.ts  # Cliente Drizzle + Supabase/Postgres (cloud, v0.2+)
-│   │   ├── auth/                   # Repo de usuarios + helpers de password
-│   │   │   └── auth.repository.drizzle.ts
-│   │   ├── tasks/                  # Implementaciones de TaskRepository
-│   │   │   ├── task.repository.sqlite.ts   # SQLite (modo local)
-│   │   │   ├── task.repository.supabase.ts # Supabase/Postgres (modo cloud, v0.2+)
-│   │   │   └── task.repository.ts          # Exporta el repo según env (DB_PROVIDER)
-│   │   ├── flags/                  # Implementaciones de FeatureFlagRepository
-│   │   │   ├── flag.repository.sqlite.ts
-│   │   │   ├── flag.repository.supabase.ts
-│   │   │   └── flag.repository.ts
+│   ├── infra/                      # 🔌 INFRAESTRUCTURA (Implementaciones)
+│   │   ├── db/                     # Configuración Drizzle (Schema, Migrations)
+│   │   ├── auth/                   # AuthRepository (DB implementation)
+│   │   ├── tasks/                  # TaskRepository (SQLite/Postgres)
+│   │   └── flags/                  # FlagRepository
 │   │   # v0.2+ (futuro):
 │   │   ├── redis/                  # Cache, sesiones, pub/sub
 │   │   ├── stripe/                 # Integración Stripe (billing)
 │   │   ├── slack/                  # Integración Slack (notificaciones)
-│   │   └── ai/                     # Integración Gemini u otros modelos
+│   │   └── ai/                     # Integración AI (Gemini)
 │   │
-│   ├── ui/                         # Design system (UI genérica, sin dominio)
-│   │   ├── primitives/
-│   │   │   ├── Button.tsx
-│   │   │   ├── Input.tsx
-│   │   │   ├── Textarea.tsx
-│   │   │   ├── Label.tsx
-│   │   │   ├── Badge.tsx
-│   │   │   ├── Spinner.tsx
-│   │   │   └── Icon.tsx
-│   │   ├── surfaces/
-│   │   │   ├── Card.tsx
-│   │   │   ├── Panel.tsx
-│   │   │   ├── PageHeader.tsx
-│   │   │   └── Section.tsx
-│   │   ├── feedback/
-│   │   │   ├── Alert.tsx
-│   │   │   ├── EmptyState.tsx
-│   │   │   └── ErrorMessage.tsx
-│   │   ├── overlay/
-│   │   │   ├── Modal.tsx
-│   │   │   ├── Dropdown.tsx
-│   │   │   └── Popover.tsx
-│   │   └── form/
-│   │       ├── FormField.tsx
-│   │       └── FormActions.tsx
+│   ├── ui/                         # 🎨 DESIGN SYSTEM (Componentes visuales)
+│   │   ├── primitives/             # Átomos (Button, Input, Badge)
+│   │   ├── surfaces/               # Contenedores (Card, Modal, Panel)
+│   │   ├── feedback/               # Toasts, Alerts
+│   │   ├── overlay/                # Overlays (Modal, Drawer)
+│   │   └── form/                   # Formularios (Form, Field, Input)
 │   │
-│   ├── features/                   # UI/UX específica por feature (usa app/ui)
+│   ├── features/                   # 🧩 UI DE NEGOCIO (Widgets completos)
 │   │   ├── layout/                 # Layout general: sidebar, navbar, theme toggle
-│   │   │   ├── AppShell.tsx
-│   │   │   └── Sidebar.tsx
-│   │   ├── auth/                   # LoginForm, RegisterForm, ProfileView
+│   │   ├── auth/                   # Components: LoginForm
 │   │   │   ├── components/
-│   │   │   │   ├── LoginForm.tsx
-│   │   │   │   └── RegisterForm.tsx
 │   │   │   └── hooks/
 │   │   │       └── useAuth.ts
-│   │   ├── tasks/                  # TaskForm, TaskList, TaskFilters
+│   │   ├── tasks/                  # Components: TaskList, TaskForm
 │   │   │   ├── components/
-│   │   │   │   ├── TaskForm.tsx
-│   │   │   │   ├── TaskList.tsx
-│   │   │   │   └── TaskFilters.tsx
 │   │   │   └── hooks/
 │   │   │       └── useTasks.ts
-│   │   ├── flags/                  # FlagForm, FlagList, FlagToggle
+│   │   └── flags/                  # Components: FlagToggle, FlagList
 │   │   │   ├── components/
-│   │   │   │   ├── FlagForm.tsx
-│   │   │   │   └── FlagList.tsx
 │   │   │   └── hooks/
 │   │   │       └── useFlags.ts
 │   │
-│   ├── routes/                     # Rutas fullstack (loader + action + componente)
-│   │   ├── home.tsx                # Ruta / (dashboard simple)
-│   │   ├── tasks.tsx               # Ruta /tasks (usa TaskRepository + UI de tasks)
-│   │   ├── flags.tsx               # Ruta /flags (usa FeatureFlagRepository + UI de flags)
-│   │   ├── auth.login.tsx          # Ruta /login (renderiza LoginForm)
-│   │   ├── auth.register.tsx       # Ruta /register (renderiza RegisterForm)
-│   │   ├── profile.tsx             # Ruta /profile (datos del usuario + logout)
-│   │   └── api/                    # (v0.2+) Rutas tipo API-only (JSON, webhooks, etc.)
-│   │       ├── health.tsx          # /api/health (healthcheck JSON)
-│   │       ├── tasks.tsx           # /api/tasks (ejemplo API JSON)
-│   │       └── webhooks.stripe.tsx # /api/webhooks/stripe (webhook Stripe)
-│   │
-│   ├── root.tsx                    # Layout raíz, ErrorBoundary, <Outlet />
-│   ├── routes.ts                   # Mapa de rutas (RouteConfig de React Router)
-│   ├── app.css                     # Estilos globales (fuente Inter, layout base)
-│   └── tailwind.css                # Entrada de Tailwind (@import "tailwindcss")
+│   └── routes/                     # 🚦 RUTAS (Controladores Fullstack)
+│       ├── _index.tsx              # Home / Dashboard
+│       ├── tasks.tsx               # Página de Tareas
+│       ├── flags.tsx               # Página de Flags
+│       ├── auth.login.tsx          # Login
+│       ├── auth.register.tsx       # Register
+│       ├── profile.tsx             # Perfil Usuario
+│       └── api/                    # (v0.2+) API Endpoints
+│           ├── health.tsx
+│           ├── tasks.tsx
+│           └── webhooks.stripe.tsx
 │
-├── public/                         # Assets estáticos (favicon, og images, etc.)
-│
-├── docs/                           # Documentación
-│   ├── ARCHITECTURE.md             # Este archivo
-│   ├── MVP.md                      # Definición de MVP y fases
-│   └── DOCS.md                     # Links a documentación externa de stack
-│
-├── drizzle.config.ts               # Configuración de Drizzle ORM
-├── vitest.config.ts                # Config Vitest (tests v0.2+)
-├── tailwind.config.ts              # Config Tailwind
-├── eslint.config.mjs               # Config ESLint
-├── .prettierrc                     # Config Prettier
-├── package.json                    # Scripts + deps
-└── README.md                       # Resumen del proyecto + cómo correrlo
+├── docs/                           # 📚 Documentación
+├── public/                         # Assets estáticos
+└── [config files]                  # tsconfig, vite.config, tailwind, etc.
 ```
+
+---
+
+## 💾 Modelo de Datos (Esquema Conceptual)
+
+Este esquema se implementa con **Drizzle ORM**.
+
+### 1. Users (`users`)
+*   `id`: UUID
+*   `email`: string (unique)
+*   `password_hash`: string
+*   `created_at`: timestamp
+
+### 2. Tasks (`tasks`)
+*   `id`: UUID
+*   `user_id`: FK -> users.id
+*   `title`: string
+*   `status`: enum (`todo`, `in_progress`, `done`)
+*   `priority`: enum (`low`, `medium`, `high`)
+
+### 3. Feature Flags (`feature_flags`)
+*   `id`: UUID
+*   `user_id`: FK -> users.id
+*   `key`: string (ej: "new-dashboard")
+*   `is_enabled`: boolean
+*   `environment`: enum (`dev`, `prod`)
+
+> **Lógica de Flags:**
+> Un flag es único por combinación de `user_id` + `key` + `environment`.
+> Esto permite que un usuario tenga la feature `dark-mode` activada en `dev` para probarla, pero desactivada en `prod`.
+> El repositorio debe permitir consultar `getFlag(user, key, env)`.
+
+---
+
+---
+
+## 🌐 Roadmap v0.2 – Internacionalización (i18n)
+
+En una versión posterior (v0.2), se plantea añadir soporte multi-idioma:
+
+*   Soporte para `en` / `es` en la UI (textos principales).
+*   Implementación de `app/i18n` con:
+    *   diccionarios de mensajes,
+    *   `I18nProvider`,
+    *   hook `useI18n`.
+*   Selección de idioma por:
+    *   query param (`?lang=en|es`),
+    *   y/o toggle en la interfaz.
+*   Ajuste dinámico de `<html lang={locale}>` para accesibilidad y SEO.
+
+Esto permite presentar el proyecto en inglés (CV / LinkedIn / portfolio) manteniendo soporte completo para español.
 
 ---
 
