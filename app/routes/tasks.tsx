@@ -1,18 +1,10 @@
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-  redirect,
-} from 'react-router';
-
+import { Form, useActionData, useLoaderData, useNavigation, redirect } from 'react-router';
+import { z } from 'zod';
 import type { Route } from './+types/tasks';
 import { taskRepository } from '../infra/tasks/tasks.repository';
 import { taskCreateSchema } from '../core/tasks/task.schema';
 
-type ActionData =
-  | { success: false; fieldErrors?: Record<string, string[]> }
-  | undefined;
+type ActionData = { success: false; fieldErrors?: Record<string, string[]> } | undefined;
 
 export async function loader(_: Route.LoaderArgs) {
   const tasks = await taskRepository.listAll();
@@ -21,16 +13,37 @@ export async function loader(_: Route.LoaderArgs) {
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
+  const intent = formData.get('intent');
 
   const parsed = taskCreateSchema.safeParse({
     title: formData.get('title'),
     description: formData.get('description'),
   });
 
+  if (intent === 'update') {
+    const id = String(formData.get('id') ?? '');
+    const status = formData.get('status');
+    const priority = formData.get('priority');
+
+    await taskRepository.update({
+      id,
+      status: typeof status === 'string' ? (status as any) : undefined,
+      priority: typeof priority === 'string' ? (priority as any) : undefined,
+    });
+
+    return redirect('/tasks');
+  }
+
+  if (intent === 'delete') {
+    const id = String(formData.get('id') ?? '');
+    await taskRepository.remove(id);
+    return redirect('/tasks');
+  }
+
   if (!parsed.success) {
     return {
       success: false,
-      fieldErrors: parsed.error.flatten().fieldErrors,
+      fieldErrors: z.flattenError(parsed.error).fieldErrors,
     } satisfies ActionData;
   }
 
@@ -89,6 +102,46 @@ export default function TasksRoute() {
               <div className="text-xs opacity-60 mt-1">
                 {task.status} · {task.priority}
               </div>
+              <Form method="post" className="flex items-center gap-2 mt-2">
+                <input type="hidden" name="intent" value="update" />
+                <input type="hidden" name="id" value={task.id} />
+
+                <select
+                  name="status"
+                  defaultValue={task.status}
+                  className="border rounded px-2 py-1"
+                >
+                  <option value="todo">todo</option>
+                  <option value="in-progress">in-progress</option>
+                  <option value="done">done</option>
+                </select>
+
+                <select
+                  name="priority"
+                  defaultValue={task.priority}
+                  className="border rounded px-2 py-1"
+                >
+                  <option value="low">low</option>
+                  <option value="medium">medium</option>
+                  <option value="high">high</option>
+                </select>
+
+                <button type="submit" className="border rounded px-2 py-1">
+                  Guardar
+                </button>
+              </Form>
+              <Form
+                method="post"
+                onSubmit={(e) => {
+                  if (!confirm('¿Eliminar esta task?')) e.preventDefault();
+                }}
+              >
+                <input type="hidden" name="intent" value="delete" />
+                <input type="hidden" name="id" value={task.id} />
+                <button type="submit" className="border rounded px-2 py-1">
+                  Eliminar
+                </button>
+              </Form>
             </li>
           ))}
         </ul>

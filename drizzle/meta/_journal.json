@@ -8,6 +8,13 @@
       "when": 1770233733306,
       "tag": "0000_new_veda",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1770350919258,
+      "tag": "0001_bumpy_raider",
+      "breakpoints": true
     }
   ]
 }
