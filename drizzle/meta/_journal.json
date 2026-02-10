@@ -15,6 +15,27 @@
       "when": 1770350919258,
       "tag": "0001_bumpy_raider",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1770393155574,
+      "tag": "0002_colorful_madripoor",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1770665623553,
+      "tag": "0003_amused_bucky",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1770666755311,
+      "tag": "0004_wide_ironclad",
+      "breakpoints": true
     }
   ]
 }

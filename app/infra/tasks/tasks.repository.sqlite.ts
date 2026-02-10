@@ -46,29 +46,29 @@ export const sqliteTaskRepository: TaskRepository = {
     };
   },
 
-	async update(input: TaskUpdateInput) {
-  const [row] = await db
-    .update(tasks)
-    .set({
-      ...(input.status ? { status: input.status } : {}),
-      ...(input.priority ? { priority: input.priority } : {}),
-      updatedAt: sql`CURRENT_TIMESTAMP`,
-    })
-    .where(eq(tasks.id, input.id))
-    .returning();
+  async update(input: TaskUpdateInput) {
+    const [row] = await db
+      .update(tasks)
+      .set({
+        ...(input.status ? { status: input.status } : {}),
+        ...(input.priority ? { priority: input.priority } : {}),
+        updatedAt: sql`CURRENT_TIMESTAMP`,
+      })
+      .where(eq(tasks.id, input.id))
+      .returning();
 
-  return {
-    id: row.id,
-    title: row.title,
-    description: row.description ?? undefined,
-    status: row.status as Task['status'],
-    priority: row.priority as Task['priority'],
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-  };
-},
+    return {
+      id: row.id,
+      title: row.title,
+      description: row.description ?? undefined,
+      status: row.status as Task['status'],
+      priority: row.priority as Task['priority'],
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+  },
 
-	async remove(id: string): Promise<void> {
-  	db.delete(tasks).where(eq(tasks.id, id)).run();
-}
+  async remove(id: string): Promise<void> {
+    db.delete(tasks).where(eq(tasks.id, id)).run();
+  },
 };

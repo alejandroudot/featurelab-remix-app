@@ -14,7 +14,7 @@ export type TaskUpdateInput = {
 
 export interface TaskRepository {
   listAll(): Promise<Task[]>; // más adelante será listByUser(userId)
-  create(input: TaskInput): Promise<Task>;		
-	update(input: TaskUpdateInput): Promise<Task>;
-	remove(id: string): Promise<void>;
+  create(input: TaskInput): Promise<Task>;
+  update(input: TaskUpdateInput): Promise<Task>;
+  remove(id: string): Promise<void>;
 }
