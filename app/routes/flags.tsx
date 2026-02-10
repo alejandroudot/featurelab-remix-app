@@ -9,13 +9,13 @@ import type { FlagsActionData } from '../features/flags/types';
 import { requireUser } from "~/infra/auth/require-user";
 
 export async function loader({request}: Route.LoaderArgs) {
-	await requireUser(request);
-  const flags = await flagRepository.listAll();
+	const user = await requireUser(request);
+  const flags = await flagRepository.listAll(user.id);
   return { flags };
 }
 
 export async function action({ request }: Route.ActionArgs) {
-	await requireUser(request);
+	const user = await requireUser(request);
   const formData = await request.formData();
   const intent = String(formData.get('intent') ?? '');
 
@@ -53,7 +53,7 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   try {
-    await flagRepository.create(parsed.data);
+    await flagRepository.create({...parsed.data, userId: user.id});
     return redirect('/flags');
   } catch (err) {
     if (err instanceof DuplicateFeatureFlagError) {

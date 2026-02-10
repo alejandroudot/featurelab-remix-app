@@ -3,6 +3,7 @@ import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core
 
 export const tasks = sqliteTable('tasks', {
   id: text('id').primaryKey(),
+	userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   title: text('title').notNull(),
   description: text('description'),
   status: text('status', { enum: ['todo', 'in-progress', 'done'] })
@@ -25,6 +26,7 @@ export const featureFlags = sqliteTable(
     id: text('id')
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
+		userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
     key: text('key').notNull(),
     description: text('description'),
     environment: text('environment').notNull().default('development'),
@@ -36,7 +38,7 @@ export const featureFlags = sqliteTable(
   	.notNull()
   	.$defaultFn(() => new Date()),
   },
-  (t) => [uniqueIndex('feature_flags_key_env_unique').on(t.key, t.environment)],
+  (t) => [uniqueIndex('feature_flags_user_key_env_unique').on(t.userId, t.key, t.environment)],
 );
 
 export const users = sqliteTable("users", {

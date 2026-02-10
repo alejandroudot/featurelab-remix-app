@@ -38,13 +38,15 @@ export const meta: Route.MetaFunction = () => {
 
 export async function loader({ request }: Route.LoaderArgs) {
   const environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-
-  // server-only
-  const { flagRepository } = await import('./infra/flags/flags.service');
-  const darkMode = await flagRepository.isEnabled('dark-theme', environment);
+	const DARK_THEME_FLAG = "dark-theme" as const;
 
   // auth (optional)
   const user = await getOptionalUser(request);
+  // server-only
+  const { flagRepository } = await import('./infra/flags/flags.service');
+  const darkMode = user
+    ? await flagRepository.isEnabled({ userId: user.id, key: DARK_THEME_FLAG, environment })
+    : false;
 
   return { darkMode, environment, user };
 }

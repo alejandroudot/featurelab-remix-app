@@ -14,7 +14,7 @@ export async function loader({request}: Route.LoaderArgs) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-	await requireUser(request);
+	const user = await requireUser(request);
   const formData = await request.formData();
   const intent = formData.get('intent');
 
@@ -50,7 +50,7 @@ export async function action({ request }: Route.ActionArgs) {
     } satisfies TaskActionData;
   }
 
-  await taskRepository.create(parsed.data);
+  await taskRepository.create({...parsed.data, userId: user.id});
 
   // PRG: evita re-submit al refresh, y re-ejecuta loader
   return redirect('/tasks');

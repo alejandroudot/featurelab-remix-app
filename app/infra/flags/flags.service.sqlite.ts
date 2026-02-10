@@ -1,7 +1,7 @@
-import { desc, eq, sql, and } from 'drizzle-orm';
+import { desc, eq, and } from 'drizzle-orm';
 import type { FeatureFlagRepository } from '../../core/flags/flags.port';
 import { DuplicateFeatureFlagError } from '~/core/flags/errors';
-import type { FeatureFlag } from '../../core/flags/flags.types';
+import type { FeatureFlag, Environment } from '../../core/flags/flags.types';
 import { db } from '../db/client.sqlite';
 import { featureFlags } from '../db/schema';
 
@@ -19,21 +19,26 @@ function isSqliteUniqueConstraintError(err: unknown) {
 }
 
 export const sqliteFlagRepository: FeatureFlagRepository = {
-  async listAll(): Promise<FeatureFlag[]> {
-    const rows = db.select().from(featureFlags).orderBy(desc(featureFlags.createdAt)).all();
+  async listAll(userId: string): Promise<FeatureFlag[]> {
+    const rows = db
+      .select()
+      .from(featureFlags)
+      .where(eq(featureFlags.userId, userId))
+      .orderBy(desc(featureFlags.createdAt))
+      .all();
 
     return rows.map((row) => ({
       id: row.id,
       key: row.key,
       description: row.description ?? undefined,
-      environment: row.environment as FeatureFlag['environment'],
+      environment: row.environment as FeatureFlag["environment"],
       enabled: row.enabled,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     }));
   },
 
-  async create(input: { key: string; environment: string; description?: string }) {
+ async create(input: { userId: string; key: string; environment: string; description?: string }) {
     try {
       const id = crypto.randomUUID();
 
@@ -41,12 +46,13 @@ export const sqliteFlagRepository: FeatureFlagRepository = {
         .insert(featureFlags)
         .values({
           id,
+					userId: input.userId,
           key: input.key,
           description: input.description ?? null,
           environment: input.environment,
           enabled: false,
-          createdAt: sql`CURRENT_TIMESTAMP`,
-          updatedAt: sql`CURRENT_TIMESTAMP`,
+          createdAt: new Date(Date.now()),
+          updatedAt: new Date(Date.now()),
         })
         .returning()
         .all();
@@ -78,7 +84,7 @@ export const sqliteFlagRepository: FeatureFlagRepository = {
       .update(featureFlags)
       .set({
         enabled: nextEnabled,
-        updatedAt: sql`CURRENT_TIMESTAMP`,
+        updatedAt: new Date(Date.now()),
       })
       .where(eq(featureFlags.id, id))
       .returning()
@@ -99,11 +105,17 @@ export const sqliteFlagRepository: FeatureFlagRepository = {
     db.delete(featureFlags).where(eq(featureFlags.id, id)).run();
   },
 
-  async isEnabled(key: string, environment: 'development' | 'production') {
+  async isEnabled(input: { userId: string; key: string; environment: Environment }) {
     const row = db
       .select({ enabled: featureFlags.enabled })
       .from(featureFlags)
-      .where(and(eq(featureFlags.key, key), eq(featureFlags.environment, environment)))
+      .where(
+        and(
+          eq(featureFlags.userId, input.userId),
+          eq(featureFlags.key, input.key),
+          eq(featureFlags.environment, input.environment)
+        )
+      )
       .get();
 
     return row?.enabled ?? false;
