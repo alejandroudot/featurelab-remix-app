@@ -4,11 +4,11 @@ import { z } from 'zod';
 export const taskCreateSchema = z
   .object({
     title: z.preprocess(
-      (v) => (typeof v === 'string' ? v.trim() : ''),
+      (value) => (typeof value === 'string' ? value.trim() : ''),
       z.string().min(1, 'El titulo es obligatorio'),
     ),
     description: z.preprocess(
-      (v) => (typeof v === 'string' ? v.trim() : ''),
+      (value) => (typeof value === 'string' ? value.trim() : ''),
       z.string().optional(),
     ),
   })

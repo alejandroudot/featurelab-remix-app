@@ -6,7 +6,7 @@ export const taskIntentSchema = z.enum(['create', 'update', 'delete']);
 // Payload de update: id + campos editables.
 export const taskUpdateSchema = z.object({
   id: z.preprocess(
-    (v) => (typeof v === 'string' ? v.trim() : ''),
+    (value) => (typeof value === 'string' ? value.trim() : ''),
     z.string().min(1, 'ID requerido'),
   ),
   status: z.enum(['todo', 'in-progress', 'done']).optional(),
@@ -16,7 +16,7 @@ export const taskUpdateSchema = z.object({
 // Payload de delete: solo id.
 export const taskDeleteSchema = z.object({
   id: z.preprocess(
-    (v) => (typeof v === 'string' ? v.trim() : ''),
+    (value) => (typeof value === 'string' ? value.trim() : ''),
     z.string().min(1, 'ID requerido'),
   ),
 });

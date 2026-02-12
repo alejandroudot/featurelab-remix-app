@@ -5,6 +5,7 @@ export function CreateTaskForm({ actionData, isSubmitting }: { actionData: TaskA
   return (
     <section className="border rounded p-4 space-y-3 max-w-xl">
 		<Form method="post" className="space-y-3 max-w-md">
+			<input type="hidden" name="intent" value="create" />
           <div className="flex flex-col gap-1">
             <label htmlFor="title" className="font-medium">
               Título

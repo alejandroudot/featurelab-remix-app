@@ -22,6 +22,9 @@ type HomeLoaderData = {
     status: string;
     priority: string;
   }>;
+	user: {
+		role: string;
+	}
 };
 
 export async function loader({request}: Route.LoaderArgs): Promise<HomeLoaderData> {
@@ -47,11 +50,14 @@ export async function loader({request}: Route.LoaderArgs): Promise<HomeLoaderDat
       status: t.status,
       priority: t.priority,
     })),
+		user: {
+			role: user.role
+		}
   };
 }
 
 export default function Home() {
-  const { env, stats, recentTasks } = useLoaderData<typeof loader>();
+  const { env, stats, recentTasks, user } = useLoaderData<typeof loader>();
 
   return (
     <main className="container mx-auto p-6 space-y-8">
@@ -79,14 +85,15 @@ export default function Home() {
           >
             Ir a Tasks
           </Link>
-
-          <Link
+					{user.role === 'admin' && 
+					<Link
             to="/flags"
-            className="inline-flex items-center justify-center rounded border px-4 py-2 text-sm font-medium opacity-60 pointer-events-none"
-            aria-disabled="true"
+            className="inline-flex items-center justify-center rounded bg-blue-600 px-4 py-2 text-white text-sm font-medium"
           >
-            Ir a Feature Flags (próximo)
+            Feature Flags
           </Link>
+					}
+          
         </div>
       </header>
 
