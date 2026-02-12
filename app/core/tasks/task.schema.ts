@@ -1,10 +1,11 @@
 import { z } from 'zod';
 
+// Schema exclusivo para crear tasks (intent=create).
 export const taskCreateSchema = z
   .object({
     title: z.preprocess(
       (v) => (typeof v === 'string' ? v.trim() : ''),
-      z.string().min(1, 'El título es obligatorio'),
+      z.string().min(1, 'El titulo es obligatorio'),
     ),
     description: z.preprocess(
       (v) => (typeof v === 'string' ? v.trim() : ''),

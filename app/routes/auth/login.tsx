@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { authService } from '~/infra/auth/auth.service';
 import { setSessionCookie } from '~/infra/auth/session-cookie';
 import { getOptionalUser } from '~/infra/auth/require-user';
+import { safeRedirect } from '~/infra/http/redirects';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -28,7 +29,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
-
+  const url = new URL(request.url);
+  const redirectTo = url.searchParams.get("redirectTo");
+	
   const parsed = loginSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
@@ -51,7 +54,7 @@ export async function action({ request }: Route.ActionArgs) {
     const headers = new Headers();
     setSessionCookie(headers, sessionId);
 
-    return redirect('/', { headers });
+  	return redirect(safeRedirect(redirectTo, "/tasks"), { headers });
   } catch {
     return Response.json(
       {

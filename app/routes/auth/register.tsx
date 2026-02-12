@@ -6,6 +6,7 @@ import { authService } from '~/infra/auth/auth.service';
 import { setSessionCookie } from '~/infra/auth/session-cookie';
 import { registerSchema } from '~/core/auth/register.schema';
 import { getOptionalUser } from '~/infra/auth/require-user';
+import { safeRedirect } from '~/infra/http/redirects';
 
 type ActionData =
   | {
@@ -24,6 +25,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
+	const url = new URL(request.url);
+	const redirectTo = url.searchParams.get("redirectTo");
 
   const parsed = registerSchema.safeParse({
     email: formData.get('email'),
@@ -52,7 +55,7 @@ export async function action({ request }: Route.ActionArgs) {
     const headers = new Headers();
     setSessionCookie(headers, sessionId);
 
-    return redirect('/tasks', { headers });
+		return redirect(safeRedirect(redirectTo, "/"), { headers });
   } catch (err) {
     // Error codes simples del manual auth
     const code = err instanceof Error ? err.message : 'UNKNOWN';
@@ -122,7 +125,7 @@ export default function RegisterRoute() {
 
       <p className="text-sm opacity-80">
         ¿Ya tenés cuenta?{' '}
-        <Link className="underline" to="/login">
+        <Link className="underline" to="/auth/login">
           Entrar
         </Link>
       </p>

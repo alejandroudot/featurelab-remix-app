@@ -10,7 +10,12 @@ import { sessions, users } from "~/infra/db/schema";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 días
 
 function toUser(row: typeof users.$inferSelect): User {
-  return { id: row.id, email: row.email, createdAt: row.createdAt };
+  return {
+    id: row.id,
+    email: row.email,
+    role: row.role as "user" | "admin",
+    createdAt: row.createdAt,
+  };
 }
 
 export function createManualAuthService(): AuthService {

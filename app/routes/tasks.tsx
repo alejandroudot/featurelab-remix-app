@@ -1,68 +1,59 @@
-import { useActionData, useLoaderData, useNavigation, redirect } from 'react-router';
+import { useActionData, useLoaderData, useNavigation } from 'react-router';
 import { TasksPage } from '~/features/tasks/TasksPage';
-import { z } from 'zod';
 import type { Route } from './+types/tasks';
-import { taskRepository } from '../infra/tasks/tasks.repository';
-import { taskCreateSchema } from '../core/tasks/task.schema';
+import { taskService } from '../infra/tasks/task.repository';
 import type { TaskActionData } from '~/features/tasks/types';
-import { requireUser } from "~/infra/auth/require-user";
+import { requireUser } from '~/infra/auth/require-user';
+import { flagService } from '~/infra/flags/flags.repository';
+import { getFlagDebugOverrideFromUrl } from '~/infra/flags/flag-debug';
+import { runTaskAction } from '~/features/tasks/server/action';
 
-export async function loader({request}: Route.LoaderArgs) {
-	await requireUser(request);
-  const tasks = await taskRepository.listAll();
-  return { tasks };
+export async function loader({ request }: Route.LoaderArgs) {
+  const user = await requireUser(request);
+  const tasks = await taskService.listByUser(user.id);
+  const environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  const url = new URL(request.url);
+
+  const betaTasksUIResolution = await flagService.resolve({
+    userId: user.id,
+    key: 'beta-tasks-ui',
+    environment,
+    debugOverride: getFlagDebugOverrideFromUrl({
+      url,
+      key: 'beta-tasks-ui',
+      enabled: isDevelopment,
+    }),
+  });
+
+  return { tasks, betaTasksUI: betaTasksUIResolution.enabled, betaTasksUIResolution, isDevelopment };
 }
 
 export async function action({ request }: Route.ActionArgs) {
-	const user = await requireUser(request);
+  const user = await requireUser(request);
   const formData = await request.formData();
-  const intent = formData.get('intent');
 
-  const parsed = taskCreateSchema.safeParse({
-    title: formData.get('title'),
-    description: formData.get('description'),
+  // La route solo orquesta; la logica de intents vive en un helper dedicado.
+  return runTaskAction({
+    formData,
+    userId: user.id,
+    taskService,
   });
-
-  if (intent === 'update') {
-    const id = String(formData.get('id') ?? '');
-    const status = formData.get('status');
-    const priority = formData.get('priority');
-
-    await taskRepository.update({
-      id,
-      status: typeof status === 'string' ? (status as any) : undefined,
-      priority: typeof priority === 'string' ? (priority as any) : undefined,
-    });
-
-    return redirect('/tasks');
-  }
-
-  if (intent === 'delete') {
-    const id = String(formData.get('id') ?? '');
-    await taskRepository.remove(id);
-    return redirect('/tasks');
-  }
-
-  if (!parsed.success) {
-    return {
-      success: false,
-      fieldErrors: z.flattenError(parsed.error).fieldErrors,
-    } satisfies TaskActionData;
-  }
-
-  await taskRepository.create({...parsed.data, userId: user.id});
-
-  // PRG: evita re-submit al refresh, y re-ejecuta loader
-  return redirect('/tasks');
 }
 
 export default function TasksRoute() {
-  const { tasks } = useLoaderData<typeof loader>();
+  const { tasks, betaTasksUI, betaTasksUIResolution, isDevelopment } = useLoaderData<typeof loader>();
   const actionData = useActionData<TaskActionData>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
 
   return (
-		<TasksPage tasks={tasks} actionData={actionData} isSubmitting={isSubmitting} />
+    <TasksPage
+      tasks={tasks}
+      actionData={actionData}
+      isSubmitting={isSubmitting}
+      betaTasksUI={betaTasksUI}
+      betaTasksUIResolution={isDevelopment ? betaTasksUIResolution : undefined}
+    />
   );
 }

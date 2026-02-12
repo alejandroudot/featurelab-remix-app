@@ -2,7 +2,9 @@
 import { Link, useLoaderData } from 'react-router';
 import { Form } from "react-router";
 
-import { taskRepository } from '../infra/tasks/tasks.repository';
+import { taskService } from '../infra/tasks/task.repository';
+import type { Route } from '../+types/root';
+import { requireUser } from '~/infra/auth/require-user';
 
 type HomeLoaderData = {
   env: {
@@ -22,8 +24,9 @@ type HomeLoaderData = {
   }>;
 };
 
-export async function loader(): Promise<HomeLoaderData> {
-  const tasks = await taskRepository.listAll();
+export async function loader({request}: Route.LoaderArgs): Promise<HomeLoaderData> {
+	const user = await requireUser(request);
+  const tasks = await taskService.listByUser(user.id);
 
   const done = tasks.filter((t) => t.status === 'done').length;
   const open = tasks.length - done;

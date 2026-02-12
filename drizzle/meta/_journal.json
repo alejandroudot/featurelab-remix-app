@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1770233733306,
-      "tag": "0000_new_veda",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1770350919258,
-      "tag": "0001_bumpy_raider",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1770393155574,
-      "tag": "0002_colorful_madripoor",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1770665623553,
-      "tag": "0003_amused_bucky",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1770666755311,
-      "tag": "0004_wide_ironclad",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1770699688913,
-      "tag": "0005_spicy_the_hood",
+      "when": 1770837678025,
+      "tag": "0000_lonely_monster_badoon",
       "breakpoints": true
     }
   ]

@@ -1,7 +1,16 @@
+import * as React from 'react';
 import { Form } from 'react-router';
 import type { FlagsActionData } from './types';
 
 export function CreateFlagForm({ actionData }: { actionData: FlagsActionData }) {
+  const [currentType, setCurrentType] = React.useState<string>(
+    actionData?.values?.type ?? 'boolean',
+  );
+
+  React.useEffect(() => {
+    setCurrentType(actionData?.values?.type ?? 'boolean');
+  }, [actionData?.values?.type]);
+
   return (
     <section className="border rounded p-4 space-y-3 max-w-xl">
       <h2 className="font-semibold">Crear flag</h2>
@@ -64,6 +73,46 @@ export function CreateFlagForm({ actionData }: { actionData: FlagsActionData }) 
             <p className="text-sm text-red-600">{actionData.fieldErrors.environment[0]}</p>
           ) : null}
         </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="font-medium" htmlFor="type">
+            Tipo de flag
+          </label>
+          <select
+            id="type"
+            name="type"
+            className="border rounded px-3 py-2"
+            value={currentType}
+            onChange={(e) => setCurrentType(e.target.value)}
+          >
+            <option value="boolean">boolean (on/off)</option>
+            <option value="percentage">percentage rollout</option>
+          </select>
+          {actionData?.fieldErrors?.type?.[0] ? (
+            <p className="text-sm text-red-600">{actionData.fieldErrors.type[0]}</p>
+          ) : null}
+        </div>
+
+        {currentType === 'percentage' ? (
+          <div className="flex flex-col gap-1">
+            <label className="font-medium" htmlFor="rolloutPercent">
+              Rollout %
+            </label>
+            <input
+              id="rolloutPercent"
+              name="rolloutPercent"
+              type="number"
+              min={0}
+              max={100}
+              className="border rounded px-3 py-2"
+              placeholder="ej: 20"
+              defaultValue={actionData?.values?.rolloutPercent ?? ''}
+            />
+            {actionData?.fieldErrors?.rolloutPercent?.[0] ? (
+              <p className="text-sm text-red-600">{actionData.fieldErrors.rolloutPercent[0]}</p>
+            ) : null}
+          </div>
+        ) : null}
 
         <button className="rounded bg-blue-600 text-white px-4 py-2 text-sm font-medium">
           Crear

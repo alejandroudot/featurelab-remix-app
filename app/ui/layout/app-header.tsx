@@ -1,10 +1,12 @@
-import { Form, Link } from "react-router";
+import { Form, Link, useLocation } from 'react-router';
 
 type Props = {
-  user: { email: string } | null;
+  user: { email: string, role: "user" | "admin"; } | null;
 };
 
 export function AppHeader({ user }: Props) {
+  const loc = useLocation();
+  const redirectTo = loc.pathname + loc.search;
   return (
     <header className="border-b">
       <div className="container mx-auto p-4 flex items-center justify-between gap-4">
@@ -21,6 +23,9 @@ export function AppHeader({ user }: Props) {
           </Link>
 
           <span className="mx-2 opacity-40">|</span>
+          {user?.role === 'admin' ? (
+            <span className="rounded border px-2 py-0.5 text-xs">ADMIN</span>
+          ) : null}
 
           {user ? (
             <>
@@ -34,10 +39,16 @@ export function AppHeader({ user }: Props) {
             </>
           ) : (
             <>
-              <Link to="/auth/login" className="border rounded px-3 py-1 text-sm">
+              <Link
+                to={`/auth/login?redirectTo=${encodeURIComponent(redirectTo)}`}
+                className="border rounded px-3 py-1 text-sm"
+              >
                 Login
               </Link>
-              <Link to="/auth/register" className="border rounded px-3 py-1 text-sm">
+              <Link
+                to={`/auth/register?redirectTo=${encodeURIComponent(redirectTo)}`}
+                className="border rounded px-3 py-1 text-sm"
+              >
                 Register
               </Link>
             </>

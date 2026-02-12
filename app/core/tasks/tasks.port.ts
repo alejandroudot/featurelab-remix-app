@@ -11,14 +11,15 @@ export type TaskCreateInput = TaskCreateDTO & { userId: string };
 
 export type TaskUpdateInput = {
   id: string;
+  userId: string;
   status?: 'todo' | 'in-progress' | 'done';
   priority?: 'low' | 'medium' | 'high';
 };
 
-export interface TaskRepository {
+export interface TaskService {
   listAll(): Promise<Task[]>; // más adelante será listByUser(userId)
   listByUser(userId: string): Promise<Task[]>;
   create(input: TaskCreateInput): Promise<Task>;
   update(input: TaskUpdateInput): Promise<Task>;
-  remove(id: string): Promise<void>;
+  remove(input: { id: string; userId: string }): Promise<void>;
 }

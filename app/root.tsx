@@ -12,6 +12,7 @@ import type { Route } from './+types/root';
 import './app.css';
 import { getOptionalUser } from '~/infra/auth/require-user';
 import { AppHeader } from './ui/layout/app-header';
+import { getFlagDebugOverrideFromUrl } from './infra/flags/flag-debug';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -38,17 +39,36 @@ export const meta: Route.MetaFunction = () => {
 
 export async function loader({ request }: Route.LoaderArgs) {
   const environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-	const DARK_THEME_FLAG = "dark-theme" as const;
+  const DARK_THEME_FLAG = 'dark-theme' as const;
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  const url = new URL(request.url);
 
   // auth (optional)
   const user = await getOptionalUser(request);
   // server-only
-  const { flagRepository } = await import('./infra/flags/flags.service');
-  const darkMode = user
-    ? await flagRepository.isEnabled({ userId: user.id, key: DARK_THEME_FLAG, environment })
-    : false;
+  const { flagService } = await import('./infra/flags/flags.repository');
+  const darkModeResolution = await flagService.resolve({
+    userId: user?.id,
+    key: DARK_THEME_FLAG,
+    environment,
+    debugOverride: getFlagDebugOverrideFromUrl({
+      url,
+      key: DARK_THEME_FLAG,
+      enabled: isDevelopment,
+    }),
+  });
 
-  return { darkMode, environment, user };
+  if (isDevelopment) {
+    console.info('[flags] dark-theme resolution', {
+      userId: user?.id ?? null,
+      enabled: darkModeResolution.enabled,
+      reason: darkModeResolution.reason,
+      bucket: darkModeResolution.bucket ?? null,
+      rolloutPercent: darkModeResolution.rolloutPercent ?? null,
+    });
+  }
+
+  return { darkMode: darkModeResolution.enabled, environment, user };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
