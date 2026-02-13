@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+// Intent permitido en el endpoint POST /flags.
+export const flagIntentSchema = z.enum(['create', 'update-rollout', 'delete', 'toggle']);
+
 export const flagCreateSchema = z
   .object({
     key: z.preprocess(
@@ -20,22 +23,14 @@ export const flagCreateSchema = z
         z.enum(['boolean', 'percentage']).default('boolean'),
       )
       .optional(),
-    rolloutPercent: z.preprocess(
-      (value) => {
-        if (value == null) return undefined;
-        if (typeof value !== 'string') return value;
-        const trimmed = value.trim();
-        if (!trimmed) return undefined;
-        const n = Number(trimmed);
-        return Number.isNaN(n) ? value : n;
-      },
-      z
-        .number()
-        .int()
-        .min(0, 'El porcentaje mínimo es 0')
-        .max(100, 'El porcentaje máximo es 100')
-        .optional(),
-    ),
+    rolloutPercent: z.preprocess((value) => {
+      if (value == null) return undefined;
+      if (typeof value !== 'string') return value;
+      const trimmed = value.trim();
+      if (!trimmed) return undefined;
+      const n = Number(trimmed);
+      return Number.isNaN(n) ? value : n;
+    }, z.number().int().min(0, 'El porcentaje mínimo es 0').max(100, 'El porcentaje máximo es 100').optional()),
   })
   .transform((data) => ({
     key: data.key,
@@ -45,4 +40,26 @@ export const flagCreateSchema = z
     rolloutPercent: data.rolloutPercent ?? null,
   }));
 
-export type FlagCreateInput = z.infer<typeof flagCreateSchema>;
+// Payload de update-rollout
+export const flagUpdateRolloutSchema = z.coerce
+  .number()
+  .int()
+  .min(0, 'El porcentaje mínimo es 0')
+  .max(100, 'El porcentaje máximo es 100');
+
+export const flagToggleSchema = z.object({
+  id: z.preprocess(
+    (value) => (typeof value === 'string' ? value.trim() : ''),
+    z.string().min(1, 'ID requerido'),
+  ),
+});
+
+// Payload de delete: solo id.
+export const flagDeleteSchema = z.object({
+  id: z.preprocess(
+    (value) => (typeof value === 'string' ? value.trim() : ''),
+    z.string().min(1, 'ID requerido'),
+  ),
+});
+
+export type FlagIntentSchema = z.infer<typeof flagIntentSchema>;

@@ -1,15 +1,15 @@
 import { redirect } from 'react-router';
 import { z } from 'zod';
 
-import { taskCreateSchema } from '~/core/tasks/task.schema';
 import {
+  taskCreateSchema,
   taskDeleteSchema,
   taskIntentSchema,
   taskUpdateSchema,
-  type TaskIntent,
-} from '~/core/tasks/task.action.schema';
-import type { RunTaskActionInput, TaskActionData, TaskActionResult } from '../types';
+  type TaskIntentSchema,
+} from '~/core/tasks/task.schema';
 
+import type { RunTaskActionInput, TaskActionData, TaskActionResult } from '../types';
 
 function validationToActionData(error: z.ZodError): TaskActionData {
   return {
@@ -18,7 +18,7 @@ function validationToActionData(error: z.ZodError): TaskActionData {
   };
 }
 
-function parseIntent(formData: FormData): TaskIntent | TaskActionData {
+function parseIntent(formData: FormData): TaskIntentSchema | TaskActionData {
   const parsedIntent = taskIntentSchema.safeParse(formData.get('intent'));
   if (!parsedIntent.success) {
     return {

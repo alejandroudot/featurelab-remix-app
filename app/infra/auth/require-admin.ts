@@ -3,6 +3,6 @@ import { requireUser } from "~/infra/auth/require-user";
 
 export async function requireAdmin(request: Request) {
   const user = await requireUser(request);
-  if (user.role !== "admin") throw redirect("/tasks");
+  if (user.role !== "admin") throw redirect("/");
   return user;
 }

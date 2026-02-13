@@ -58,16 +58,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     }),
   });
 
-  if (isDevelopment) {
-    console.info('[flags] dark-theme resolution', {
-      userId: user?.id ?? null,
-      enabled: darkModeResolution.enabled,
-      reason: darkModeResolution.reason,
-      bucket: darkModeResolution.bucket ?? null,
-      rolloutPercent: darkModeResolution.rolloutPercent ?? null,
-    });
-  }
-
   return { darkMode: darkModeResolution.enabled, environment, user };
 }
 

@@ -1,9 +1,10 @@
+import type { FlagService } from '~/core/flags/flags.service';
 import type { FeatureFlag } from '~/core/flags/flags.types';
 
 // View model para la UI, derivado del dominio.
 export type Flag = FeatureFlag;
 
-export type FlagsActionData =
+export type FlagActionData =
   | {
       success: false;
       formError?: string;
@@ -18,3 +19,9 @@ export type FlagsActionData =
     }
   | undefined;
 
+	export type FlagActionResult = Response | FlagActionData;
+
+	export type RunFlagActionInput = {
+		formData: FormData;
+		flagService: FlagService;
+	};
