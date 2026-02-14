@@ -27,7 +27,7 @@ No buscamos ser un clon complejo de Jira. FeatureLab es para equipos ágiles que
 - **Gestión de Tareas:** Tableros simples, estados customizables, etiquetas.
 - **Feature Flags & Rollouts:**
   - Flags booleanos simples (On/Off).
-  - Targeting por usuario o entorno.
+  - Targeting por global y por porcentaje.
 - **Experimentación (Futuro):**
   - A/B testing integrado con las tareas.
 - **Monetización (Futuro):**

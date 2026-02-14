@@ -1,8 +1,8 @@
-import type { FlagsActionData, Flag } from './types';
+import type { FlagActionData, Flag } from './types';
 import { CreateFlagForm } from './CreateFlagForm';
 import { FlagsList } from './FlagList';
 
-export function FlagsPage({ flags, actionData }: { flags: Flag[]; actionData: FlagsActionData }) {
+export function FlagsPage({ flags, actionData }: { flags: Flag[]; actionData: FlagActionData }) {
   return (
     <main className="container mx-auto p-4 space-y-6">
       <header className="space-y-2">

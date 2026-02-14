@@ -1,87 +1,84 @@
-# Welcome to React Router!
+# FeatureLab
 
-A modern, production-ready template for building full-stack React applications using React Router.
+FeatureLab is a fullstack app built with React Router v7 + TypeScript + Drizzle.
+Current scope focuses on personal task management and product feature flags.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## Current Status
 
-## Features
+- Auth with session-based access control (`requireUser`, `requireAdmin`)
+- Tasks: list, create, update, delete
+- Feature Flags: list, create, toggle, delete, rollout update
+- SQLite repository active in local environment
+- Feature flag resolution integrated into tasks route (`beta-tasks-ui`)
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+## Stack
 
-## Getting Started
+- React Router v7 (framework mode)
+- React 19 + TypeScript
+- Drizzle ORM + better-sqlite3
+- Zod validation
+- Tailwind CSS v4
 
-### Installation
+## Run Locally
 
-Install the dependencies:
+Requirements:
+
+- Node.js 20+
+- npm
+
+Install and run:
 
 ```bash
 npm install
-```
-
-### Development
-
-Start the development server with HMR:
-
-```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+App runs at:
 
-## Building for Production
+- http://localhost:5173
 
-Create a production build:
+## Useful Scripts
 
 ```bash
+npm run dev
 npm run build
+npm run start
+npm run typecheck
+npm run lint
+npm run format
+npm run db:generate
+npm run db:migrate
+npm run db:push
+npm run db:studio
 ```
 
-## Deployment
+## Main Routes
 
-### Docker Deployment
+- `/` home/dashboard
+- `/tasks` personal tasks
+- `/flags` feature flags admin page
+- auth routes under `app/routes` (login/register/logout flow)
 
-To build and run using Docker:
+## Project Structure
 
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+```text
+app/
+  core/        # Domain types, schemas, ports
+  infra/       # Repository implementations, db adapters
+  features/    # Feature-level UI + server actions
+  routes/      # HTTP entrypoints (loader/action)
+  ui/          # Reusable UI primitives
+docs/          # Product, MVP, architecture docs
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+## Notes
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+- Routes should stay thin: orchestrate only.
+- Feature server actions should own intent parsing + validation.
+- Keep schema definitions in `app/core/*/*.schema.ts`.
 
-### DIY Deployment
+## Next Work
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
+The active implementation plan is tracked in:
 
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+- `docs/NEXT_TASKS.md`

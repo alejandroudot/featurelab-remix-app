@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Form } from 'react-router';
-import type { FlagsActionData } from './types';
+import type { FlagActionData } from './types';
 
-export function CreateFlagForm({ actionData }: { actionData: FlagsActionData }) {
+export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
   const [currentType, setCurrentType] = React.useState<string>(
     actionData?.values?.type ?? 'boolean',
   );

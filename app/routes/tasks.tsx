@@ -6,7 +6,7 @@ import type { TaskActionData } from '~/features/tasks/types';
 import { requireUser } from '~/infra/auth/require-user';
 import { flagService } from '~/infra/flags/flags.repository';
 import { getFlagDebugOverrideFromUrl } from '~/infra/flags/flag-debug';
-import { runTaskAction } from '~/features/tasks/server/action';
+import { runTaskAction } from '~/features/tasks/server/task.action';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
@@ -57,3 +57,4 @@ export default function TasksRoute() {
     />
   );
 }
+

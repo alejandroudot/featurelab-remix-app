@@ -4,7 +4,7 @@ import { flagService } from '../infra/flags/flags.repository';
 import { FlagsPage } from '../features/flags/FlagsPage';
 import type { FlagActionData } from '../features/flags/types';
 import { requireAdmin } from '~/infra/auth/require-admin';
-import { runFlagAction } from '~/features/flags/server/action';
+import { runFlagAction } from '~/features/flags/server/flag.action';
 
 export async function loader({ request }: Route.LoaderArgs) {
   await requireAdmin(request);
