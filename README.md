@@ -10,6 +10,7 @@ Current scope focuses on personal task management and product feature flags.
 - Feature Flags: list, create, toggle, delete, rollout update
 - SQLite repository active in local environment
 - Feature flag resolution integrated into tasks route (`beta-tasks-ui`)
+- Product direction: Tasks-first with collaboration as the main axis
 
 ## Stack
 
@@ -18,6 +19,8 @@ Current scope focuses on personal task management and product feature flags.
 - Drizzle ORM + better-sqlite3
 - Zod validation
 - Tailwind CSS v4
+- Radix UI primitives
+- shadcn/ui for product-facing UI components
 
 ## Run Locally
 
@@ -54,10 +57,15 @@ npm run db:studio
 
 ## Main Routes
 
-- `/` home/dashboard
+- `/` home/dashboard (planned as `Execution Hub`)
 - `/tasks` personal tasks
 - `/flags` feature flags admin page
 - auth routes under `app/routes` (login/register/logout flow)
+
+Planned routes in roadmap:
+
+- `/account` or `/settings` (user panel)
+- billing section (initially inside user panel)
 
 ## Project Structure
 
@@ -76,6 +84,7 @@ docs/          # Product, MVP, architecture docs
 - Routes should stay thin: orchestrate only.
 - Feature server actions should own intent parsing + validation.
 - Keep schema definitions in `app/core/*/*.schema.ts`.
+- UI rule: prefer `shadcn/ui` components by default; use `Radix` directly for advanced/custom behavior.
 
 ## Next Work
 
