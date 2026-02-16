@@ -19,6 +19,14 @@ Este documento es la lista activa de ejecucion.
   - `User Panel` (`/account` o `/settings`)
   - `Billing/Plan` (inicialmente dentro de User Panel)
 
+## Criterio UI (shadcn/ui + Radix)
+
+- `shadcn/ui`: componentes de interfaz y layout del producto (cards, table, tabs, dialog, sheet, form controls, badge, button, input, textarea, dropdown).
+- `Radix UI` directo: primitives de comportamiento/accesibilidad que queremos controlar fino (toast provider, tooltip avanzado, alert dialog destructivo, popover/menu complejos).
+- Regla de uso:
+  - si existe componente listo en `shadcn/ui`, usar `shadcn/ui`;
+  - usar `Radix` directo solo cuando necesitemos comportamiento custom o composición avanzada.
+
 ## Base ya implementada (tracking historico)
 
 - [x] Auth con sesiones y control por rol (`requireUser`/`requireAdmin`)
@@ -74,10 +82,11 @@ Criterio de cierre:
 
 ### P1.1 Home como Execution Hub
 
-Tecnologias a usar: React Router + TanStack Query + Zustand.
+Tecnologias a usar: React Router + TanStack Query + Zustand + shadcn/ui + Radix (toggle/tooltip/toast).
 
 - [ ] Crear Home (`/`) como `Execution Hub`
   - [ ] Definir layout de dashboard (resumen, actividad, quick actions)
+  - [ ] Implementar layout con `shadcn/ui` (`Card`, `Badge`, `Button`, `Separator`)
   - [ ] Mostrar metricas clave de tasks (to do, in progress, qa, ready)
   - [ ] Mostrar resumen de flags (solo estado operativo basico)
 - [ ] Agregar panel de actividad reciente
@@ -89,11 +98,14 @@ Tecnologias a usar: React Router + TanStack Query + Zustand.
   - [ ] Ir a flags
 - [ ] Agregar toggle de dark mode en Hub (UI facherita y visible)
   - [ ] Mostrar switch en header del Hub
+  - [ ] Implementar switch con `shadcn/ui` (`Switch`)
   - [ ] Persistir preferencia de tema por usuario (Zustand + storage)
   - [ ] Aplicar tema sin salto visual al recargar
 - [ ] Agregar bloque `Feature Switches` (solo admin) en Hub
   - [ ] Mostrar toggles de flags clave con estado actual
+  - [ ] Implementar panel con `shadcn/ui` (`Card`, `Switch`, `Tooltip`)
   - [ ] Permitir prender/apagar desde Hub con feedback inmediato
+  - [ ] Usar `Radix Toast` para feedback de toggle exitoso/error
   - [ ] Respetar permisos: solo admins pueden cambiar flags
 - [ ] Bootstrap de flags iniciales para darle sentido al modulo de flags
   - [ ] `execution-hub-enabled`
@@ -116,7 +128,7 @@ Criterio de cierre:
 
 ### P1.2 Tasks UX (List + Board estilo Jira)
 
-Tecnologias a usar: Zod (query params) + React Router + DnD + Radix UI.
+Tecnologias a usar: Zod (query params) + React Router + DnD + shadcn/ui + Radix (dialog/tooltip).
 
 - [ ] Definir direccion UX para `/tasks`
   - [ ] Estilo visual elegido y consistente
@@ -125,6 +137,7 @@ Tecnologias a usar: Zod (query params) + React Router + DnD + Radix UI.
 - [ ] Filtros y orden via URL
   - [ ] Params: `status`, `priority`, `assignee`, `sort`
   - [ ] Validacion con Zod + defaults seguros
+  - [ ] UI de filtros con `shadcn/ui` (`Select`, `Tabs`, `Input`, `Badge`)
   - [ ] Persistencia de estado al navegar/recargar
 - [ ] Estados vacios y feedback de interaccion
   - [ ] Estado vacio global
@@ -133,10 +146,13 @@ Tecnologias a usar: Zod (query params) + React Router + DnD + Radix UI.
 - [ ] Vista Board tipo Jira en `/tasks`
   - [ ] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
   - [ ] Toggle `List` / `Board`
+  - [ ] Toggle de vista con `shadcn/ui` (`Tabs` o `ToggleGroup`)
   - [ ] Drag and drop entre columnas
   - [ ] Update optimista al mover cards
   - [ ] Card de task con prioridad, labels, responsable, metadata minima
+  - [ ] Card construida con `shadcn/ui` (`Card`, `Badge`, `Avatar`, `DropdownMenu`)
   - [ ] Edicion rapida desde card
+  - [ ] Usar `Radix AlertDialog` para acciones destructivas desde card
   - [ ] Responsive real (desktop/mobile)
 
 Criterio de cierre:
@@ -182,10 +198,11 @@ Criterio de cierre:
 
 ### P1.4 User Panel (`/account` o `/settings`)
 
-Tecnologias a usar: React Router + Zod + Radix UI + Zustand.
+Tecnologias a usar: React Router + Zod + Zustand + shadcn/ui + Radix (alert dialog/toast).
 
 - [ ] Crear vista dedicada de cuenta
   - [ ] Bloques: Perfil, Seguridad, Preferencias, Plan
+  - [ ] Layout con `shadcn/ui` (`Tabs`, `Card`, `Form`, `Input`, `Button`)
   - [ ] Navegacion visible desde header
 - [ ] Perfil y seguridad
   - [ ] Editar nombre visible
@@ -206,13 +223,14 @@ Criterio de cierre:
 
 ### P1.5 Feedback + calidad visual
 
-Tecnologias a usar: Radix UI + patrones de `ActionData`.
+Tecnologias a usar: shadcn/ui + Radix + patrones de `ActionData`.
 
 - [ ] Sistema consistente de feedback
-  - [ ] Toasts success/error/warn
+  - [ ] Toasts success/error/warn (`Radix Toast` + estilo `shadcn`)
   - [ ] Mapeo uniforme `formError`/`fieldErrors`
   - [ ] Sin redirects silenciosos en errores
 - [ ] Base visual consistente
+  - [ ] Definir set base de componentes `shadcn/ui` permitidos para todo el producto
   - [ ] Paleta, tipografia, spacing, botones
   - [ ] Jerarquia clara de bloques y acciones
   - [ ] Microinteracciones y estados de carga prolijos
