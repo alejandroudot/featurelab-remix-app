@@ -1,66 +1,66 @@
-# FeatureLab
+﻿# FeatureLab
 
-FeatureLab es una plataforma fullstack para planificar, ejecutar y monitorear trabajo de producto.
-El foco principal es `Tasks` con colaboración entre usuarios, usando `Feature Flags` como capa de control para activar o desactivar funcionalidades de forma gradual.
+Plataforma fullstack para planificar, ejecutar y monitorear trabajo de producto.
+Enfoque principal: `Tasks` colaborativas + `Feature Flags` para lanzar con control.
 
-## Propuesta del producto
+## ✨ Quick View
 
-- `Tasks-first`: el núcleo es la gestión de trabajo diario y colaborativo.
-- `Execution Hub`: home operativa con métricas, actividad reciente y acciones rápidas.
-- `Feature Flags`: control de release por entorno, toggles admin y rollout progresivo.
-- `User Panel`: perfil, seguridad, preferencias y plan.
-- `Escalabilidad progresiva`: estado cliente avanzado, integraciones externas y CI/CD.
+- 🎯 `Tasks-first`: trabajo diario y colaborativo como eje del producto.
+- 🧭 `Execution Hub`: home operativa con metricas, actividad y quick actions.
+- 🚦 `Feature Flags`: control de release por entorno, toggles admin y rollout.
+- 👤 `User Panel`: perfil, seguridad, preferencias y plan.
+- 📈 Escalabilidad progresiva: estado cliente avanzado, integraciones y CI/CD.
 
-## Funcionalidades principales (target final)
+## 🧩 Funcionalidades (target final)
 
-- Autenticación con sesiones y control por rol (`user`, `admin`).
-- Gestión de tareas end-to-end:
+- Autenticacion con sesiones y control por rol (`user`, `admin`).
+- Gestion de tasks end-to-end:
   - create/update/delete
-  - vista lista y vista board estilo Jira
+  - vista lista + board estilo Jira
   - filtros y orden persistidos en URL
-  - colaboración: asignaciones, comentarios, checklist, labels, due dates
+  - asignaciones, comentarios, checklist, labels, due dates
   - historial de cambios y notificaciones in-app
-- Gestión de feature flags:
+- Gestion de feature flags:
   - create/toggle/delete/update rollout
-  - uso directo dentro de flujos de producto
-  - panel de `Feature Switches` en Execution Hub para admins
+  - uso real en modulos del producto
+  - panel de `Feature Switches` en Execution Hub (admin)
 - Preferencias de usuario:
   - densidad, vista por defecto, tema (`light`/`dark`/`system`)
   - persistencia local con estado global
-- Integraciones de producto:
-  - Stripe para planes/billing
-  - Slack para notificaciones operativas
-  - Gemini para asistencia en generación/refinamiento de tasks
+- Integraciones:
+  - Stripe (billing)
+  - Slack (notificaciones)
+  - Gemini (asistencia para tasks)
 
-## Vistas del producto (target)
+## 🗺️ Vistas del producto (target)
 
 - `/` `Execution Hub`
 - `/tasks` `Tasks` (List + Board)
 - `/flags` `Feature Flags`
 - `/account` o `/settings` `User Panel`
-- Billing dentro de User Panel (con posibilidad de separarse más adelante)
-- rutas de auth bajo `app/routes/auth/*`
+- Billing dentro de User Panel (inicialmente)
+- Auth en `app/routes/auth/*`
 
-## Arquitectura
+## 🏗️ Arquitectura
 
-Patrón general:
+Patron general:
 
-- `features/*` (UI de feature): aquí vive la interfaz específica del dominio (por ejemplo `tasks` y `flags`), incluyendo páginas, formularios, listas/boards y componentes que no se reutilizan fuera de esa feature.
-- `ui/*`: componentes base reutilizables (primitivos/patrones compartidos de interfaz)
-- `routes` orquestan request/response
-- `features/*/server/*` resuelven intents, validación y errores de action
-- `core/*` define contratos de dominio (schemas, ports, tipos)
-- `infra/*` implementa persistencia e integraciones externas
+- `features/*` (UI de feature): interfaz especifica de dominio (`tasks`, `flags`, etc.), con paginas, formularios, listas/boards y componentes no compartidos.
+- `ui/*`: componentes base reutilizables (primitivos/patrones de interfaz).
+- `routes/*`: orquestacion HTTP request/response.
+- `features/*/server/*`: intents, validacion y manejo de errores de action.
+- `core/*`: contratos de dominio (schemas, ports, tipos).
+- `infra/*`: persistencia e integraciones externas.
 
 Decisiones clave:
 
-- Validación centralizada con Zod.
+- Validacion centralizada con Zod.
 - Contrato de error consistente en actions (`fieldErrors`, `formError`, `values`).
-- Separación clara entre dominio, infraestructura y UI.
-- Feature flags integradas al flujo de producto, no solo como módulo aislado.
-- Enfoque hexagonal / clean architecture (simple): `core` define puertos/contratos y `infra` provee implementaciones, para desacoplar lógica de negocio de frameworks y proveedores.
+- Separacion clara entre dominio, infraestructura y UI.
+- Feature flags integradas al flujo de producto.
+- Enfoque hexagonal/clean (simple): `core` define contratos y `infra` implementa.
 
-## Stack
+## 🧰 Stack
 
 - React Router v7 (framework mode)
 - React 19 + TypeScript
@@ -69,7 +69,7 @@ Decisiones clave:
 - Tailwind CSS v4
 - shadcn/ui (componentes de producto por defecto)
 - Radix UI primitives (comportamiento custom/accesible)
-- TanStack Query (cache, invalidación, optimistic updates)
+- TanStack Query (cache, invalidacion, optimistic updates)
 - Zustand (estado global de UI y preferencias)
 - Drag and drop para Tasks Board
 - Vitest + Testing Library (unit/integration)
@@ -79,13 +79,13 @@ Decisiones clave:
 - Gemini API
 - GitHub Actions (CI/CD)
 
-## Criterio UI (shadcn/ui + Radix)
+## 🎨 Criterio UI (shadcn/ui + Radix)
 
-- Usar `shadcn/ui` como primera opción para construir interfaz y layout.
-- Usar `Radix` directo cuando se necesite comportamiento avanzado o composición custom.
+- Usar `shadcn/ui` como opcion por defecto para interfaz y layout.
+- Usar `Radix` directo para comportamiento avanzado/composicion custom.
 - Mantener consistencia visual entre Hub, Tasks, Flags y User Panel.
 
-## Run Locally
+## 🚀 Run Locally
 
 Requirements:
 
@@ -103,7 +103,7 @@ App runs at:
 
 - http://localhost:5173
 
-## Useful Scripts
+## 📜 Useful Scripts
 
 ```bash
 npm run dev
@@ -118,7 +118,7 @@ npm run db:push
 npm run db:studio
 ```
 
-## Estructura del proyecto
+## 📁 Estructura del proyecto
 
 ```text
 app/
@@ -130,10 +130,9 @@ app/
 docs/          # estrategia de producto, roadmap, arquitectura
 ```
 
-## Documentación de producto
+## 📚 Documentacion
 
 - Roadmap principal: `docs/PRODUCT_ROADMAP.md`
-- Visión de producto: `docs/PRODUCT.md`
+- Vision de producto: `docs/PRODUCT.md`
 - Arquitectura: `docs/ARQUITECTURE.md`
-- Stack y decisiones técnicas: `docs/STACK.md`
-
+- Stack y decisiones tecnicas: `docs/STACK.md`
