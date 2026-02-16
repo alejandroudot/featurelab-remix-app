@@ -81,4 +81,5 @@ docs/          # Product, MVP, architecture docs
 
 The active implementation plan is tracked in:
 
-- `docs/NEXT_TASKS.md`
+- `docs/PRODUCT_ROADMAP.md`
+
