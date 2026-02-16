@@ -23,7 +23,7 @@ export async function runFlagAction(input: RunFlagActionInput): Promise<FlagActi
       rolloutPercent: formData.get('rolloutPercent'),
     });
 
-    if (!parsedCreate.success) return validationToActionData(parsedCreate.error);
+    if (!parsedCreate.success) return validationToActionData(parsedCreate.error, formData);
 
     try {
       await flagService.create(parsedCreate.data);
@@ -53,7 +53,7 @@ export async function runFlagAction(input: RunFlagActionInput): Promise<FlagActi
     const parsedToggle = flagToggleSchema.safeParse({
       id: formData.get('id'),
     });
-    if (!parsedToggle.success) return validationToActionData(parsedToggle.error);
+    if (!parsedToggle.success) return validationToActionData(parsedToggle.error, formData);
     await flagService.toggle(parsedToggle.data.id);
     return redirect('/flags');
   }
@@ -86,9 +86,10 @@ export async function runFlagAction(input: RunFlagActionInput): Promise<FlagActi
       id: input.formData.get('id'),
     });
 
-    if (!parsedDelete.success) return validationToActionData(parsedDelete.error);
+    if (!parsedDelete.success) return validationToActionData(parsedDelete.error, formData);
 
     await flagService.remove(parsedDelete.data.id);
     return redirect('/flags');
   }
 }
+

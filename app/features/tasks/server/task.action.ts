@@ -1,83 +1,86 @@
 import { redirect } from 'react-router';
-import { z } from 'zod';
 
 import {
   taskCreateSchema,
   taskDeleteSchema,
-  taskIntentSchema,
   taskUpdateSchema,
-  type TaskIntentSchema,
 } from '~/core/tasks/task.schema';
 
-import type { RunTaskActionInput, TaskActionData, TaskActionResult } from '../types';
-
-function validationToActionData(error: z.ZodError): TaskActionData {
-  return {
-    success: false,
-    fieldErrors: z.flattenError(error).fieldErrors,
-  };
-}
-
-function parseIntent(formData: FormData): TaskIntentSchema | TaskActionData {
-  const parsedIntent = taskIntentSchema.safeParse(formData.get('intent'));
-  if (!parsedIntent.success) {
-    return {
-      success: false,
-      fieldErrors: { intent: ['Intent invalido'] },
-    };
-  }
-  return parsedIntent.data;
-}
+import type { RunTaskActionInput, TaskActionResult } from '../types';
+import { getTaskFormValues, parseIntent } from './utils';
+import { jsonTaskError, toTaskFormError, validationToActionData } from './errors';
 
 // Orquesta la action de tasks: valida por intent y delega al service.
 export async function runTaskAction(input: RunTaskActionInput): Promise<TaskActionResult> {
-  const intentResult = parseIntent(input.formData);
+  const { formData } = input;
+  const intentResult = parseIntent(formData);
+
   if (typeof intentResult !== 'string') {
     return intentResult;
   }
 
   if (intentResult === 'create') {
     const parsed = taskCreateSchema.safeParse({
-      title: input.formData.get('title'),
-      description: input.formData.get('description'),
+      title: formData.get('title'),
+      description: formData.get('description'),
     });
 
-    if (!parsed.success) return validationToActionData(parsed.error);
+    if (!parsed.success) return validationToActionData(parsed.error, formData);
 
-    await input.taskService.create({ ...parsed.data, userId: input.userId });
-    return redirect('/tasks');
+    try {
+      await input.taskService.create({ ...parsed.data, userId: input.userId });
+      return redirect('/tasks');
+    } catch (err) {
+      return jsonTaskError({
+        formError: toTaskFormError(err),
+        values: getTaskFormValues(formData),
+      });
+    }
   }
 
   if (intentResult === 'update') {
     const parsed = taskUpdateSchema.safeParse({
-      id: input.formData.get('id'),
-      status: input.formData.get('status'),
-      priority: input.formData.get('priority'),
+      id: formData.get('id'),
+      status: formData.get('status'),
+      priority: formData.get('priority'),
     });
 
-    if (!parsed.success) return validationToActionData(parsed.error);
+    if (!parsed.success) return validationToActionData(parsed.error, formData);
 
-    await input.taskService.update({
-      id: parsed.data.id,
-      userId: input.userId,
-      status: parsed.data.status,
-      priority: parsed.data.priority,
-    });
+    try {
+      await input.taskService.update({
+        id: parsed.data.id,
+        userId: input.userId,
+        status: parsed.data.status,
+        priority: parsed.data.priority,
+      });
 
-    return redirect('/tasks');
+      return redirect('/tasks');
+    } catch (err) {
+      return jsonTaskError({
+        formError: toTaskFormError(err),
+        values: getTaskFormValues(formData),
+      });
+    }
   }
 
   const parsedDelete = taskDeleteSchema.safeParse({
-    id: input.formData.get('id'),
+    id: formData.get('id'),
   });
 
-  if (!parsedDelete.success) return validationToActionData(parsedDelete.error);
+  if (!parsedDelete.success) return validationToActionData(parsedDelete.error, formData);
 
-  await input.taskService.remove({
-    id: parsedDelete.data.id,
-    userId: input.userId,
-  });
+  try {
+    await input.taskService.remove({
+      id: parsedDelete.data.id,
+      userId: input.userId,
+    });
 
-  return redirect('/tasks');
+    return redirect('/tasks');
+  } catch (err) {
+    return jsonTaskError({
+      formError: toTaskFormError(err),
+      values: getTaskFormValues(formData),
+    });
+  }
 }
-

@@ -2,11 +2,13 @@ import { Form } from 'react-router';
 import type { TaskActionData } from './types';
 
 export function CreateTaskForm({ actionData, isSubmitting }: { actionData: TaskActionData, isSubmitting: boolean }) {
+  const globalError = actionData?.formError ?? actionData?.fieldErrors?.intent?.[0];
+
   return (
     <section className="border rounded p-4 space-y-3 max-w-xl">
-      {actionData?.success === false && actionData.fieldErrors?.intent?.[0] ? (
+      {actionData?.success === false && globalError ? (
         <div className="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700">
-          {actionData.fieldErrors.intent[0]}
+          {globalError}
         </div>
       ) : null}
 
@@ -17,7 +19,12 @@ export function CreateTaskForm({ actionData, isSubmitting }: { actionData: TaskA
           <label htmlFor="title" className="font-medium">
             Titulo
           </label>
-          <input id="title" name="title" className="border rounded px-3 py-2" />
+          <input
+            id="title"
+            name="title"
+            className="border rounded px-3 py-2"
+            defaultValue={actionData?.values?.title ?? ''}
+          />
           {actionData?.success === false && actionData.fieldErrors?.title?.[0] && (
             <p className="text-sm text-red-600">{actionData.fieldErrors.title[0]}</p>
           )}
@@ -27,7 +34,12 @@ export function CreateTaskForm({ actionData, isSubmitting }: { actionData: TaskA
           <label htmlFor="description" className="font-medium">
             Descripcion
           </label>
-          <textarea id="description" name="description" className="border rounded px-3 py-2" />
+          <textarea
+            id="description"
+            name="description"
+            className="border rounded px-3 py-2"
+            defaultValue={actionData?.values?.description ?? ''}
+          />
         </div>
 
         <button

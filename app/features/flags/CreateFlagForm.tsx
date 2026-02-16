@@ -31,6 +31,7 @@ export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
           <input
             id="key"
             name="key"
+						autoFocus
             className="border rounded px-3 py-2"
             placeholder="dark-theme"
             defaultValue={actionData?.values?.key ?? ''}

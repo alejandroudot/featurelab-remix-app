@@ -12,10 +12,16 @@ Este documento es la lista activa de ejecucion.
 
 ### 1. Endurecer flujo de tasks
 
-- [ ] Persistir valores del formulario al fallar validacion en crear task
-- [ ] Agregar render de `formError` global en el formulario de crear task
-- [ ] Asegurar que todos los errores de actions de tasks sean visibles en UI
+- [x] Persistir valores del formulario al fallar validacion en crear task
+- [x] Agregar render de `formError` global en el formulario de crear task
+- [x] Asegurar que todos los errores de actions de tasks sean visibles en UI
 - [ ] Validar manualmente create/update/delete con payloads invalidos
+  - [ ] create inválido: `title` vacío -> muestra error de campo y preserva valores
+  - [ ] create error inesperado (simulado) -> muestra `formError` global
+  - [ ] update inválido: `id` vacío/manipulado -> muestra error visible (no silencio)
+  - [ ] update inválido: `status` o `priority` fuera de enum (payload manipulado) -> error visible
+  - [ ] delete inválido: `id` vacío/manipulado -> error visible (no silencio)
+  - [ ] confirmación final: ningún submit inválido falla en silencio
 
 Criterio de cierre:
 
