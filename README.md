@@ -21,6 +21,15 @@ Current scope focuses on personal task management and product feature flags.
 - Tailwind CSS v4
 - Radix UI primitives
 - shadcn/ui for product-facing UI components
+- TanStack Query (server state, cache, optimistic updates)
+- Zustand (global UI state and persisted preferences)
+- Drag and drop layer for Tasks Board (Jira-style UX)
+- Vitest + Testing Library (unit/integration tests)
+- Playwright (E2E flows)
+- Stripe API + webhooks (billing/plans)
+- Slack API / Incoming Webhooks (operational notifications)
+- Gemini API (task assistance and AI suggestions)
+- GitHub Actions (CI/CD and release checks)
 
 ## Run Locally
 
