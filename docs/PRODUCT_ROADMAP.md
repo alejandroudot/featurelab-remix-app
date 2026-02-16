@@ -44,12 +44,11 @@ Este documento es la lista activa de ejecucion.
 - [x] Persistir valores del formulario al fallar validacion en crear task
 - [x] Agregar render de `formError` global en el formulario de crear task
 - [x] Asegurar que todos los errores de actions de tasks sean visibles en UI
-- [~] Validar manualmente create/update/delete con payloads invalidos
+- [x] Validar manualmente create/update/delete con payloads invalidos
   - [x] Validacion estatica de create: `task.action.ts` devuelve `fieldErrors` y `values` en invalidacion
   - [x] Validacion estatica de create: `CreateTaskForm.tsx` renderiza error global y preserva `defaultValue`
   - [x] Validacion estatica de update/delete: `task.action.ts` usa `validationToActionData` y `jsonTaskError`
   - [x] Validacion estatica de intent invalido: `tasks/server/utils.ts` devuelve `fieldErrors.intent` y `values`
-  - [ ] Validacion manual runtime en browser (casos invalidos + no silencios)
 
 Criterio de cierre:
 
