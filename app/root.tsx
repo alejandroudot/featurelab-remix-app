@@ -11,8 +11,9 @@ import {
 import type { Route } from './+types/root';
 import './app.css';
 import { getOptionalUser } from '~/infra/auth/require-user';
+import { getThemeFromRequest } from '~/infra/theme/theme-cookie';
 import { AppHeader } from './ui/layout/app-header';
-import { ThemeHydrator } from '~/ui/theme-hydrator';
+import { Toaster } from './ui/primitives/sonner';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -40,16 +41,20 @@ export const meta: Route.MetaFunction = () => {
 export async function loader({ request }: Route.LoaderArgs) {
   // auth (optional)
   const user = await getOptionalUser(request);
+  const theme = getThemeFromRequest(request);
 
-  return { user };
+  return { user, theme };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const data = useLoaderData<typeof loader>();
   const user = data?.user ?? null;
+  const theme = data?.theme ?? 'system';
+  const isDark = theme === 'dark';
+  const colorScheme = isDark ? 'dark' : 'light';
 
   return (
-    <html lang="en">
+    <html lang="en" className={isDark ? 'dark' : undefined} style={{ colorScheme }}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -58,9 +63,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
 
       <body>
-				<ThemeHydrator />
-        <AppHeader user={user} />
+        <AppHeader user={user} theme={theme} />
         {children}
+        <Toaster position="bottom-right" richColors theme={isDark ? 'dark' : 'light'} />
         <ScrollRestoration />
         <Scripts />
       </body>

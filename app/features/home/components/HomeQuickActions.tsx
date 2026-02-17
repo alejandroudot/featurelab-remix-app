@@ -25,12 +25,8 @@ export function HomeQuickActions({ userRole, flagsSummary }: HomeQuickActionsPro
         ) : null}
       </div>
 
-      <Separator />
-      <div>
-        <p className="text-xs opacity-70">
-          Proxima iteracion: dark mode toggle y panel inline de feature switches para admins.
-        </p>
-      </div>
+      <Separator className='mt-6'/>
+
 
       <HomeFeatureSwitches flagsSummary={flagsSummary} userRole={userRole} />
       </CardContent>

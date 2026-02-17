@@ -1,4 +1,3 @@
-import { redirect } from 'react-router';
 import type { FlagService } from '~/core/flags/flags.service';
 
 type RunHomeActionInput = {
@@ -24,6 +23,10 @@ export async function runHomeAction(input: RunHomeActionInput) {
     return Response.json({ success: false, message: 'ID requerido' }, { status: 400 });
   }
 
-  await flagService.toggle(id);
-  return redirect('/');
+  try {
+    await flagService.toggle(id);
+    return Response.json({ success: true });
+  } catch {
+    return Response.json({ success: false, message: 'No se pudo actualizar la flag' }, { status: 500 });
+  }
 }

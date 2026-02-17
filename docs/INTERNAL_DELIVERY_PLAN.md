@@ -168,20 +168,20 @@ Fuente roadmap: [P1.1 kit visual Hub](./PRODUCT_ROADMAP.md#L98), [P1.1 dark mode
 
 - [x] Aplicar kit visual del Hub con `shadcn/ui`
   - [x] `Card`, `Badge`, `Button`, `Separator`
-- [ ] Evolucionar quick action de `Crear task` en Hub
+- [x] Evolucionar quick action de `Crear task` en Hub
   - [x] Abrir formulario en `Dialog` o `Sheet` (shadcn/ui)
   - [x] Reusar action/validaciones de tasks (sin duplicar logica)
   - [x] Mantener fallback por link a `/tasks#create-task`
-- [ ] Agregar toggle de dark mode en Hub (UI facherita y visible)
-  - [ ] Mostrar switch en header del Hub
-  - [ ] Implementar switch con `shadcn/ui` (`Switch`)
-  - [ ] Persistir preferencia de tema por usuario (Zustand + storage)
-  - [ ] Aplicar tema sin salto visual al recargar
-- [ ] Agregar bloque `Feature Switches` (solo admin) en Hub
+- [x] Agregar toggle de dark mode en Hub (UI facherita y visible)
+  - [x] Mostrar switch en header del Hub
+  - [x] Implementar switch con `shadcn/ui` (`Switch`)
+  - [x] Persistir preferencia de tema por usuario (Zustand + storage)
+  - [x] Aplicar tema sin salto visual al recargar
+- [x] Agregar bloque `Feature Switches` (solo admin) en Hub
   - [x] Mostrar toggles de flags clave con estado actual
-  - [ ] Implementar panel con `shadcn/ui` (`Card`, `Switch`, `Tooltip`)
+  - [x] Implementar panel con `shadcn/ui` (`Card`, `Switch`, `Tooltip`)
   - [x] Permitir prender/apagar desde Hub con feedback inmediato
-  - [ ] Usar `Radix Toast` para feedback de toggle exitoso/error
+  - [x] Usar `Radix Toast` para feedback de toggle exitoso/error
   - [x] Respetar permisos: solo admins pueden cambiar flags
 
 ## Dia 3 - Miercoles 18/02/2026

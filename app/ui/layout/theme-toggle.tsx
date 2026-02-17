@@ -1,19 +1,36 @@
 import { Moon, Sun } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import type { ThemeMode } from '~/infra/theme/theme-cookie';
 import { Switch } from '~/ui/primitives/switch';
-import { useThemeStore } from '~/ui/theme.store';
 
-export function ThemeToggle() {
-  const theme = useThemeStore((state) => state.theme);
-  const setTheme = useThemeStore((state) => state.setTheme);
+type ThemeToggleProps = {
+  theme: ThemeMode;
+};
 
-  const isDark = theme === 'dark';
+export function ThemeToggle({ theme }: ThemeToggleProps) {
+  const [localTheme, setLocalTheme] = useState<ThemeMode>(theme);
+  const isDark = localTheme === 'dark';
+
+  useEffect(() => {
+    setLocalTheme(theme);
+  }, [theme]);
+
+  const updateTheme = (nextTheme: ThemeMode) => {
+    setLocalTheme(nextTheme);
+
+    const root = document.documentElement;
+    root.classList.toggle('dark', nextTheme === 'dark');
+    root.style.colorScheme = nextTheme === 'dark' ? 'dark' : 'light';
+    document.cookie = `fl_theme=${nextTheme}; Path=/; Max-Age=31536000; SameSite=Lax`;
+  };
 
   return (
     <Switch
+      tone="theme"
       className="h-5.5 w-10 hover:ring-1 hover:ring-indigo-400/60 dark:hover:ring-indigo-500/60"
-      thumbClassName="size-[18px]"
+      thumbClassName="size-4 bg-white"
       checked={isDark}
-      onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+      onCheckedChange={(checked) => updateTheme(checked ? 'dark' : 'light')}
       aria-label="Toggle dark mode"
       thumbContent={
         isDark ? (

@@ -1,11 +1,13 @@
 import { Form, Link, useLocation } from 'react-router';
 import { ThemeToggle } from './theme-toggle';
+import type { ThemeMode } from '~/infra/theme/theme-cookie';
 
 type Props = {
   user: { email: string; role: 'user' | 'admin' } | null;
+  theme: ThemeMode;
 };
 
-export function AppHeader({ user }: Props) {
+export function AppHeader({ user, theme }: Props) {
   const loc = useLocation();
   const redirectTo = loc.pathname + loc.search;
   return (
@@ -31,8 +33,8 @@ export function AppHeader({ user }: Props) {
             <>
               <span className="opacity-80">Hola, {user.email}</span>
               <div className="mx-0.5 h-5 w-px bg-muted-foreground/40" aria-hidden="true" />
-              <ThemeToggle />
-							<div className="mx-0.5 h-5 w-px bg-muted-foreground/40" aria-hidden="true" />
+              <ThemeToggle theme={theme} />
+              <div className="mx-0.5 h-5 w-px bg-muted-foreground/40" aria-hidden="true" />
               <Form method="post" action="/auth/logout">
                 <button type="submit" className="border rounded px-3 py-1 text-sm">
                   Logout

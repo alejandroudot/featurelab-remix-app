@@ -100,16 +100,16 @@ Tecnologias a usar: React Router + TanStack Query + Zustand + shadcn/ui + Radix 
   - [x] Reusar validaciones y contrato de `task.action` en la accion inline
 - [x] Aplicar kit visual del Hub con `shadcn/ui`
   - [x] `Card`, `Badge`, `Button`, `Separator`
-- [ ] Agregar toggle de dark mode en Hub (UI facherita y visible)
-  - [ ] Mostrar switch en header del Hub
-  - [ ] Implementar switch con `shadcn/ui` (`Switch`)
-  - [ ] Persistir preferencia de tema por usuario (Zustand + storage)
-  - [ ] Aplicar tema sin salto visual al recargar
-- [ ] Agregar bloque `Feature Switches` (solo admin) en Hub
+- [x] Agregar toggle de dark mode en Hub (UI facherita y visible)
+  - [x] Mostrar switch en header del Hub
+  - [x] Implementar switch con `shadcn/ui` (`Switch`)
+  - [x] Persistir preferencia de tema por usuario (Zustand + storage)
+  - [x] Aplicar tema sin salto visual al recargar
+- [x] Agregar bloque `Feature Switches` (solo admin) en Hub
   - [x] Mostrar toggles de flags clave con estado actual
-  - [ ] Implementar panel con `shadcn/ui` (`Card`, `Switch`, `Tooltip`)
+  - [x] Implementar panel con `shadcn/ui` (`Card`, `Switch`, `Tooltip`)
   - [x] Permitir prender/apagar desde Hub con feedback inmediato
-  - [ ] Usar `Radix Toast` para feedback de toggle exitoso/error
+  - [x] Usar `Radix Toast` para feedback de toggle exitoso/error
   - [x] Respetar permisos: solo admins pueden cambiar flags
 - [ ] Bootstrap de flags iniciales para darle sentido al modulo de flags
   - [ ] `execution-hub-enabled`
