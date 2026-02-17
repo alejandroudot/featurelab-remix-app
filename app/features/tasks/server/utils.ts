@@ -22,3 +22,14 @@ export function parseIntent(formData: FormData): TaskIntentSchema | TaskActionDa
   }
   return parsedIntent.data;
 }
+
+export function getSafeRedirectTo(formData: FormData, fallback = '/tasks'): string {
+  const raw = String(formData.get('redirectTo') ?? '').trim();
+  if (!raw) return fallback;
+
+  // Permite solo paths internos absolutos del sitio.
+  if (!raw.startsWith('/')) return fallback;
+  if (raw.startsWith('//')) return fallback;
+
+  return raw;
+}

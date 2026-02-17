@@ -7,7 +7,7 @@ import {
 } from '~/core/tasks/task.schema';
 
 import type { RunTaskActionInput, TaskActionResult } from '../types';
-import { getTaskFormValues, parseIntent } from './utils';
+import { getSafeRedirectTo, getTaskFormValues, parseIntent } from './utils';
 import { jsonTaskError, toTaskFormError, validationToActionData } from './errors';
 
 // Orquesta la action de tasks: valida por intent y delega al service.
@@ -29,7 +29,7 @@ export async function runTaskAction(input: RunTaskActionInput): Promise<TaskActi
 
     try {
       await input.taskService.create({ ...parsed.data, userId: input.userId });
-      return redirect('/tasks');
+      return redirect(getSafeRedirectTo(formData, '/tasks'));
     } catch (err) {
       return jsonTaskError({
         formError: toTaskFormError(err),

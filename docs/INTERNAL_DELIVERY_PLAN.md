@@ -169,9 +169,9 @@ Fuente roadmap: [P1.1 kit visual Hub](./PRODUCT_ROADMAP.md#L98), [P1.1 dark mode
 - [x] Aplicar kit visual del Hub con `shadcn/ui`
   - [x] `Card`, `Badge`, `Button`, `Separator`
 - [ ] Evolucionar quick action de `Crear task` en Hub
-  - [ ] Abrir formulario en `Dialog` o `Sheet` (shadcn/ui)
-  - [ ] Reusar action/validaciones de tasks (sin duplicar logica)
-  - [ ] Mantener fallback por link a `/tasks#create-task`
+  - [x] Abrir formulario en `Dialog` o `Sheet` (shadcn/ui)
+  - [x] Reusar action/validaciones de tasks (sin duplicar logica)
+  - [x] Mantener fallback por link a `/tasks#create-task`
 - [ ] Agregar toggle de dark mode en Hub (UI facherita y visible)
   - [ ] Mostrar switch en header del Hub
   - [ ] Implementar switch con `shadcn/ui` (`Switch`)

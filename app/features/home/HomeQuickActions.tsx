@@ -4,6 +4,7 @@ import { HomeFeatureSwitches } from './HomeFeatureSwitches';
 import { Button } from '~/ui/primitives/button';
 import { Card, CardContent } from '~/ui/primitives/card';
 import { Separator } from '~/ui/primitives/separator';
+import { HomeCreateTaskDialog } from './HomeCreateTaskDialog';
 
 type HomeQuickActionsProps = {
   userRole: HomePageProps['user']['role'];
@@ -16,12 +17,7 @@ export function HomeQuickActions({ userRole, flagsSummary }: HomeQuickActionsPro
       <CardContent className="px-4 space-y-3">
       <h2 className="text-lg font-semibold">Quick Actions</h2>
       <div className="flex flex-col gap-2">
-        <Button asChild variant="outline">
-          <Link to="/tasks#create-task">Crear task</Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link to="/tasks">Ir al board/listado de tasks</Link>
-        </Button>
+        <HomeCreateTaskDialog />
         {userRole === 'admin' ? (
           <Button asChild variant="outline">
             <Link to="/flags">Gestionar feature flags</Link>
