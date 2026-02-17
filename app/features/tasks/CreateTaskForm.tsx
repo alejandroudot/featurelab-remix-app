@@ -5,7 +5,7 @@ export function CreateTaskForm({ actionData, isSubmitting }: { actionData: TaskA
   const globalError = actionData?.formError ?? actionData?.fieldErrors?.intent?.[0];
 
   return (
-    <section className="border rounded p-4 space-y-3 max-w-xl">
+    <section id="create-task" className="border rounded p-4 space-y-3 max-w-xl">
       {actionData?.success === false && globalError ? (
         <div className="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700">
           {globalError}

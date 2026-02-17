@@ -1,0 +1,94 @@
+import type { FlagService } from '~/core/flags/flags.service';
+import type { TaskService } from '~/core/tasks/tasks.port';
+import type { HomePageProps } from '../types';
+
+type RunHomeLoaderInput = {
+  user: {
+    id: string;
+    email: string;
+    role: 'user' | 'admin';
+  };
+  taskService: TaskService;
+  flagService: FlagService;
+};
+
+export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePageProps> {
+  const { user, taskService, flagService } = input;
+  const environment: 'development' | 'production' =
+    process.env.NODE_ENV === 'production' ? 'production' : 'development';
+
+  const tasks = await taskService.listByUser(user.id);
+  const done = tasks.filter((task) => task.status === 'done').length;
+  const open = tasks.length - done;
+
+  const byStatus = tasks.reduce(
+    (acc, task) => {
+      const rawStatus = String(task.status);
+      if (rawStatus === 'todo') acc.todo += 1;
+      if (rawStatus === 'in-progress') acc.inProgress += 1;
+      if (rawStatus === 'qa') acc.qa += 1;
+      if (rawStatus === 'ready-to-go-live') acc.readyToGoLive += 1;
+      if (rawStatus === 'done') acc.done += 1;
+      return acc;
+    },
+    { todo: 0, inProgress: 0, qa: 0, readyToGoLive: 0, done: 0 },
+  );
+
+  const flagsSummary =
+    user.role === 'admin'
+      ? await flagService.listAll().then((flags) => {
+          const envFlags = flags.filter((flag) => flag.environment === environment);
+          return {
+            environment,
+            total: envFlags.length,
+            enabled: envFlags.filter((flag) => flag.enabled).length,
+            switches: envFlags.slice(0, 8).map((flag) => ({
+              id: flag.id,
+              key: flag.key,
+              enabled: flag.enabled,
+              type: flag.type,
+              rolloutPercent: flag.rolloutPercent ?? null,
+            })),
+          };
+        })
+      : undefined;
+
+  const recentActivity = [...tasks]
+    .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+    .slice(0, 5)
+    .map((task) => {
+      const action: HomePageProps['recentActivity'][number]['action'] =
+        task.status === 'done'
+          ? 'ha cerrado'
+          : task.updatedAt.getTime() === task.createdAt.getTime()
+            ? 'ha creado'
+            : 'ha actualizado';
+
+      return {
+        id: `${task.id}-${task.updatedAt.toISOString()}`,
+        taskId: task.id,
+        taskTitle: task.title,
+        action,
+        actor: user.email,
+        timestamp: task.updatedAt.toISOString(),
+      };
+    });
+
+  return {
+    env: {
+      mode: process.env.NODE_ENV ?? 'development',
+      dbProvider: process.env.DB_PROVIDER ?? 'sqlite',
+    },
+    stats: {
+      total: tasks.length,
+      open,
+      done,
+      byStatus,
+    },
+    recentActivity,
+    flagsSummary,
+    user: {
+      role: user.role,
+    },
+  };
+}

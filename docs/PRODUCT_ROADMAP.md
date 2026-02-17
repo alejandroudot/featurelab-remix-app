@@ -83,29 +83,34 @@ Criterio de cierre:
 
 Tecnologias a usar: React Router + TanStack Query + Zustand + shadcn/ui + Radix (toggle/tooltip/toast).
 
-- [ ] Crear Home (`/`) como `Execution Hub`
-  - [ ] Definir layout de dashboard (resumen, actividad, quick actions)
-  - [ ] Implementar layout con `shadcn/ui` (`Card`, `Badge`, `Button`, `Separator`)
-  - [ ] Mostrar metricas clave de tasks (to do, in progress, qa, ready)
-  - [ ] Mostrar resumen de flags (solo estado operativo basico)
-- [ ] Agregar panel de actividad reciente
-  - [ ] Eventos minimos: task creada/editada/reasignada/cerrada
-  - [ ] Mostrar actor + timestamp + accion
-- [ ] Agregar quick actions
-  - [ ] Crear task
-  - [ ] Ir a board
-  - [ ] Ir a flags
+- [x] Crear Home (`/`) como `Execution Hub`
+  - [x] Definir layout de dashboard (resumen, actividad, quick actions)
+  - [x] Implementar layout base del dashboard (estructura sin kit visual final)
+  - [x] Mostrar metricas clave de tasks (to do, in progress, qa, ready)
+  - [x] Mostrar resumen de flags (solo estado operativo basico)
+- [x] Agregar panel de actividad reciente
+  - [x] Eventos base: task creada/editada/cerrada
+  - [ ] Evento `reasignada` (se completa en P1.3 al incorporar `assigneeId`)
+  - [x] Mostrar actor + timestamp + accion
+- [x] Agregar quick actions
+  - [x] Crear task
+  - [x] Ir a board
+  - [x] Ir a flags
+  - [ ] Evolucionar `Crear task` a accion inline desde Hub (modal/sheet)
+  - [ ] Reusar validaciones y contrato de `task.action` en la accion inline
+- [ ] Aplicar kit visual del Hub con `shadcn/ui`
+  - [ ] `Card`, `Badge`, `Button`, `Separator`
 - [ ] Agregar toggle de dark mode en Hub (UI facherita y visible)
   - [ ] Mostrar switch en header del Hub
   - [ ] Implementar switch con `shadcn/ui` (`Switch`)
   - [ ] Persistir preferencia de tema por usuario (Zustand + storage)
   - [ ] Aplicar tema sin salto visual al recargar
 - [ ] Agregar bloque `Feature Switches` (solo admin) en Hub
-  - [ ] Mostrar toggles de flags clave con estado actual
+  - [x] Mostrar toggles de flags clave con estado actual
   - [ ] Implementar panel con `shadcn/ui` (`Card`, `Switch`, `Tooltip`)
-  - [ ] Permitir prender/apagar desde Hub con feedback inmediato
+  - [x] Permitir prender/apagar desde Hub con feedback inmediato
   - [ ] Usar `Radix Toast` para feedback de toggle exitoso/error
-  - [ ] Respetar permisos: solo admins pueden cambiar flags
+  - [x] Respetar permisos: solo admins pueden cambiar flags
 - [ ] Bootstrap de flags iniciales para darle sentido al modulo de flags
   - [ ] `execution-hub-enabled`
   - [ ] `hub-activity-feed-enabled`
@@ -278,7 +283,7 @@ Criterio de cierre:
 Tecnologias a usar: README + docs internos.
 
 - [ ] README alineado con scripts/rutas reales
-- [ ] `docs/MVP.md` actualizado al estado actual
+- [ ] `docs/PRODUCT.md` actualizado al estado actual
 - [ ] Guia corta: debug de actions, errores y smoke local
 
 Criterio de cierre:

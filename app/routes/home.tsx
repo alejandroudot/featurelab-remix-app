@@ -1,38 +1,22 @@
 import { useLoaderData } from 'react-router';
-import type { Route } from '../+types/root';
+import type { Route } from './+types/home';
 
 import { HomePage } from '~/features/home/HomePage';
-import type { HomePageProps } from '~/features/home/types';
+import { runHomeAction } from '~/features/home/server/home.action';
+import { runHomeLoader } from '~/features/home/server/home.loader';
 import { requireUser } from '~/infra/auth/require-user';
+import { flagService } from '~/infra/flags/flags.repository';
 import { taskService } from '~/infra/tasks/task.repository';
 
-export async function loader({ request }: Route.LoaderArgs): Promise<HomePageProps> {
+export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
-  const tasks = await taskService.listByUser(user.id);
+  return runHomeLoader({ user, taskService, flagService });
+}
 
-  const done = tasks.filter((t) => t.status === 'done').length;
-  const open = tasks.length - done;
-
-  return {
-    env: {
-      mode: process.env.NODE_ENV ?? 'development',
-      dbProvider: process.env.DB_PROVIDER ?? 'sqlite',
-    },
-    stats: {
-      total: tasks.length,
-      open,
-      done,
-    },
-    recentTasks: tasks.slice(0, 5).map((t) => ({
-      id: t.id,
-      title: t.title,
-      status: t.status,
-      priority: t.priority,
-    })),
-    user: {
-      role: user.role,
-    },
-  };
+export async function action({ request }: Route.ActionArgs) {
+  const user = await requireUser(request);
+  const formData = await request.formData();
+  return runHomeAction({ formData, userRole: user.role, flagService });
 }
 
 export default function HomeRoute() {
