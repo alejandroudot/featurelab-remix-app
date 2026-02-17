@@ -1,4 +1,4 @@
-import type { HomePageProps } from './types';
+import type { HomePageProps } from '../types';
 import { Card, CardContent } from '~/ui/primitives/card';
 
 type HomeStatsSectionProps = {

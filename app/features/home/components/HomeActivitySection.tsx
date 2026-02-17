@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import type { HomePageProps } from './types';
+import type { HomePageProps } from '../types';
 import { Button } from '~/ui/primitives/button';
 import { Card, CardContent } from '~/ui/primitives/card';
 

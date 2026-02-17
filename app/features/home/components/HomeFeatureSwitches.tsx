@@ -1,9 +1,9 @@
-import { Form } from 'react-router';
-import type { HomePageProps } from './types';
+import { useSubmit } from 'react-router';
+import type { HomePageProps } from '../types';
 import { Badge } from '~/ui/primitives/badge';
-import { Button } from '~/ui/primitives/button';
 import { Card, CardContent } from '~/ui/primitives/card';
 import { Separator } from '~/ui/primitives/separator';
+import { Switch } from '~/ui/primitives/switch';
 
 type HomeFeatureSwitchesProps = {
   flagsSummary: HomePageProps['flagsSummary'];
@@ -11,6 +11,8 @@ type HomeFeatureSwitchesProps = {
 };
 
 export function HomeFeatureSwitches({ flagsSummary, userRole }: HomeFeatureSwitchesProps) {
+  const submit = useSubmit();
+
   if (userRole !== 'admin' || !flagsSummary) return null;
 
   return (
@@ -42,13 +44,17 @@ export function HomeFeatureSwitches({ flagsSummary, userRole }: HomeFeatureSwitc
                       </div>
                     </div>
 
-                    <Form method="post">
-                      <input type="hidden" name="intent" value="toggle-hub-flag" />
-                      <input type="hidden" name="id" value={flag.id} />
-                      <Button type="submit" variant="outline" size="xs">
-                        {flag.enabled ? 'Apagar' : 'Prender'}
-                      </Button>
-                    </Form>
+                    <Switch
+                      type="button"
+                      checked={flag.enabled}
+                      aria-label={`Toggle flag ${flag.key}`}
+                      onCheckedChange={() =>
+                        submit(
+                          { intent: 'toggle-hub-flag', id: flag.id },
+                          { method: 'post', preventScrollReset: true, replace: true },
+                        )
+                      }
+                    />
                   </div>
                 </CardContent>
               </Card>

@@ -1,7 +1,8 @@
 import { Form, Link, useLocation } from 'react-router';
+import { ThemeToggle } from './theme-toggle';
 
 type Props = {
-  user: { email: string, role: "user" | "admin"; } | null;
+  user: { email: string; role: 'user' | 'admin' } | null;
 };
 
 export function AppHeader({ user }: Props) {
@@ -13,7 +14,6 @@ export function AppHeader({ user }: Props) {
         <Link to="/" className="font-semibold">
           FeatureLab
         </Link>
-
         <nav className="flex items-center gap-3 text-sm">
           <Link to="/tasks" className="underline-offset-4 hover:underline">
             Tasks
@@ -30,7 +30,9 @@ export function AppHeader({ user }: Props) {
           {user ? (
             <>
               <span className="opacity-80">Hola, {user.email}</span>
-
+              <div className="mx-0.5 h-5 w-px bg-muted-foreground/40" aria-hidden="true" />
+              <ThemeToggle />
+							<div className="mx-0.5 h-5 w-px bg-muted-foreground/40" aria-hidden="true" />
               <Form method="post" action="/auth/logout">
                 <button type="submit" className="border rounded px-3 py-1 text-sm">
                   Logout

@@ -1,4 +1,5 @@
-import { Form } from 'react-router';
+import { useEffect, useRef, useState } from 'react';
+import { Form, useNavigation } from 'react-router';
 import { Button } from '~/ui/primitives/button';
 import {
   Dialog,
@@ -11,8 +12,30 @@ import {
 } from '~/ui/primitives/dialog';
 
 export function HomeCreateTaskDialog() {
+  const navigation = useNavigation();
+  const [open, setOpen] = useState(false);
+  const wasSubmittingRef = useRef(false);
+
+  const isSubmittingThisDialog =
+    navigation.state === 'submitting' &&
+    String(navigation.formAction ?? '').includes('/tasks') &&
+    navigation.formData?.get('intent') === 'create' &&
+    navigation.formData?.get('redirectTo') === '/';
+
+  useEffect(() => {
+    if (isSubmittingThisDialog) {
+      wasSubmittingRef.current = true;
+      return;
+    }
+
+    if (wasSubmittingRef.current && navigation.state === 'idle') {
+      setOpen(false);
+      wasSubmittingRef.current = false;
+    }
+  }, [isSubmittingThisDialog, navigation.state]);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default">Crear task</Button>
       </DialogTrigger>
@@ -26,7 +49,7 @@ export function HomeCreateTaskDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <Form method="post" action="/tasks" className="space-y-3">
+        <Form method="post" action="/tasks" preventScrollReset className="space-y-3">
           <input type="hidden" name="intent" value="create" />
           <input type="hidden" name="redirectTo" value="/" />
 
@@ -56,7 +79,9 @@ export function HomeCreateTaskDialog() {
           </div>
 
           <DialogFooter>
-            <Button type="submit">Crear task</Button>
+            <Button type="submit" disabled={isSubmittingThisDialog}>
+              {isSubmittingThisDialog ? 'Creando...' : 'Crear task'}
+            </Button>
           </DialogFooter>
         </Form>
       </DialogContent>

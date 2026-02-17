@@ -12,7 +12,7 @@ import type { Route } from './+types/root';
 import './app.css';
 import { getOptionalUser } from '~/infra/auth/require-user';
 import { AppHeader } from './ui/layout/app-header';
-import { getFlagDebugOverrideFromUrl } from './infra/flags/flag-debug';
+import { ThemeHydrator } from '~/ui/theme-hydrator';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -38,36 +38,18 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-  const DARK_THEME_FLAG = 'dark-theme' as const;
-  const isDevelopment = process.env.NODE_ENV !== 'production';
-  const url = new URL(request.url);
-
   // auth (optional)
   const user = await getOptionalUser(request);
-  // server-only
-  const { flagService } = await import('./infra/flags/flags.repository');
-  const darkModeResolution = await flagService.resolve({
-    userId: user?.id,
-    key: DARK_THEME_FLAG,
-    environment,
-    debugOverride: getFlagDebugOverrideFromUrl({
-      url,
-      key: DARK_THEME_FLAG,
-      enabled: isDevelopment,
-    }),
-  });
 
-  return { darkMode: darkModeResolution.enabled, environment, user };
+  return { user };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const data = useLoaderData<typeof loader>();
-  const darkMode = data?.darkMode ?? false;
   const user = data?.user ?? null;
 
   return (
-    <html lang="en" className={darkMode ? 'dark' : undefined}>
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -76,6 +58,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
 
       <body>
+				<ThemeHydrator />
         <AppHeader user={user} />
         {children}
         <ScrollRestoration />

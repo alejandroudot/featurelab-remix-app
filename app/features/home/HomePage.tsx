@@ -1,9 +1,9 @@
 //doc :  Compone presenta la vista UI de la home
 
 import { Form } from 'react-router';
-import { HomeActivitySection } from './HomeActivitySection';
-import { HomeQuickActions } from './HomeQuickActions';
-import { HomeStatsSection } from './HomeStatsSection';
+import { HomeActivitySection } from './components/HomeActivitySection';
+import { HomeQuickActions } from './components/HomeQuickActions';
+import { HomeStatsSection } from './components/HomeStatsSection';
 import type { HomePageProps } from './types';
 import { Badge } from '~/ui/primitives/badge';
 import { Button } from '~/ui/primitives/button';
