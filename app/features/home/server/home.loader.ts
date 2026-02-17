@@ -1,3 +1,6 @@
+// doc : prepara datos del servidor para esa vista home en homepage.tsx (shape listo para render).
+// lógica server-side del loader de React Router 
+
 import type { FlagService } from '~/core/flags/flags.service';
 import type { TaskService } from '~/core/tasks/tasks.port';
 import type { HomePageProps } from '../types';

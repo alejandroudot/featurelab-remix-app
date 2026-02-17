@@ -1,3 +1,5 @@
+//doc :  Compone presenta la vista UI de la home
+
 import { Form } from 'react-router';
 import { HomeActivitySection } from './HomeActivitySection';
 import { HomeQuickActions } from './HomeQuickActions';
