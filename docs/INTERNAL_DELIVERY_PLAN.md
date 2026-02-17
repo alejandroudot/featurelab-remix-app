@@ -166,8 +166,8 @@ Fuente roadmap: [P1.1 inicio (Crear Home)](./PRODUCT_ROADMAP.md#L86), [P1.1 pane
 Tecnologias del dia: shadcn/ui (Card, Badge, Button, Separator, Switch, Tooltip), Radix Toast.
 Fuente roadmap: [P1.1 kit visual Hub](./PRODUCT_ROADMAP.md#L98), [P1.1 dark mode](./PRODUCT_ROADMAP.md#L100), [P1.1 feature switches](./PRODUCT_ROADMAP.md#L105).
 
-- [ ] Aplicar kit visual del Hub con `shadcn/ui`
-  - [ ] `Card`, `Badge`, `Button`, `Separator`
+- [x] Aplicar kit visual del Hub con `shadcn/ui`
+  - [x] `Card`, `Badge`, `Button`, `Separator`
 - [ ] Evolucionar quick action de `Crear task` en Hub
   - [ ] Abrir formulario en `Dialog` o `Sheet` (shadcn/ui)
   - [ ] Reusar action/validaciones de tasks (sin duplicar logica)

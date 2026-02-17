@@ -5,6 +5,8 @@ import { HomeActivitySection } from './HomeActivitySection';
 import { HomeQuickActions } from './HomeQuickActions';
 import { HomeStatsSection } from './HomeStatsSection';
 import type { HomePageProps } from './types';
+import { Badge } from '~/ui/primitives/badge';
+import { Button } from '~/ui/primitives/button';
 
 export function HomePage({ env, stats, recentActivity, flagsSummary, user }: HomePageProps) {
   return (
@@ -21,9 +23,9 @@ export function HomePage({ env, stats, recentActivity, flagsSummary, user }: Hom
         </div>
 
         <div className="flex flex-wrap gap-2 text-xs">
-          <span className="border rounded px-2 py-1">mode: {env.mode}</span>
-          <span className="border rounded px-2 py-1">db: {env.dbProvider}</span>
-          <span className="border rounded px-2 py-1">{user.role}</span>
+          <Badge variant="outline">mode: {env.mode}</Badge>
+          <Badge variant="outline">db: {env.dbProvider}</Badge>
+          <Badge variant="outline">{user.role}</Badge>
         </div>
       </header>
 
@@ -35,9 +37,9 @@ export function HomePage({ env, stats, recentActivity, flagsSummary, user }: Hom
       </section>
 
       <Form method="post" action="/auth/logout">
-        <button type="submit" className="border rounded px-3 py-1 text-sm">
+        <Button type="submit" variant="outline">
           Logout
-        </button>
+        </Button>
       </Form>
     </main>
   );

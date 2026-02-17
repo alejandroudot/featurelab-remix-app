@@ -98,8 +98,8 @@ Tecnologias a usar: React Router + TanStack Query + Zustand + shadcn/ui + Radix 
   - [x] Ir a flags
   - [ ] Evolucionar `Crear task` a accion inline desde Hub (modal/sheet)
   - [ ] Reusar validaciones y contrato de `task.action` en la accion inline
-- [ ] Aplicar kit visual del Hub con `shadcn/ui`
-  - [ ] `Card`, `Badge`, `Button`, `Separator`
+- [x] Aplicar kit visual del Hub con `shadcn/ui`
+  - [x] `Card`, `Badge`, `Button`, `Separator`
 - [ ] Agregar toggle de dark mode en Hub (UI facherita y visible)
   - [ ] Mostrar switch en header del Hub
   - [ ] Implementar switch con `shadcn/ui` (`Switch`)
