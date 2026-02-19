@@ -1,6 +1,7 @@
 import { useLoaderData, useActionData } from 'react-router';
 import type { Route } from './+types/flags';
 import { flagService } from '../infra/flags/flags.repository';
+import { ensureProductFlagsSeeded } from '~/core/flags/flag-seed';
 import { FlagsPage } from '../features/flags/FlagsPage';
 import type { FlagActionData } from '../features/flags/types';
 import { requireAdmin } from '~/infra/auth/require-admin';
@@ -8,6 +9,7 @@ import { runFlagAction } from '~/features/flags/server/flag.action';
 
 export async function loader({ request }: Route.LoaderArgs) {
   await requireAdmin(request);
+  await ensureProductFlagsSeeded(flagService);
   const flags = await flagService.listAll();
   return { flags };
 }

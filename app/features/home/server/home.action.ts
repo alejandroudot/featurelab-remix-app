@@ -19,12 +19,16 @@ export async function runHomeAction(input: RunHomeActionInput) {
   }
 
   const id = String(formData.get('id') ?? '');
+  const environmentRaw = String(formData.get('environment') ?? '');
   if (!id) {
     return Response.json({ success: false, message: 'ID requerido' }, { status: 400 });
   }
+  if (environmentRaw !== 'development' && environmentRaw !== 'production') {
+    return Response.json({ success: false, message: 'Environment invalido' }, { status: 400 });
+  }
 
   try {
-    await flagService.toggle(id);
+    await flagService.toggle({ id, environment: environmentRaw });
     return Response.json({ success: true });
   } catch {
     return Response.json({ success: false, message: 'No se pudo actualizar la flag' }, { status: 500 });

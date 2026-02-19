@@ -7,14 +7,8 @@ export type FeatureFlag = {
   id: string;
   key: string;
   description?: string;
-  environment: Environment;
   type: FeatureFlagType;
-  enabled: boolean;
-  /**
-   * Para flags de tipo "percentage": porcentaje de usuarios
-   * que ven la flag activa (0-100). Para "boolean" se ignora.
-   */
-  rolloutPercent?: number | null;
+  stateByEnvironment: Record<Environment, { enabled: boolean; rolloutPercent: number | null }>;
   createdAt: Date;
   updatedAt: Date;
 };

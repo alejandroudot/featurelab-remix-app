@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "41b6771d-48a1-441b-b7f8-13d6ef1a36c7",
+  "id": "05a4c93a-0e8c-4e19-b718-827f19427076",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "feature_flags": {
@@ -28,14 +28,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "environment": {
-          "name": "environment",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'development'"
-        },
         "type": {
           "name": "type",
           "type": "text",
@@ -44,16 +36,31 @@
           "autoincrement": false,
           "default": "'boolean'"
         },
-        "enabled": {
-          "name": "enabled",
+        "enabled_development": {
+          "name": "enabled_development",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": false
         },
-        "rollout_percent": {
-          "name": "rollout_percent",
+        "enabled_production": {
+          "name": "enabled_production",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "rollout_percent_development": {
+          "name": "rollout_percent_development",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "rollout_percent_production": {
+          "name": "rollout_percent_production",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -75,11 +82,10 @@
         }
       },
       "indexes": {
-        "feature_flags_key_env_unique": {
-          "name": "feature_flags_key_env_unique",
+        "feature_flags_key_unique": {
+          "name": "feature_flags_key_unique",
           "columns": [
-            "key",
-            "environment"
+            "key"
           ],
           "isUnique": true
         }

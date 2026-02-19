@@ -1,87 +1,93 @@
-# FeatureLab: Documento de Producto
+# FeatureLab - Documento de Producto
 
-## 1. Que es este proyecto
+## 1. Contexto del proyecto
 
-FeatureLab es un proyecto de estudio fullstack para practicar construccion de producto con una arquitectura ordenada.
-No se penso para venta ni para lanzamiento comercial.
+FeatureLab es un proyecto de estudio fullstack.  
+No esta pensado para venta ni lanzamiento comercial.
 
-Objetivo del proyecto:
-- aprender a disenar y mantener un producto con modulos reales;
-- practicar decisiones de arquitectura y calidad tecnica;
-- integrar funcionalidades de negocio (tasks, flags, cuenta, billing, integraciones) en una base coherente.
+Objetivo:
+- practicar construccion de producto end-to-end;
+- mantener una arquitectura ordenada por capas y features;
+- aprender stack moderno con casos reales (no solo demos).
 
 ## 2. Problema que modela
 
-El proyecto modela un equipo de producto que necesita:
-- organizar tareas de trabajo;
-- controlar despliegues con feature flags;
-- operar todo desde un hub central;
-- gestionar cuenta, preferencias y plan.
+Simula un equipo de producto que necesita:
+- planificar y ejecutar trabajo con tasks;
+- habilitar y deshabilitar funcionalidades con feature flags;
+- operar desde un hub central;
+- sumar cuenta, plan e integraciones externas en etapas posteriores.
 
-## 3. Alcance funcional del proyecto (version objetivo)
+## 3. Vision del producto (Tasks-first)
 
-### 3.1 Home (`/`) - Execution Hub
-- resumen operativo de tasks;
+El foco principal es `Tasks` y colaboracion.  
+`Flags` es un modulo de soporte operativo para controlar rollout de funcionalidades.
+
+Vistas objetivo:
+- Home (`/`) como `Execution Hub`;
+- Tasks (`/tasks`) en modo lista y board;
+- Flags (`/flags`) para administracion;
+- User Panel (`/account` o `/settings`);
+- Billing/Plan (inicialmente dentro de User Panel).
+
+## 4. Alcance funcional objetivo
+
+### 4.1 Home (`/`) - Execution Hub
+- resumen de estado de tasks;
 - actividad reciente;
-- quick actions a vistas clave;
-- quick action de `Crear task` con evolucion a flujo inline (modal/sheet);
-- bloque de feature switches para admins;
-- toggle de tema (light/dark) y preferencias sincronizadas.
+- quick actions;
+- accion inline para crear task (dialog/sheet);
+- bloque admin de `Feature Switches`;
+- toggle de tema;
+- feedback de acciones via toast.
 
-### 3.2 Tasks (`/tasks`)
-- CRUD de tasks;
-- estados de flujo: `todo`, `in-progress`, `qa`, `ready-to-go-live`, `done`;
-- prioridades, labels, fechas y filtros por URL;
-- asignacion y reasignacion de responsables;
-- vista lista + vista board estilo kanban;
-- drag and drop con actualizacion optimista;
-- historial de cambios y base de colaboracion.
+### 4.2 Tasks (`/tasks`)
+- CRUD base;
+- evolucion a UX de producto: filtros URL, estados vacios y feedback claro;
+- board tipo Jira (`To Do`, `In Progress`, `QA`, `Ready to Go Live`);
+- drag and drop + actualizacion optimista;
+- asignaciones, permisos y trazabilidad;
+- enriquecimiento funcional: due date, tags, checklist, comentarios.
 
-### 3.3 Flags (`/flags`)
-- CRUD de feature flags;
-- toggle ON/OFF;
-- rollout por porcentaje;
-- separacion por environment (`development` y `production`);
-- uso operativo desde el Hub para validar valor real del modulo.
+### 4.3 Flags (`/flags`)
+- gestion de flags de producto;
+- control por environment (`development` y `production`) desde una misma entidad;
+- toggle y rollout por porcentaje por entorno;
+- panel operativo en Home para admins;
+- bootstrap de flags base para dar sentido real al modulo.
 
-### 3.4 User Panel (`/account` o `/settings`)
+### 4.4 User Panel (`/account` o `/settings`)
 - perfil y seguridad;
-- preferencias de interfaz y trabajo;
-- gestion de tema y defaults de vistas;
-- estado de plan y base para billing.
+- preferencias de interfaz;
+- sincronizacion de tema y defaults de uso;
+- base para plan/billing.
 
-## 4. Integraciones objetivo del proyecto
+## 5. Integraciones objetivo (etapas posteriores)
 
-- Stripe: planes, checkout, webhooks y limites por suscripcion.
-- Slack API: notificaciones operativas y eventos relevantes.
-- Gemini API: sugerencias asistidas para tareas/subtareas.
-- GitHub Actions: CI/CD con lint, typecheck, tests y smoke e2e.
+- Stripe (planes, checkout, webhooks, limites);
+- Slack API (notificaciones operativas);
+- Gemini API (sugerencias de tareas/subtareas);
+- GitHub Actions (CI/CD con checks de calidad).
 
-## 5. Criterios de calidad buscados
+## 6. Calidad y criterios de cierre
 
-- arquitectura consistente por capas y features;
-- errores visibles en UI (sin fallos silenciosos);
-- contratos tipados y validacion de entrada/salida;
-- trazabilidad de cambios en flujos importantes;
-- base de tests (unit, integration, e2e smoke).
+El producto se considera bien encaminado cuando:
+- no hay errores silenciosos en flows criticos;
+- contratos de datos son estables y tipados;
+- rutas quedan como orquestadores y logica en `features/*/server/*`;
+- UX principal se percibe de producto real, no CRUD basico;
+- existe base de testing (unit, integration, e2e smoke).
 
-## 6. Alcance de aprendizaje (por que existe)
+## 7. Estado y fuente de verdad
 
-Este proyecto existe para practicar, de forma aplicada:
-- React Router fullstack + TypeScript;
-- modelado de dominio con validaciones;
-- estado cliente con Zustand y data fetching con TanStack Query;
-- diseno de UI de producto con shadcn/ui y primitives de Radix;
-- integraciones externas y automatizacion de calidad.
+- Fuente de verdad de plan y detalle de ejecucion: `docs/PRODUCT_ROADMAP.md`.
+- Este documento resume vision y alcance.
+- Si hay conflicto entre ambos, prevalece `docs/PRODUCT_ROADMAP.md`.
 
-## 7. Documentos relacionados
+## 8. Documentos relacionados
 
-- roadmap de implementacion: `docs/PRODUCT_ROADMAP.md`
-- stack tecnico: `docs/STACK.md`
-- plan interno de entrega: `docs/INTERNAL_DELIVERY_PLAN.md`
-- plan interno de estudio: `docs/INTERNAL_STUDY_PLAN.md`
-
-## 8. Regla de mantenimiento
-
-Este archivo documenta el producto que se busca construir en este repo de estudio.
-Si cambia el alcance funcional o el foco de aprendizaje, se actualiza aca primero.
+- `docs/PRODUCT_ROADMAP.md`
+- `docs/ARQUITECTURE.md`
+- `docs/STACK.md`
+- `docs/INTERNAL_DELIVERY_PLAN.md`
+- `docs/INTERNAL_STUDY_PLAN.md`

@@ -2,6 +2,7 @@
 // lógica server-side del loader de React Router 
 
 import type { FlagService } from '~/core/flags/flags.service';
+import { ensureProductFlagsSeeded } from '~/core/flags/flag-seed';
 import type { TaskService } from '~/core/tasks/tasks.port';
 import type { HomePageProps } from '../types';
 
@@ -17,6 +18,8 @@ type RunHomeLoaderInput = {
 
 export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePageProps> {
   const { user, taskService, flagService } = input;
+  await ensureProductFlagsSeeded(flagService);
+
   const environment: 'development' | 'production' =
     process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
@@ -40,17 +43,17 @@ export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePage
   const flagsSummary =
     user.role === 'admin'
       ? await flagService.listAll().then((flags) => {
-          const envFlags = flags.filter((flag) => flag.environment === environment);
+          const envFlags = flags;
           return {
             environment,
             total: envFlags.length,
-            enabled: envFlags.filter((flag) => flag.enabled).length,
+            enabled: envFlags.filter((flag) => flag.stateByEnvironment[environment].enabled).length,
             switches: envFlags.slice(0, 8).map((flag) => ({
               id: flag.id,
               key: flag.key,
-              enabled: flag.enabled,
+              enabled: flag.stateByEnvironment[environment].enabled,
               type: flag.type,
-              rolloutPercent: flag.rolloutPercent ?? null,
+              rolloutPercent: flag.stateByEnvironment[environment].rolloutPercent ?? null,
             })),
           };
         })

@@ -2,15 +2,16 @@ CREATE TABLE `feature_flags` (
 	`id` text PRIMARY KEY NOT NULL,
 	`key` text NOT NULL,
 	`description` text,
-	`environment` text DEFAULT 'development' NOT NULL,
 	`type` text DEFAULT 'boolean' NOT NULL,
-	`enabled` integer DEFAULT false NOT NULL,
-	`rollout_percent` integer,
+	`enabled_development` integer DEFAULT false NOT NULL,
+	`enabled_production` integer DEFAULT false NOT NULL,
+	`rollout_percent_development` integer,
+	`rollout_percent_production` integer,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `feature_flags_key_env_unique` ON `feature_flags` (`key`,`environment`);--> statement-breakpoint
+CREATE UNIQUE INDEX `feature_flags_key_unique` ON `feature_flags` (`key`);--> statement-breakpoint
 CREATE TABLE `sessions` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,

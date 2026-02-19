@@ -1,4 +1,4 @@
-import { desc, eq, and } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import type { FeatureFlagRepository, FlagCreateInput } from '../../core/flags/flags.port';
 import { DuplicateFeatureFlagError } from '~/core/flags/errors';
 import type { FeatureFlag, Environment } from '../../core/flags/flags.types';
@@ -9,18 +9,15 @@ import { isSqliteUniqueConstraintError } from '../db/sqlite-error';
 
 export const sqliteFlagRepository: FeatureFlagRepository = {
   async listAll(): Promise<FeatureFlag[]> {
-    const rows = db
-      .select()
-      .from(featureFlags)
-      .orderBy(desc(featureFlags.createdAt))
-      .all();
-
+    const rows = db.select().from(featureFlags).orderBy(desc(featureFlags.createdAt)).all();
     return rows.map(mapFlagRow);
   },
 
   async create(input: FlagCreateInput) {
     try {
       const id = crypto.randomUUID();
+      const dev = input.stateByEnvironment?.development;
+      const prod = input.stateByEnvironment?.production;
 
       const [row] = db
         .insert(featureFlags)
@@ -28,10 +25,11 @@ export const sqliteFlagRepository: FeatureFlagRepository = {
           id,
           key: input.key,
           description: input.description ?? null,
-          environment: input.environment,
           type: input.type ?? 'boolean',
-          enabled: false,
-          rolloutPercent: input.rolloutPercent ?? null,
+          enabledDevelopment: dev?.enabled ?? false,
+          enabledProduction: prod?.enabled ?? false,
+          rolloutPercentDevelopment: dev?.rolloutPercent ?? null,
+          rolloutPercentProduction: prod?.rolloutPercent ?? null,
           createdAt: new Date(),
           updatedAt: new Date(),
         })
@@ -41,29 +39,28 @@ export const sqliteFlagRepository: FeatureFlagRepository = {
       return mapFlagRow(row);
     } catch (err) {
       if (isSqliteUniqueConstraintError(err)) {
-        throw new DuplicateFeatureFlagError(input.key, input.environment);
+        throw new DuplicateFeatureFlagError(input.key);
       }
       throw err;
     }
   },
 
-  async toggle(id: string): Promise<FeatureFlag> {
-    const existing = db
-      .select()
-      .from(featureFlags)
-      .where(eq(featureFlags.id, id))
-      .get();
+  async toggle(input: { id: string; environment: Environment }): Promise<FeatureFlag> {
+    const existing = db.select().from(featureFlags).where(eq(featureFlags.id, input.id)).get();
     if (!existing) throw new Response('Flag not found', { status: 404 });
 
-    const nextEnabled = !existing.enabled;
+    const nextEnabled =
+      input.environment === 'development' ? !existing.enabledDevelopment : !existing.enabledProduction;
 
     const [row] = db
       .update(featureFlags)
       .set({
-        enabled: nextEnabled,
+        ...(input.environment === 'development'
+          ? { enabledDevelopment: nextEnabled }
+          : { enabledProduction: nextEnabled }),
         updatedAt: new Date(),
       })
-      .where(eq(featureFlags.id, id))
+      .where(eq(featureFlags.id, input.id))
       .returning()
       .all();
 
@@ -77,13 +74,23 @@ export const sqliteFlagRepository: FeatureFlagRepository = {
   async update(input: {
     id: string;
     type?: 'boolean' | 'percentage';
-    rolloutPercent?: number | null;
+    stateByEnvironment?: Partial<Record<Environment, { enabled?: boolean; rolloutPercent?: number | null }>>;
   }): Promise<FeatureFlag> {
+    const dev = input.stateByEnvironment?.development;
+    const prod = input.stateByEnvironment?.production;
+
     const [row] = db
       .update(featureFlags)
       .set({
         ...(input.type ? { type: input.type } : {}),
-        ...(input.rolloutPercent !== undefined ? { rolloutPercent: input.rolloutPercent } : {}),
+        ...(dev?.enabled !== undefined ? { enabledDevelopment: dev.enabled } : {}),
+        ...(dev?.rolloutPercent !== undefined
+          ? { rolloutPercentDevelopment: dev.rolloutPercent }
+          : {}),
+        ...(prod?.enabled !== undefined ? { enabledProduction: prod.enabled } : {}),
+        ...(prod?.rolloutPercent !== undefined
+          ? { rolloutPercentProduction: prod.rolloutPercent }
+          : {}),
         updatedAt: new Date(),
       })
       .where(eq(featureFlags.id, input.id))
@@ -97,18 +104,8 @@ export const sqliteFlagRepository: FeatureFlagRepository = {
     return mapFlagRow(row);
   },
 
-  async findByKeyAndEnvironment(input: { key: string; environment: Environment }) {
-    const row = db
-      .select()
-      	.from(featureFlags)
-      .where(
-        and(
-          eq(featureFlags.key, input.key),
-          eq(featureFlags.environment, input.environment),
-        ),
-      )
-      .get();
-
+  async findByKey(key: string) {
+    const row = db.select().from(featureFlags).where(eq(featureFlags.key, key)).get();
     return row ? mapFlagRow(row) : null;
   },
 };

@@ -1,6 +1,11 @@
 import { redirect } from 'react-router';
 import type { FlagActionResult, RunFlagActionInput } from '../types';
-import { flagCreateSchema, flagDeleteSchema, flagToggleSchema, flagUpdateRolloutSchema } from '~/core/flags/flags.schema';
+import {
+  flagCreateSchema,
+  flagDeleteSchema,
+  flagToggleSchema,
+  flagUpdateStateSchema,
+} from '~/core/flags/flags.schema';
 import { jsonFlagsError, toFlagFormError, validationToActionData } from './errors';
 import { DuplicateFeatureFlagError } from '~/core/flags/errors';
 import { getCreateFlagFormValues, parseIntent } from './utils';
@@ -18,7 +23,6 @@ export async function runFlagAction(input: RunFlagActionInput): Promise<FlagActi
     const parsedCreate = flagCreateSchema.safeParse({
       key: formData.get('key'),
       description: formData.get('description'),
-      environment: formData.get('environment'),
       type: formData.get('type'),
       rolloutPercent: formData.get('rolloutPercent'),
     });
@@ -26,13 +30,27 @@ export async function runFlagAction(input: RunFlagActionInput): Promise<FlagActi
     if (!parsedCreate.success) return validationToActionData(parsedCreate.error, formData);
 
     try {
-      await flagService.create(parsedCreate.data);
+      await flagService.create({
+        key: parsedCreate.data.key,
+        description: parsedCreate.data.description,
+        type: parsedCreate.data.type,
+        stateByEnvironment: {
+          development: {
+            enabled: false,
+            rolloutPercent: parsedCreate.data.rolloutPercent,
+          },
+          production: {
+            enabled: false,
+            rolloutPercent: parsedCreate.data.rolloutPercent,
+          },
+        },
+      });
       return redirect('/flags');
     } catch (err) {
       if (err instanceof DuplicateFeatureFlagError) {
         return jsonFlagsError(
           {
-            formError: 'Ya existe una flag con esa key en ese environment.',
+            formError: 'Ya existe una flag con esa key.',
             values: getCreateFlagFormValues(formData),
           },
           409,
@@ -42,7 +60,7 @@ export async function runFlagAction(input: RunFlagActionInput): Promise<FlagActi
       return jsonFlagsError(
         {
           formError: toFlagFormError(err),
-          values: getCreateFlagFormValues(formData, { environment: 'development' }),
+          values: getCreateFlagFormValues(formData),
         },
         500,
       );
@@ -52,32 +70,30 @@ export async function runFlagAction(input: RunFlagActionInput): Promise<FlagActi
   if (intentResult === 'toggle') {
     const parsedToggle = flagToggleSchema.safeParse({
       id: formData.get('id'),
+      environment: formData.get('environment'),
     });
     if (!parsedToggle.success) return validationToActionData(parsedToggle.error, formData);
-    await flagService.toggle(parsedToggle.data.id);
+    await flagService.toggle({ id: parsedToggle.data.id, environment: parsedToggle.data.environment });
     return redirect('/flags');
   }
 
-  if (intentResult === 'update-rollout') {
-    const id = String(formData.get('id') ?? '');
-    const rawPercent = String(formData.get('rolloutPercent') ?? '');
+  if (intentResult === 'update-state') {
+    const parsedState = flagUpdateStateSchema.safeParse({
+      id: formData.get('id'),
+      environment: formData.get('environment'),
+      rolloutPercent: formData.get('rolloutPercent'),
+    });
 
-    const parsedPercent = flagUpdateRolloutSchema.safeParse(rawPercent.length ? rawPercent : '0');
+    if (!parsedState.success) return validationToActionData(parsedState.error, formData);
 
-    if (!parsedPercent.success) {
-      const messages = parsedPercent.error.issues.map((issue) => issue.message);
-      return jsonFlagsError(
-        {
-          fieldErrors: { rolloutPercent: messages },
-          values: {
-            rolloutPercent: rawPercent,
-          },
+    await flagService.update({
+      id: parsedState.data.id,
+      stateByEnvironment: {
+        [parsedState.data.environment]: {
+          rolloutPercent: parsedState.data.rolloutPercent ?? null,
         },
-        400,
-      );
-    }
-
-    await flagService.update({ id, rolloutPercent: parsedPercent.data });
+      },
+    });
     return redirect('/flags');
   }
 
@@ -92,4 +108,3 @@ export async function runFlagAction(input: RunFlagActionInput): Promise<FlagActi
     return redirect('/flags');
   }
 }
-

@@ -58,24 +58,6 @@ export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="font-medium" htmlFor="environment">
-            Environment
-          </label>
-          <select
-            id="environment"
-            name="environment"
-            className="border rounded px-3 py-2"
-            defaultValue={actionData?.values?.environment ?? 'development'}
-          >
-            <option value="development">development</option>
-            <option value="production">production</option>
-          </select>
-          {actionData?.fieldErrors?.environment?.[0] ? (
-            <p className="text-sm text-red-600">{actionData.fieldErrors.environment[0]}</p>
-          ) : null}
-        </div>
-
-        <div className="flex flex-col gap-1">
           <label className="font-medium" htmlFor="type">
             Tipo de flag
           </label>

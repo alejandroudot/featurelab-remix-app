@@ -83,7 +83,11 @@ export function HomeFeatureSwitches({ flagsSummary, userRole }: HomeFeatureSwitc
                             onCheckedChange={() => {
                               lastToggledKeyRef.current = flag.key;
                               fetcher.submit(
-                                { intent: 'toggle-hub-flag', id: flag.id },
+                                {
+                                  intent: 'toggle-hub-flag',
+                                  id: flag.id,
+                                  environment: flagsSummary.environment,
+                                },
                                 { method: 'post' },
                               );
                             }}

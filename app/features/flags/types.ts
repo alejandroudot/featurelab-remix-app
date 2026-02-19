@@ -12,7 +12,6 @@ export type FlagActionData =
       values?: {
         key?: string;
         description?: string;
-        environment?: string;
         type?: string;
         rolloutPercent?: string;
       };
