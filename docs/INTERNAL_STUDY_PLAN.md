@@ -1,9 +1,10 @@
-# Internal Study Plan (post-coding)
+# 🧠 Internal Study Plan (post-coding)
+> 📚 Objetivo: entender de verdad lo que construimos, no solo "hacer que funcione".
 
 Plan interno de estudio.
 Objetivo: que entiendas de verdad lo que construimos cada dia, sin depender de memoria pasiva.
 
-## Prompt diario para pasarle a Codex (copiar/pegar)
+## 🗣️ Prompt diario para pasarle a Codex (copiar/pegar)
 
 Usar este prompt al arrancar o cerrar cada dia:
 
@@ -28,7 +29,7 @@ Contexto del dia:
 - Dudas mias actuales:
 ```
 
-## Como usar este plan
+## 🧭 Como usar este plan
 
 - Se ejecuta al final de cada dia de coding (idealmente el mismo dia).
 - Duracion objetivo: 60-90 minutos.
@@ -37,9 +38,9 @@ Contexto del dia:
   - lectura guiada (20 min)
   - nota de cierre (10 min)
 
-## Rutina diaria (60-90 min)
+## ⏱️ Rutina diaria (60-90 min)
 
-### Bloque 1 - Explicacion oral (10 min)
+### Bloque 1 - Explicacion oral (10 min) 🎙️
 
 - Explicar en voz alta:
   - que hicimos hoy
@@ -47,7 +48,7 @@ Contexto del dia:
   - que problema evita en arquitectura
 - Regla: si no lo podés explicar simple, no está aprendido.
 
-### Bloque 2 - Lectura guiada (20 min)
+### Bloque 2 - Lectura guiada (20 min) 🔍
 
 - Elegir 3 archivos del dia:
   - 1 route (orquestacion)
@@ -59,7 +60,7 @@ Contexto del dia:
   - salida
   - manejo de error
 
-### Bloque 3 - Reescritura parcial (20 min)
+### Bloque 3 - Reescritura parcial (20 min) ✍️
 
 - Sin mirar, reescribir una parte chica:
   - una validacion Zod
@@ -68,7 +69,7 @@ Contexto del dia:
   - un handler de action
 - Luego comparar con la version real.
 
-### Bloque 4 - Debug intencional (10-20 min)
+### Bloque 4 - Debug intencional (10-20 min) 🐞
 
 - Provocar 1 error a proposito:
   - cambiar un nombre de campo
@@ -76,13 +77,13 @@ Contexto del dia:
   - mandar intent invalido
 - Objetivo: aprender a detectar rapido causa y fix.
 
-### Bloque 5 - Nota final (10 min)
+### Bloque 5 - Nota final (10 min) 📝
 
 - Completar la plantilla de cierre diaria (abajo).
 
 ---
 
-## Plantilla de cierre diaria (copiar/pegar)
+## 📌 Plantilla de cierre diaria (copiar/pegar)
 
 Dia X - Fecha
 
@@ -98,7 +99,7 @@ Dia X - Fecha
 
 ---
 
-## Reglas anti-olvido (clave)
+## 🚫 Reglas anti-olvido (clave)
 
 - No pasar al dia siguiente sin nota de cierre.
 - No estudiar solo leyendo: siempre escribir/cambiar algo.
