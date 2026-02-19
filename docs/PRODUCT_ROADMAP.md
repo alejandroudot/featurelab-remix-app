@@ -1,15 +1,15 @@
-# ??? PROXIMAS TAREAS (Pulido MVP + MVP+1)
-> ?? Lista viva de ejecucion para avanzar sin perder foco.
+﻿# 🛣️ PROXIMAS TAREAS (Pulido MVP + MVP+1)
+> 🎯 Lista viva de ejecucion para avanzar sin perder foco.
 
 Este documento es la lista activa de ejecucion.
 
-## ?? Leyenda
+## 🧾 Leyenda
 
 - `[ ]` pendiente
 - `[~]` en progreso
 - `[x]` listo
 
-## ?? Direccion del producto (alineada)
+## 🧭 Direccion del producto (alineada)
 
 - Foco principal: `Tasks` y colaboracion entre usuarios.
 - Flags: se mantienen como modulo de soporte (sin ampliar demasiado alcance funcional).
@@ -20,15 +20,15 @@ Este documento es la lista activa de ejecucion.
   - `User Panel` (`/account` o `/settings`)
   - `Billing/Plan` (inicialmente dentro de User Panel)
 
-## ?? Criterio UI (shadcn/ui + Radix)
+## 🎨 Criterio UI (shadcn/ui + Radix)
 
 - `shadcn/ui`: componentes de interfaz y layout del producto (cards, table, tabs, dialog, sheet, form controls, badge, button, input, textarea, dropdown).
 - `Radix UI` directo: primitives de comportamiento/accesibilidad que queremos controlar fino (toast provider, tooltip avanzado, alert dialog destructivo, popover/menu complejos).
 - Regla de uso:
   - si existe componente listo en `shadcn/ui`, usar `shadcn/ui`;
-  - usar `Radix` directo solo cuando necesitemos comportamiento custom o composición avanzada.
+  - usar `Radix` directo solo cuando necesitemos comportamiento custom o composicion avanzada.
 
-## ? Base ya implementada (tracking historico)
+## ✅ Base ya implementada (tracking historico)
 
 - [x] Auth con sesiones y control por rol (`requireUser`/`requireAdmin`)
 - [x] Tasks CRUD basico (list, create, update, delete) con validacion Zod
@@ -38,7 +38,7 @@ Este documento es la lista activa de ejecucion.
 - [x] Persistencia local con SQLite + Drizzle
 - [x] Resolucion de flag integrada en flujo de tasks (`beta-tasks-ui`)
 
-## ?? P0 - Estabilidad y consistencia
+## 🔒 P0 - Estabilidad y consistencia
 
 ### P0.1 Endurecer flujo de tasks
 
@@ -78,7 +78,7 @@ Criterio de cierre:
 - Nombres de tipos e imports coherentes
 - Sin alias de path rotos ni modulos faltantes
 
-## ?? P1 - Producto (Tasks-first)
+## 🚀 P1 - Producto (Tasks-first)
 
 ### P1.1 Home como Execution Hub
 
@@ -244,7 +244,7 @@ Criterio de cierre:
 
 - La UI se percibe intencional y coherente en todas las vistas principales
 
-## ?? P2 - Escala cliente y calidad tecnica
+## 🧪 P2 - Escala cliente y calidad tecnica
 
 ### P2.1 TanStack Query + Zustand (uso real y profundo)
 
@@ -291,7 +291,7 @@ Criterio de cierre:
 
 - La documentacion refleja el estado real del proyecto
 
-## ?? P3 - Integraciones externas y automatizacion
+## 🌐 P3 - Integraciones externas y automatizacion
 
 ### P3.1 Stripe (billing y planes)
 
@@ -353,4 +353,5 @@ Criterio de cierre:
 3. Ejecutar `P2.1` (TanStack Query + Zustand real).
 4. Ejecutar `P2.2` y `P2.3` (calidad + docs).
 5. Ejecutar `P3.1` a `P3.4` (integraciones + automatizacion).
+
 
