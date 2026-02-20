@@ -13,7 +13,7 @@ export type TaskUpdateInput = {
   id: string;
   userId: string;
   status?: 'todo' | 'in-progress' | 'done';
-  priority?: 'low' | 'medium' | 'high';
+  priority?: 'low' | 'medium' | 'high' | 'critical';
 };
 
 export interface TaskService {

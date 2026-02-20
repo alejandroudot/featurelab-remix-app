@@ -9,7 +9,7 @@ export const tasks = sqliteTable('tasks', {
   status: text('status', { enum: ['todo', 'in-progress', 'done'] })
     .notNull()
     .default('todo'),
-  priority: text('priority', { enum: ['low', 'medium', 'high'] })
+  priority: text('priority', { enum: ['low', 'medium', 'high', 'critical'] })
     .notNull()
     .default('medium'),
   createdAt: integer("created_at", { mode: "timestamp_ms" })

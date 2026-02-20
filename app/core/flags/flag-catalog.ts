@@ -5,6 +5,8 @@ export type ProductFlagKey =
   | 'hub-activity-feed-enabled'
   | 'tasks-board-enabled'
   | 'tasks-comments-enabled'
+  | 'tasks-mentions-enabled'
+  | 'tasks-attachments-enabled'
   | 'tasks-checklist-enabled'
   | 'tasks-ai-suggestions-enabled'
   | 'billing-enabled'
@@ -43,6 +45,20 @@ export const PRODUCT_FLAG_CATALOG: readonly ProductFlagCatalogItem[] = [
   {
     key: 'tasks-comments-enabled',
     description: 'Habilita comentarios dentro de cada task.',
+    type: 'boolean',
+    rolloutPercent: null,
+    defaultsByEnvironment: { development: true, production: false },
+  },
+  {
+    key: 'tasks-mentions-enabled',
+    description: 'Habilita menciones (@usuario) en comentarios de tasks.',
+    type: 'boolean',
+    rolloutPercent: null,
+    defaultsByEnvironment: { development: true, production: false },
+  },
+  {
+    key: 'tasks-attachments-enabled',
+    description: 'Habilita adjuntos (imagenes/archivos) en comentarios de tasks.',
     type: 'boolean',
     rolloutPercent: null,
     defaultsByEnvironment: { development: true, production: false },

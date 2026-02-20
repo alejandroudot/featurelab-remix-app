@@ -112,18 +112,20 @@ Tecnologias a usar: React Router + TanStack Query + Zustand + shadcn/ui + Radix 
   - [x] Permitir prender/apagar desde Hub con feedback inmediato
   - [x] Usar `Radix Toast` para feedback de toggle exitoso/error
   - [x] Respetar permisos: solo admins pueden cambiar flags
-- [ ] Bootstrap de flags iniciales para darle sentido al modulo de flags
-  - [ ] `execution-hub-enabled`
-  - [ ] `hub-activity-feed-enabled`
-  - [ ] `tasks-board-enabled`
-  - [ ] `tasks-comments-enabled`
-  - [ ] `tasks-checklist-enabled`
-  - [ ] `tasks-ai-suggestions-enabled`
-  - [ ] `billing-enabled`
-  - [ ] `slack-notifications-enabled`
-- [ ] Definir comportamiento por environment para flags iniciales
-  - [ ] `development`: defaults mas permissivos para probar features
-  - [ ] `production`: defaults conservadores para release gradual
+- [x] Bootstrap de flags iniciales para darle sentido al modulo de flags
+  - [x] `execution-hub-enabled`
+  - [x] `hub-activity-feed-enabled`
+  - [x] `tasks-board-enabled`
+  - [x] `tasks-comments-enabled`
+  - [x] `tasks-mentions-enabled`
+  - [x] `tasks-attachments-enabled`
+  - [x] `tasks-checklist-enabled`
+  - [x] `tasks-ai-suggestions-enabled`
+  - [x] `billing-enabled`
+  - [x] `slack-notifications-enabled`
+- [x] Definir comportamiento por environment para flags iniciales
+  - [x] `development`: defaults mas permissivos para probar features
+  - [x] `production`: defaults conservadores para release gradual
 
 Criterio de cierre:
 
@@ -156,6 +158,10 @@ Tecnologias a usar: Zod (query params) + React Router + DnD + shadcn/ui + Radix 
   - [ ] Update optimista al mover cards
   - [ ] Card de task con prioridad, labels, responsable, metadata minima
   - [ ] Card construida con `shadcn/ui` (`Card`, `Badge`, `Avatar`, `DropdownMenu`)
+  - [ ] Abrir detalle de task al clickear card/fila (modal/sheet estilo Jira)
+  - [ ] Detalle con layout simple: contenido principal + comentarios abajo + panel lateral
+  - [ ] Panel lateral con acciones rapidas: cambiar `assignee`, `status` y `priority`
+  - [ ] Mantener contexto al abrir detalle (filtros, vista y scroll)
   - [ ] Edicion rapida desde card
   - [ ] Usar `Radix AlertDialog` para acciones destructivas desde card
   - [ ] Responsive real (desktop/mobile)
@@ -194,6 +200,8 @@ Tecnologias a usar: Drizzle/SQLite + React Router + Zod + Zustand + TanStack Que
   - [ ] labels/tags
   - [ ] checklist/subtareas
   - [ ] comentarios
+  - [ ] `@menciones` de usuarios en comentarios
+  - [ ] adjuntos en comentarios (imagenes + archivos)
   - [ ] plantillas rapidas
 
 Criterio de cierre:

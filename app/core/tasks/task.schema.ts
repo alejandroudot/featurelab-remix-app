@@ -27,7 +27,7 @@ export const taskUpdateSchema = z.object({
     z.string().min(1, 'ID requerido'),
   ),
   status: z.enum(['todo', 'in-progress', 'done']).optional(),
-  priority: z.enum(['low', 'medium', 'high']).optional(),
+  priority: z.enum(['low', 'medium', 'high', 'critical']).optional(),
 });
 
 // Payload de delete: solo id.
@@ -39,4 +39,3 @@ export const taskDeleteSchema = z.object({
 });
 
 export type TaskIntentSchema = z.infer<typeof taskIntentSchema>;
-

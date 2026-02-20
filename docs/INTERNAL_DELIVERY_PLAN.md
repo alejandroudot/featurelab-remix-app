@@ -190,18 +190,20 @@ Fuente roadmap: [P1.1 kit visual Hub](./PRODUCT_ROADMAP.md#L98), [P1.1 dark mode
 Tecnologias del dia: flags repository/service, SQLite/Drizzle, environment config.
 Fuente roadmap: [P1.1 bootstrap flags](./PRODUCT_ROADMAP.md#L111), [P1.1 behavior por environment](./PRODUCT_ROADMAP.md#L120).
 
-- [ ] Bootstrap de flags iniciales para darle sentido al modulo de flags
-  - [ ] `execution-hub-enabled`
-  - [ ] `hub-activity-feed-enabled`
-  - [ ] `tasks-board-enabled`
-  - [ ] `tasks-comments-enabled`
-  - [ ] `tasks-checklist-enabled`
-  - [ ] `tasks-ai-suggestions-enabled`
-  - [ ] `billing-enabled`
-  - [ ] `slack-notifications-enabled`
-- [ ] Definir comportamiento por environment para flags iniciales
-  - [ ] `development`: defaults mas permissivos para probar features
-  - [ ] `production`: defaults conservadores para release gradual
+- [x] Bootstrap de flags iniciales para darle sentido al modulo de flags
+  - [x] `execution-hub-enabled`
+  - [x] `hub-activity-feed-enabled`
+  - [x] `tasks-board-enabled`
+  - [x] `tasks-comments-enabled`
+  - [x] `tasks-mentions-enabled`
+  - [x] `tasks-attachments-enabled`
+  - [x] `tasks-checklist-enabled`
+  - [x] `tasks-ai-suggestions-enabled`
+  - [x] `billing-enabled`
+  - [x] `slack-notifications-enabled`
+- [x] Definir comportamiento por environment para flags iniciales
+  - [x] `development`: defaults mas permissivos para probar features
+  - [x] `production`: defaults conservadores para release gradual
 
 ## 📅 Dia 4 - Jueves 19/02/2026
 
@@ -233,6 +235,10 @@ Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
   - [ ] Toggle de vista con `shadcn/ui` (`Tabs` o `ToggleGroup`)
   - [ ] Card de task con prioridad, labels, responsable, metadata minima
   - [ ] Card construida con `shadcn/ui` (`Card`, `Badge`, `Avatar`, `DropdownMenu`)
+  - [ ] Abrir detalle de task al clickear card/fila (modal/sheet estilo Jira)
+  - [ ] Detalle con layout simple: contenido principal + comentarios abajo + panel lateral
+  - [ ] Panel lateral con acciones rapidas: cambiar `assignee`, `status` y `priority`
+  - [ ] Mantener contexto al abrir detalle (filtros, vista y scroll)
   - [ ] Edicion rapida desde card
   - [ ] Usar `Radix AlertDialog` para acciones destructivas desde card
   - [ ] Responsive real (desktop/mobile)
@@ -288,6 +294,8 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
   - [ ] labels/tags
   - [ ] checklist/subtareas
   - [ ] comentarios
+  - [ ] `@menciones` de usuarios en comentarios
+  - [ ] adjuntos en comentarios (imagenes + archivos)
   - [ ] plantillas rapidas
 
 ## 📅 Dia 10 - Miercoles 25/02/2026
