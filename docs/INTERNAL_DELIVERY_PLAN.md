@@ -27,14 +27,19 @@ No se agregan features fuera de roadmap. No se omiten bullets del roadmap.
 - [ ] Commit local con mensaje claro.
 - [ ] Nota diaria (hecho, pendiente, riesgo).
 
-## ⚙️ Metodologia diaria (70/30)
+## ⚙️ Metodologia diaria (50/50)
 
 Aplicar en cada dia:
 
-- `Implementa Codex` (70%):
-  - estructura, wiring, refactors, base funcional, fixes complejos.
-- `Completa vos` (30%):
-  - 2-3 cambios chicos pero claves del dia (UI, validacion, copy, edge case).
+- `Implementa Codex` (boilerplate/plomeria):
+  - estructura, wiring, scaffolding, refactors mecanicos, glue code.
+  - dejar base funcional lista para que vos metas la logica fina.
+- `Completa vos` (implementacion fina/aprendizaje):
+  - validaciones clave (ej: Zod), logica central de features y decisiones finas.
+  - nuevas tecnologias (ej: Zustand, React Query, DnD): las implementas vos con guia paso a paso.
+- `Regla de tecnologia nueva`:
+  - Codex no escribe esa logica por vos.
+  - Codex frena y te guia con pasos concretos, checklist y criterio de cierre.
 - `Checkpoint`:
   - responder 3 preguntas cortas para validar comprension real.
 
@@ -115,7 +120,7 @@ Tecnologias del dia: delivery planning, control de avance.
 - [x] Crear `docs/INTERNAL_DELIVERY_PLAN.md` dia por dia con fechas
 - [x] Alinear cada dia con bullets del roadmap
 - [x] Agregar tecnologias por dia para aprendizaje dirigido
-- [x] Definir metodologia de trabajo 70/30 (Codex implementa / vos completas)
+- [x] Definir metodologia de trabajo 50/50 (Codex implementa / vos completas)
 
 ### 📌 Dia D-1 - Plan interno de estudio y metodologia con IA
 
