@@ -133,29 +133,34 @@ Criterio de cierre:
 - El usuario puede decidir y actuar rapido desde una sola vista
 - Flags tiene uso visible y cotidiano dentro del producto
 
-### P1.2 Tasks UX (List + Board estilo Jira)
+### P1.2 Tasks UX (Board-first estilo Jira/Trello)
 
 Tecnologias a usar: Zod (query params) + React Router + DnD + shadcn/ui + Radix (dialog/tooltip).
 
-- [ ] Definir direccion UX para `/tasks`
+- [ ] Definir direccion UX para `/tasks` (acordada antes de codear)
   - [ ] Estilo visual elegido y consistente
   - [ ] Prioridades de lectura claras en pantalla
   - [ ] Copy de acciones coherente
-- [ ] Filtros y orden via URL
-  - [ ] Params: `status`, `priority`, `assignee`, `sort`
+- [ ] Definir comportamiento de orden en board por columna
+  - [ ] Modo `manual` por defecto (orden libre con DnD vertical)
+  - [ ] Modo `prioridad` (ordenado por `critical`, `high`, `medium`, `low`)
+  - [ ] Regla de actualizacion de prioridad desde interacciones del board
+- [ ] URL como soporte de estado de vista (no foco principal)
+  - [ ] Params minimos: `view`, `order`
   - [ ] Validacion con Zod + defaults seguros
-  - [ ] UI de filtros con `shadcn/ui` (`Select`, `Tabs`, `Input`, `Badge`)
   - [ ] Persistencia de estado al navegar/recargar
 - [ ] Estados vacios y feedback de interaccion
   - [ ] Estado vacio global
-  - [ ] Estado vacio por filtro
-  - [ ] CTA clara para crear task o limpiar filtros
+  - [ ] Estado vacio por columna
+  - [ ] CTA clara para crear task o limpiar configuracion de vista
 - [ ] Vista Board tipo Jira en `/tasks`
   - [ ] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
+  - [ ] Crear task entra en `To Do` por defecto
   - [ ] Toggle `List` / `Board`
   - [ ] Toggle de vista con `shadcn/ui` (`Tabs` o `ToggleGroup`)
   - [ ] Drag and drop entre columnas
-  - [ ] Update optimista al mover cards
+  - [ ] Drag and drop vertical dentro de columna
+  - [ ] Update optimista al mover cards (horizontal y vertical)
   - [ ] Card de task con prioridad, labels, responsable, metadata minima
   - [ ] Card construida con `shadcn/ui` (`Card`, `Badge`, `Avatar`, `DropdownMenu`)
   - [ ] Abrir detalle de task al clickear card/fila (modal/sheet estilo Jira)

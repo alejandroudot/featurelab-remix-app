@@ -31,15 +31,17 @@ Quiero trabajar con este acuerdo:
 Necesito que me guies asi:
 1) Decime primero que parte exacta del dia vas a tocar.
 2) Espera mi autorizacion antes de editar.
-3) Hace cambios chicos (no choclo gigante).
-4) Despues de cada cambio, mostrame resumen corto + que aprendo yo.
-5) Deja tareas obligatorias para que yo complete.
-6) Cerramos con checkpoint de 3 preguntas para validar comprension.
+3) Si hay decisiones UX, primero las definimos juntos y recien despues editas.
+4) Hace cambios chicos (no choclo gigante).
+5) Despues de cada cambio, mostrame resumen corto + que aprendo yo.
+6) Deja tareas obligatorias para que yo complete.
+7) Cerramos con checkpoint de 3 preguntas para validar comprension.
 
 Contexto del dia:
 - Objetivo:
 - Bloques del roadmap:
 - Dudas mias actuales:
+- Si estamos en `/tasks`: confirmar si hoy el foco es board-first.
 ```
 
 ## Como usar este plan

@@ -16,8 +16,10 @@ Enfoque principal: `Tasks` colaborativas + `Feature Flags` para lanzar con contr
 - Autenticacion con sesiones y control por rol (`user`, `admin`).
 - Gestion de tasks end-to-end:
   - create/update/delete
-  - vista lista + board estilo Jira
-  - filtros y orden persistidos en URL
+  - vista board-first estilo Jira/Trello con soporte de lista
+  - columnas fijas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
+  - orden por columna: `manual` (default) o `prioridad`
+  - drag and drop horizontal (cambio de estado) y vertical (reorden/prioridad)
   - asignaciones, comentarios, checklist, labels, due dates
   - historial de cambios y notificaciones in-app
 - Gestion de feature flags:
@@ -135,4 +137,4 @@ docs/          # estrategia de producto, roadmap, arquitectura
 - Roadmap principal: `docs/PRODUCT_ROADMAP.md`
 - Vision de producto: `docs/PRODUCT.md`
 - Arquitectura: `docs/ARQUITECTURE.md`
-- Stack y decisiones tecnicas: `docs/STACK.md`
+- Stack y decisiones tecnicas: `docs/stack.md`

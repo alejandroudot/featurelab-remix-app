@@ -212,22 +212,25 @@ Fuente roadmap: [P1.1 bootstrap flags](./PRODUCT_ROADMAP.md#L111), [P1.1 behavio
 
 ## 📅 Dia 4 - Jueves 19/02/2026
 
-Tecnologias del dia: Zod (query params), React Router loaders, shadcn/ui filtros.
-Fuente roadmap: [P1.2 direccion UX](./PRODUCT_ROADMAP.md#L134), [P1.2 filtros/orden](./PRODUCT_ROADMAP.md#L138), [P1.2 estados vacios](./PRODUCT_ROADMAP.md#L143).
+Tecnologias del dia: UX definition, board behavior rules, Zod (query params minimos), React Router loaders.
+Fuente roadmap: [P1.2 direccion UX](./PRODUCT_ROADMAP.md#L134), [P1.2 comportamiento de orden](./PRODUCT_ROADMAP.md#L138), [P1.2 URL soporte de vista](./PRODUCT_ROADMAP.md#L142).
 
 - [ ] Definir direccion UX para `/tasks`
   - [ ] Estilo visual elegido y consistente
   - [ ] Prioridades de lectura claras en pantalla
   - [ ] Copy de acciones coherente
-- [ ] Filtros y orden via URL
-  - [ ] Params: `status`, `priority`, `assignee`, `sort`
+- [ ] Definir comportamiento de orden en board por columna
+  - [ ] Modo `manual` por defecto (orden libre con DnD vertical)
+  - [ ] Modo `prioridad` (`critical`, `high`, `medium`, `low`)
+  - [ ] Regla de actualizacion de prioridad desde interacciones del board
+- [ ] URL como soporte de estado de vista (minimo)
+  - [ ] Params: `view`, `order`
   - [ ] Validacion con Zod + defaults seguros
-  - [ ] UI de filtros con `shadcn/ui` (`Select`, `Tabs`, `Input`, `Badge`)
   - [ ] Persistencia de estado al navegar/recargar
 - [ ] Estados vacios y feedback de interaccion
   - [ ] Estado vacio global
-  - [ ] Estado vacio por filtro
-  - [ ] CTA clara para crear task o limpiar filtros
+  - [ ] Estado vacio por columna
+  - [ ] CTA clara para crear task o limpiar configuracion de vista
 
 ## 📅 Dia 5 - Viernes 20/02/2026
 
@@ -236,6 +239,7 @@ Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
 
 - [ ] Vista Board tipo Jira en `/tasks`
   - [ ] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
+  - [ ] Crear task entra en `To Do` por defecto
   - [ ] Toggle `List` / `Board`
   - [ ] Toggle de vista con `shadcn/ui` (`Tabs` o `ToggleGroup`)
   - [ ] Card de task con prioridad, labels, responsable, metadata minima
@@ -255,7 +259,8 @@ Fuente roadmap: [P1.2 board base (DnD/optimistic)](./PRODUCT_ROADMAP.md#L147).
 
 - [ ] Vista Board tipo Jira en `/tasks`
   - [ ] Drag and drop entre columnas
-  - [ ] Update optimista al mover cards
+  - [ ] Drag and drop vertical dentro de columna
+  - [ ] Update optimista al mover cards (horizontal y vertical)
 
 ## 📅 Dia 7 - Domingo 22/02/2026
 
