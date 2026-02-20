@@ -11,25 +11,32 @@ Enfoque principal: `Tasks` colaborativas + `Feature Flags` para lanzar con contr
 - 👤 `User Panel`: perfil, seguridad, preferencias y plan.
 - 📈 Escalabilidad progresiva: estado cliente avanzado, integraciones y CI/CD.
 
-## 🧩 Funcionalidades (target final)
+## 🏷️ Estado
 
-- Autenticacion con sesiones y control por rol (`user`, `admin`).
-- Gestion de tasks end-to-end:
+- `✅ Implementado`: disponible hoy en el repo.
+- `🟡 Planeado`: definido en roadmap, todavia no implementado completo.
+
+## 🧩 Funcionalidades
+
+- ✅ Autenticacion con sesiones y control por rol (`user`, `admin`).
+- ✅ Gestion de tasks base:
   - create/update/delete
-  - vista board-first estilo Jira/Trello con soporte de lista
+  - vista lista actual
+- ✅ Gestion de feature flags:
+  - create/toggle/delete/update rollout
+  - panel de `Feature Switches` en Execution Hub (admin)
+- ✅ Home (`Execution Hub`) con metricas, actividad y quick actions.
+- 🟡 Gestion de tasks evolucionada:
+  - vista board-first estilo Jira/Trello
   - columnas fijas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
   - orden por columna: `manual` (default) o `prioridad`
   - drag and drop horizontal (cambio de estado) y vertical (reorden/prioridad)
   - asignaciones, comentarios, checklist, labels, due dates
   - historial de cambios y notificaciones in-app
-- Gestion de feature flags:
-  - create/toggle/delete/update rollout
-  - uso real en modulos del producto
-  - panel de `Feature Switches` en Execution Hub (admin)
-- Preferencias de usuario:
+- 🟡 Preferencias de usuario:
   - densidad, vista por defecto, tema (`light`/`dark`/`system`)
   - persistencia local con estado global
-- Integraciones:
+- 🟡 Integraciones:
   - Stripe (billing)
   - Slack (notificaciones)
   - Gemini (asistencia para tasks)
@@ -64,22 +71,24 @@ Decisiones clave:
 
 ## 🧰 Stack
 
-- React Router v7 (framework mode)
-- React 19 + TypeScript
-- Drizzle ORM + better-sqlite3
-- Zod validation
-- Tailwind CSS v4
-- shadcn/ui (componentes de producto por defecto)
-- Radix UI primitives (comportamiento custom/accesible)
-- TanStack Query (cache, invalidacion, optimistic updates)
-- Zustand (estado global de UI y preferencias)
-- Drag and drop para Tasks Board
-- Vitest + Testing Library (unit/integration)
-- Playwright (E2E)
-- Stripe API + webhooks
-- Slack API / Incoming Webhooks
-- Gemini API
-- GitHub Actions (CI/CD)
+- ✅ En uso hoy:
+  - React Router v7 (framework mode)
+  - React 19 + TypeScript
+  - Drizzle ORM + better-sqlite3
+  - Zod validation
+  - Tailwind CSS v4
+  - shadcn/ui (componentes de producto por defecto)
+  - Radix UI primitives (comportamiento custom/accesible)
+- 🟡 Planeado / adopcion progresiva:
+  - TanStack Query (cache, invalidacion, optimistic updates)
+  - Zustand (estado global de UI y preferencias)
+  - Drag and drop para Tasks Board
+  - Vitest + Testing Library (unit/integration)
+  - Playwright (E2E)
+  - Stripe API + webhooks
+  - Slack API / Incoming Webhooks
+  - Gemini API
+  - GitHub Actions (CI/CD)
 
 ## 🎨 Criterio UI (shadcn/ui + Radix)
 
