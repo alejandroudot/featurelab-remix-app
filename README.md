@@ -52,7 +52,16 @@ Enfoque principal: `Tasks` colaborativas + `Feature Flags` para lanzar con contr
 
 ## 🏗️ Arquitectura
 
-Patron general:
+Se usa un enfoque pragmatico de:
+- base de Hexagonal / Clean Architecture;
+- arquitectura por capas;
+- organizacion por feature;
+- puertos/adaptadores en dominio-infra.
+
+No se busca pureza academica extrema: se aplica Hexagonal/Clean de forma pragmatica,
+priorizando claridad operativa y velocidad de iteracion para un proyecto de estudio real.
+
+Patron general del repo:
 
 - `features/*` (UI de feature): interfaz especifica de dominio (`tasks`, `flags`, etc.), con paginas, formularios, listas/boards y componentes no compartidos.
 - `ui/*`: componentes base reutilizables (primitivos/patrones de interfaz).
