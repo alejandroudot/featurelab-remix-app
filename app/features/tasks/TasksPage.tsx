@@ -1,11 +1,10 @@
-import { useSearchParams } from 'react-router';
+import { useSearchParams, useSubmit } from 'react-router';
 import type { TaskActionData } from './types';
 import { CreateTaskForm } from './components/CreateTaskForm';
 import { TasksList } from './components/TasksList';
 import { TasksViewControls } from './components/TasksViewControls';
 import { TasksEmptyState } from './components/TasksEmptyState';
 import { TasksBoardView } from './components/TasksBoardView';
-import type { FlagResolution } from '~/core/flags/flags.service';
 import type { Task } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from './server/task-view-state';
 
@@ -15,16 +14,15 @@ export function TasksPage({
   actionData,
   isSubmitting,
   betaTasksUI,
-  betaTasksUIResolution,
 }: {
   tasks: Task[];
   viewState: TasksViewState;
   actionData: TaskActionData;
   isSubmitting: boolean;
   betaTasksUI: boolean;
-  betaTasksUIResolution?: FlagResolution;
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const submit = useSubmit();
 
   function setView(view: 'list' | 'board') {
     const next = new URLSearchParams(searchParams);
@@ -45,6 +43,24 @@ export function TasksPage({
     setSearchParams(next);
   }
 
+  function handleEditTask(_taskId: string) {
+    setView('list');
+  }
+
+  function handleDeleteTask(taskId: string) {
+    if (!confirm('Eliminar esta task?')) return;
+
+    submit(
+      {
+        intent: 'delete',
+        id: taskId,
+      },
+      {
+        method: 'post',
+      },
+    );
+  }
+
   const hasNonDefaultViewState = viewState.view !== 'board' || viewState.order !== 'manual';
 
   return (
@@ -63,21 +79,9 @@ export function TasksPage({
       {betaTasksUI ? (
         <div className="rounded border p-3 text-sm">
           <div className="font-medium">Beta Tasks UI activa</div>
-          <div className="opacity-80">Aca despues metemos mejoras (filtros, vista kanban, etc.)</div>
-        </div>
-      ) : null}
-
-      {betaTasksUIResolution ? (
-        <div className="rounded border p-3 text-xs opacity-85">
-          <div className="font-medium">Flag debug: beta-tasks-ui</div>
-          <div>enabled: {String(betaTasksUIResolution.enabled)}</div>
-          <div>reason: {betaTasksUIResolution.reason}</div>
-          {typeof betaTasksUIResolution.bucket === 'number' ? (
-            <div>bucket: {betaTasksUIResolution.bucket}</div>
-          ) : null}
-          {typeof betaTasksUIResolution.rolloutPercent === 'number' ? (
-            <div>rolloutPercent: {betaTasksUIResolution.rolloutPercent}</div>
-          ) : null}
+          <div className="opacity-80">
+            Aca despues metemos mejoras (filtros, vista kanban, etc.)
+          </div>
         </div>
       ) : null}
 
@@ -91,7 +95,12 @@ export function TasksPage({
       ) : viewState.view === 'list' ? (
         <TasksList tasks={tasks} />
       ) : (
-        <TasksBoardView tasks={tasks} order={viewState.order} />
+        <TasksBoardView
+          tasks={tasks}
+          order={viewState.order}
+          onEditTask={handleEditTask}
+          onDeleteTask={handleDeleteTask}
+        />
       )}
     </main>
   );

@@ -18,13 +18,13 @@ export function TasksViewControls({ viewState, onSetView, onSetOrder }: TasksVie
           if (value === 'list' || value === 'board') onSetView(value);
         }}
       >
-        <ToggleGroupItem value="list" aria-label="Vista lista">
-          List
-        </ToggleGroupItem>
         <ToggleGroupItem value="board" aria-label="Vista board">
           Board
         </ToggleGroupItem>
-				</ToggleGroup>
+        <ToggleGroupItem value="list" aria-label="Vista lista">
+          List
+        </ToggleGroupItem>
+      </ToggleGroup>
       <ToggleGroup
         type="single"
         value={viewState.order}

@@ -32,8 +32,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     tasks,
     viewState,
     betaTasksUI: betaTasksUIResolution.enabled,
-    betaTasksUIResolution,
-    isDevelopment,
   };
 }
 
@@ -50,7 +48,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function TasksRoute() {
-  const { tasks, viewState, betaTasksUI, betaTasksUIResolution, isDevelopment } =
+  const { tasks, viewState, betaTasksUI } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<TaskActionData>();
   const navigation = useNavigation();
@@ -63,7 +61,6 @@ export default function TasksRoute() {
       actionData={actionData}
       isSubmitting={isSubmitting}
       betaTasksUI={betaTasksUI}
-      betaTasksUIResolution={isDevelopment ? betaTasksUIResolution : undefined}
     />
   );
 }

@@ -13,6 +13,9 @@ import {
 type TaskCardProps = {
   task: Task;
   compact?: boolean;
+  onOpen?: (taskId: string) => void;
+  onEdit?: (taskId: string) => void;
+  onDelete?: (taskId: string) => void;
 };
 
 const PRIORITY_LABEL: Record<Task['priority'], string> = {
@@ -35,9 +38,12 @@ function priorityBadgeVariant(priority: Task['priority']): 'secondary' | 'outlin
   return 'outline';
 }
 
-export function TaskCard({ task, compact = false }: TaskCardProps) {
+export function TaskCard({ task, compact = false, onOpen, onEdit, onDelete }: TaskCardProps) {
   return (
-    <Card className={compact ? 'gap-2 py-3' : 'gap-3 py-4'}>
+    <Card
+      className={`${compact ? 'gap-2 py-3' : 'gap-3 py-4'} ${onOpen ? 'cursor-pointer' : ''}`}
+      onClick={onOpen ? () => onOpen(task.id) : undefined}
+    >
       <CardContent className={compact ? 'space-y-2 px-3' : 'space-y-3 px-4'}>
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-1">
@@ -49,12 +55,30 @@ export function TaskCard({ task, compact = false }: TaskCardProps) {
             <DropdownMenuTrigger
               aria-label="Acciones de la task"
               className="hover:bg-accent inline-flex size-6 items-center justify-center rounded-md"
+              onClick={(event) => event.stopPropagation()}
             >
-                <MoreHorizontal className="size-4" />
+              <MoreHorizontal className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Editar task</DropdownMenuItem>
-              <DropdownMenuItem variant="destructive">Borrar task</DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onEdit?.(task.id);
+                }}
+              >
+                Editar task
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                variant="destructive"
+                onSelect={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onDelete?.(task.id);
+                }}
+              >
+                Borrar task
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

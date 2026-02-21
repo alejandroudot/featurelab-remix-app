@@ -26,9 +26,12 @@ const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
 type TasksBoardViewProps = {
   tasks: Task[];
   order: TasksViewState['order'];
+  onOpenTask?: (taskId: string) => void;
+  onEditTask?: (taskId: string) => void;
+  onDeleteTask?: (taskId: string) => void;
 };
 
-export function TasksBoardView({ tasks, order }: TasksBoardViewProps) {
+export function TasksBoardView({ tasks, order, onOpenTask, onEditTask, onDeleteTask }: TasksBoardViewProps) {
   function getColumnTasks(columnId: BoardColumnId, items: Task[]) {
     return items.filter((task) => task.status === columnId);
   }
@@ -60,7 +63,13 @@ export function TasksBoardView({ tasks, order }: TasksBoardViewProps) {
                 <ul className="space-y-2">
                   {columnTasks.map((task) => (
                     <li key={task.id}>
-                      <TaskCard task={task} compact />
+                      <TaskCard
+                        task={task}
+                        compact
+                        onOpen={onOpenTask}
+                        onEdit={onEditTask}
+                        onDelete={onDeleteTask}
+                      />
                     </li>
                   ))}
                 </ul>
