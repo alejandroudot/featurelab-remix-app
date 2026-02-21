@@ -7,6 +7,7 @@ import { requireUser } from '~/infra/auth/require-user';
 import { flagService } from '~/infra/flags/flags.repository';
 import { getFlagDebugOverrideFromUrl } from '~/infra/flags/flag-debug';
 import { runTaskAction } from '~/features/tasks/server/task.action';
+import { parseTasksViewStateFromUrl } from '~/features/tasks/server/task-view-state';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
@@ -14,6 +15,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
   const isDevelopment = process.env.NODE_ENV !== 'production';
   const url = new URL(request.url);
+  const viewState = parseTasksViewStateFromUrl(url);
 
   const betaTasksUIResolution = await flagService.resolve({
     userId: user.id,
@@ -26,7 +28,13 @@ export async function loader({ request }: Route.LoaderArgs) {
     }),
   });
 
-  return { tasks, betaTasksUI: betaTasksUIResolution.enabled, betaTasksUIResolution, isDevelopment };
+  return {
+    tasks,
+    viewState,
+    betaTasksUI: betaTasksUIResolution.enabled,
+    betaTasksUIResolution,
+    isDevelopment,
+  };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -42,7 +50,8 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function TasksRoute() {
-  const { tasks, betaTasksUI, betaTasksUIResolution, isDevelopment } = useLoaderData<typeof loader>();
+  const { tasks, viewState, betaTasksUI, betaTasksUIResolution, isDevelopment } =
+    useLoaderData<typeof loader>();
   const actionData = useActionData<TaskActionData>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
@@ -50,6 +59,7 @@ export default function TasksRoute() {
   return (
     <TasksPage
       tasks={tasks}
+      viewState={viewState}
       actionData={actionData}
       isSubmitting={isSubmitting}
       betaTasksUI={betaTasksUI}

@@ -1,5 +1,5 @@
 import { Form } from 'react-router';
-import type { TaskActionData } from './types';
+import type { TaskActionData } from '../types';
 
 export function CreateTaskForm({ actionData, isSubmitting }: { actionData: TaskActionData, isSubmitting: boolean }) {
   const globalError = actionData?.formError ?? actionData?.fieldErrors?.intent?.[0];

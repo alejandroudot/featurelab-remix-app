@@ -1,5 +1,5 @@
-﻿# 🗓️ Internal Delivery Plan (14 days)
-> 🚦 Plan operativo diario para ejecutar el roadmap sin desorden.
+# ??? Internal Delivery Plan (14 days)
+> ?? Plan operativo diario para ejecutar el roadmap sin desorden.
 
 Plan interno de ejecucion.
 Inicio: lunes 16/02/2026
@@ -8,7 +8,7 @@ Fin: domingo 01/03/2026
 Regla de oro: este plan es una division diaria del `docs/PRODUCT_ROADMAP.md`.
 No se agregan features fuera de roadmap. No se omiten bullets del roadmap.
 
-## 📏 Reglas de trabajo (obligatorias)
+## ?? Reglas de trabajo (obligatorias)
 
 - Se cierra un bloque por dia antes de abrir el siguiente.
 - Cada dia termina con commit local y nota corta de estado.
@@ -20,14 +20,14 @@ No se agregan features fuera de roadmap. No se omiten bullets del roadmap.
   - `infra/*` implementaciones
   - `ui/*` compartidos
 
-## ✅ DoD diario
+## ? DoD diario
 
 - [ ] Lo del dia queda funcional.
 - [ ] No se rompen rutas principales (`/`, `/tasks`, `/flags`, auth).
 - [ ] Commit local con mensaje claro.
 - [ ] Nota diaria (hecho, pendiente, riesgo).
 
-## ⚙️ Metodologia diaria (50/50)
+## ?? Metodologia diaria (50/50)
 
 Aplicar en cada dia:
 
@@ -55,12 +55,12 @@ Template para cada dia:
   - [ ] Cual fue el contrato/validacion clave del dia?
   - [ ] Cual fue el bug o riesgo principal y como se resolvio?
 
-## 🧱 Prework ya realizado (dias previos al plan de 14 dias)
+## ?? Prework ya realizado (dias previos al plan de 14 dias)
 
 Esta seccion documenta trabajo real que ya se hizo antes del Dia 1 formal.
 Sirve para tracking historico y para entender contexto tecnico/funcional.
 
-### 📌 Dia D-6 - Alineacion de base tecnica y alcance inicial
+### ?? Dia D-6 - Alineacion de base tecnica y alcance inicial
 
 Tecnologias del dia: React Router, TypeScript, Zod, Drizzle/SQLite.
 
@@ -72,7 +72,7 @@ Tecnologias del dia: React Router, TypeScript, Zod, Drizzle/SQLite.
   - [x] separar responsabilidad por capa
   - [x] centralizar parseo de intent y mapeo de errores
 
-### 📌 Dia D-5 - Endurecimiento de actions (tasks + flags)
+### ?? Dia D-5 - Endurecimiento de actions (tasks + flags)
 
 Tecnologias del dia: React Router actions, Zod validation, TypeScript.
 
@@ -85,7 +85,7 @@ Tecnologias del dia: React Router actions, Zod validation, TypeScript.
 - [x] Ajuste defensivo en flags para `validationToActionData(error, formData?)`
   - [x] `values` queda `undefined` cuando no hay `formData`
 
-### 📌 Dia D-4 - Definicion de direccion de producto
+### ?? Dia D-4 - Definicion de direccion de producto
 
 Tecnologias del dia: product discovery, modelado funcional, documentacion.
 
@@ -100,7 +100,7 @@ Tecnologias del dia: product discovery, modelado funcional, documentacion.
   - [x] permisos
   - [x] trazabilidad y notificaciones
 
-### 📌 Dia D-3 - Armado de roadmap y stack
+### ?? Dia D-3 - Armado de roadmap y stack
 
 Tecnologias del dia: planning de producto, stack strategy.
 
@@ -113,7 +113,7 @@ Tecnologias del dia: planning de producto, stack strategy.
   - [x] Stripe, Slack API, Gemini API, GitHub Actions
 - [x] Refinar bullets del roadmap para que cada tarea sea accionable
 
-### 📌 Dia D-2 - Plan interno de entrega por dia
+### ?? Dia D-2 - Plan interno de entrega por dia
 
 Tecnologias del dia: delivery planning, control de avance.
 
@@ -122,7 +122,7 @@ Tecnologias del dia: delivery planning, control de avance.
 - [x] Agregar tecnologias por dia para aprendizaje dirigido
 - [x] Definir metodologia de trabajo 50/50 (Codex implementa / vos completas)
 
-### 📌 Dia D-1 - Plan interno de estudio y metodologia con IA
+### ?? Dia D-1 - Plan interno de estudio y metodologia con IA
 
 Tecnologias del dia: learning workflow, active recall, debugging practice.
 
@@ -138,7 +138,7 @@ Tecnologias del dia: learning workflow, active recall, debugging practice.
   - [x] armado de plan de estudio y arquitectura consultado con IA + tu experiencia
   - [x] priorizar comprension real y consistencia tecnica
 
-### 📌 Dia D0 - Setup de ejecucion del Dia 1 (inicio tecnico en Home)
+### ?? Dia D0 - Setup de ejecucion del Dia 1 (inicio tecnico en Home)
 
 Tecnologias del dia: React Router loaders/actions, TypeScript typing, services.
 
@@ -148,7 +148,7 @@ Tecnologias del dia: React Router loaders/actions, TypeScript typing, services.
   - [x] route como capa de orquestacion
 - [x] Corregir errores iniciales detectados (`flagsSummary`, tipos de environment)
 
-## 📅 Dia 1 - Lunes 16/02/2026
+## ?? Dia 1 - Lunes 16/02/2026
 
 Tecnologias del dia: React Router, TypeScript, Tailwind, flags service.
 Fuente roadmap: [P1.1 inicio (Crear Home)](./PRODUCT_ROADMAP.md#L86), [P1.1 panel actividad](./PRODUCT_ROADMAP.md#L91), [P1.1 quick actions](./PRODUCT_ROADMAP.md#L94).
@@ -167,7 +167,7 @@ Fuente roadmap: [P1.1 inicio (Crear Home)](./PRODUCT_ROADMAP.md#L86), [P1.1 pane
   - [x] Ir a board
   - [x] Ir a flags
 
-## 📅 Dia 2 - Martes 17/02/2026
+## ?? Dia 2 - Martes 17/02/2026
 
 Tecnologias del dia: shadcn/ui (Card, Badge, Button, Separator, Switch, Tooltip), Radix Toast.
 Fuente roadmap: [P1.1 kit visual Hub](./PRODUCT_ROADMAP.md#L98), [P1.1 dark mode](./PRODUCT_ROADMAP.md#L100), [P1.1 feature switches](./PRODUCT_ROADMAP.md#L105).
@@ -190,7 +190,7 @@ Fuente roadmap: [P1.1 kit visual Hub](./PRODUCT_ROADMAP.md#L98), [P1.1 dark mode
   - [x] Usar `Radix Toast` para feedback de toggle exitoso/error
   - [x] Respetar permisos: solo admins pueden cambiar flags
 
-## 📅 Dia 3 - Miercoles 18/02/2026
+## ?? Dia 3 - Miercoles 18/02/2026
 
 Tecnologias del dia: flags repository/service, SQLite/Drizzle, environment config.
 Fuente roadmap: [P1.1 bootstrap flags](./PRODUCT_ROADMAP.md#L111), [P1.1 behavior por environment](./PRODUCT_ROADMAP.md#L120).
@@ -210,29 +210,28 @@ Fuente roadmap: [P1.1 bootstrap flags](./PRODUCT_ROADMAP.md#L111), [P1.1 behavio
   - [x] `development`: defaults mas permissivos para probar features
   - [x] `production`: defaults conservadores para release gradual
 
-## 📅 Dia 4 - Jueves 19/02/2026
+## ?? Dia 4 - Jueves 19/02/2026
 
 Tecnologias del dia: UX definition, board behavior rules, Zod (query params minimos), React Router loaders.
 Fuente roadmap: [P1.2 direccion UX](./PRODUCT_ROADMAP.md#L134), [P1.2 comportamiento de orden](./PRODUCT_ROADMAP.md#L138), [P1.2 URL soporte de vista](./PRODUCT_ROADMAP.md#L142).
 
-- [ ] Definir direccion UX para `/tasks`
-  - [ ] Estilo visual elegido y consistente
-  - [ ] Prioridades de lectura claras en pantalla
-  - [ ] Copy de acciones coherente
-- [ ] Definir comportamiento de orden en board por columna
-  - [ ] Modo `manual` por defecto (orden libre con DnD vertical)
-  - [ ] Modo `prioridad` (`critical`, `high`, `medium`, `low`)
-  - [ ] Regla de actualizacion de prioridad desde interacciones del board
-- [ ] URL como soporte de estado de vista (minimo)
-  - [ ] Params: `view`, `order`
-  - [ ] Validacion con Zod + defaults seguros
-  - [ ] Persistencia de estado al navegar/recargar
-- [ ] Estados vacios y feedback de interaccion
-  - [ ] Estado vacio global
-  - [ ] Estado vacio por columna
-  - [ ] CTA clara para crear task o limpiar configuracion de vista
+- [x] Definir direccion UX para `/tasks`
+  - [x] Estilo visual elegido y consistente
+  - [x] Prioridades de lectura claras en pantalla
+  - [x] Copy de acciones coherente
+- [x] Definir comportamiento de orden en board por columna
+  - [x] Modo `manual` por defecto (orden libre con DnD vertical)
+  - [x] Modo `prioridad` (`critical`, `high`, `medium`, `low`)
+- [x] URL como soporte de estado de vista (minimo)
+  - [x] Params: `view`, `order`
+  - [x] Validacion con Zod + defaults seguros
+  - [x] Persistencia de estado al navegar/recargar
+- [x] Estados vacios y feedback de interaccion
+  - [x] Estado vacio global
+  - [x] Estado vacio por columna
+  - [x] CTA clara para crear task o limpiar configuracion de vista
 
-## 📅 Dia 5 - Viernes 20/02/2026
+## ?? Dia 5 - Viernes 20/02/2026
 
 Tecnologias del dia: DnD, shadcn/ui (Tabs/ToggleGroup/Card/Avatar/DropdownMenu), Radix AlertDialog.
 Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
@@ -249,10 +248,11 @@ Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
   - [ ] Panel lateral con acciones rapidas: cambiar `assignee`, `status` y `priority`
   - [ ] Mantener contexto al abrir detalle (filtros, vista y scroll)
   - [ ] Edicion rapida desde card
+  - [ ] Regla de actualizacion de prioridad desde interacciones del board
   - [ ] Usar `Radix AlertDialog` para acciones destructivas desde card
   - [ ] Responsive real (desktop/mobile)
 
-## 📅 Dia 6 - Sabado 21/02/2026
+## ?? Dia 6 - Sabado 21/02/2026
 
 Tecnologias del dia: DnD + TanStack Query (optimistic updates/rollback).
 Fuente roadmap: [P1.2 board base (DnD/optimistic)](./PRODUCT_ROADMAP.md#L147).
@@ -262,7 +262,7 @@ Fuente roadmap: [P1.2 board base (DnD/optimistic)](./PRODUCT_ROADMAP.md#L147).
   - [ ] Drag and drop vertical dentro de columna
   - [ ] Update optimista al mover cards (horizontal y vertical)
 
-## 📅 Dia 7 - Domingo 22/02/2026
+## ?? Dia 7 - Domingo 22/02/2026
 
 Tecnologias del dia: Drizzle/SQLite, Zod, React forms.
 Fuente roadmap: [P1.3 modelo asignacion](./PRODUCT_ROADMAP.md#L168), [P1.3 flujo asignacion](./PRODUCT_ROADMAP.md#L172).
@@ -276,7 +276,7 @@ Fuente roadmap: [P1.3 modelo asignacion](./PRODUCT_ROADMAP.md#L168), [P1.3 flujo
   - [ ] Reasignacion rapida desde board
   - [ ] Responsable visible en list y board
 
-## 📅 Dia 8 - Lunes 23/02/2026
+## ?? Dia 8 - Lunes 23/02/2026
 
 Tecnologias del dia: auth/roles, server actions, filtros por usuario.
 Fuente roadmap: [P1.3 vistas por usuario](./PRODUCT_ROADMAP.md#L176), [P1.3 permisos/reglas](./PRODUCT_ROADMAP.md#L180).
@@ -290,7 +290,7 @@ Fuente roadmap: [P1.3 vistas por usuario](./PRODUCT_ROADMAP.md#L176), [P1.3 perm
   - [ ] Validar permisos en server actions
   - [ ] Mensajes claros en acciones no permitidas
 
-## 📅 Dia 9 - Martes 24/02/2026
+## ?? Dia 9 - Martes 24/02/2026
 
 Tecnologias del dia: timeline UI, notifications UI, modelado de eventos.
 Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [P1.3 enriquecer task](./PRODUCT_ROADMAP.md#L188).
@@ -308,7 +308,7 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
   - [ ] adjuntos en comentarios (imagenes + archivos)
   - [ ] plantillas rapidas
 
-## 📅 Dia 10 - Miercoles 25/02/2026
+## ?? Dia 10 - Miercoles 25/02/2026
 
 Tecnologias del dia: shadcn/ui (Tabs/Card/Form/Input/Button), Zod forms, Zustand preferencias.
 Fuente roadmap: [P1.4 user panel](./PRODUCT_ROADMAP.md#L204), [P1.4 perfil/seguridad](./PRODUCT_ROADMAP.md#L208), [P1.4 preferencias](./PRODUCT_ROADMAP.md#L212), [P1.4 plan](./PRODUCT_ROADMAP.md#L216).
@@ -329,7 +329,7 @@ Fuente roadmap: [P1.4 user panel](./PRODUCT_ROADMAP.md#L204), [P1.4 perfil/segur
   - [ ] Mostrar plan actual y limites
   - [ ] CTA de upgrade
 
-## 📅 Dia 11 - Jueves 26/02/2026
+## ?? Dia 11 - Jueves 26/02/2026
 
 Tecnologias del dia: Radix Toast + shadcn styling, design tokens.
 Fuente roadmap: [P1.5 feedback](./PRODUCT_ROADMAP.md#L229), [P1.5 base visual](./PRODUCT_ROADMAP.md#L233).
@@ -344,7 +344,7 @@ Fuente roadmap: [P1.5 feedback](./PRODUCT_ROADMAP.md#L229), [P1.5 base visual](.
   - [ ] Jerarquia clara de bloques y acciones
   - [ ] Microinteracciones y estados de carga prolijos
 
-## 📅 Dia 12 - Viernes 27/02/2026
+## ?? Dia 12 - Viernes 27/02/2026
 
 Tecnologias del dia: TanStack Query + Zustand.
 Fuente roadmap: [P2.1 TanStack Query + Zustand](./PRODUCT_ROADMAP.md#L249).
@@ -357,7 +357,7 @@ Fuente roadmap: [P2.1 TanStack Query + Zustand](./PRODUCT_ROADMAP.md#L249).
 - [ ] Cola local de acciones pendientes con reintento manual
 - [ ] Sincronia URL <-> store <-> query keys
 
-## 📅 Dia 13 - Sabado 28/02/2026
+## ?? Dia 13 - Sabado 28/02/2026
 
 Tecnologias del dia: Vitest, Testing Library, Playwright.
 Fuente roadmap: [P2.2 minimo calidad tecnica](./PRODUCT_ROADMAP.md#L266).
@@ -370,7 +370,7 @@ Fuente roadmap: [P2.2 minimo calidad tecnica](./PRODUCT_ROADMAP.md#L266).
   - [ ] `login -> create task -> assign -> mover board -> cerrar`
   - [ ] `create flag -> toggle`
 
-## 📅 Dia 14 - Domingo 01/03/2026
+## ?? Dia 14 - Domingo 01/03/2026
 
 Tecnologias del dia: documentacion operativa, Stripe, Slack API, Gemini API, GitHub Actions.
 Fuente roadmap: [P2.3 documentacion](./PRODUCT_ROADMAP.md#L282), [P3.1 stripe](./PRODUCT_ROADMAP.md#L296), [P3.2 slack](./PRODUCT_ROADMAP.md#L310), [P3.3 gemini](./PRODUCT_ROADMAP.md#L323), [P3.4 github actions](./PRODUCT_ROADMAP.md#L336).
@@ -396,7 +396,7 @@ Fuente roadmap: [P2.3 documentacion](./PRODUCT_ROADMAP.md#L282), [P3.1 stripe](.
 - [ ] Branch protection con checks obligatorios
 - [ ] Documentacion de CI/CD en README
 
-## 📝 Template de nota diaria (copiar/pegar)
+## ?? Template de nota diaria (copiar/pegar)
 
 Dia X - Fecha
 
@@ -406,5 +406,7 @@ Dia X - Fecha
 - Bloqueado:
 - Riesgo:
 - Primer tarea de manana:
+
+
 
 

@@ -141,10 +141,9 @@ Tecnologias a usar: Zod (query params) + React Router + DnD + shadcn/ui + Radix 
   - [ ] Estilo visual elegido y consistente
   - [ ] Prioridades de lectura claras en pantalla
   - [ ] Copy de acciones coherente
-- [ ] Definir comportamiento de orden en board por columna
-  - [ ] Modo `manual` por defecto (orden libre con DnD vertical)
-  - [ ] Modo `prioridad` (ordenado por `critical`, `high`, `medium`, `low`)
-  - [ ] Regla de actualizacion de prioridad desde interacciones del board
+- [x] Definir comportamiento de orden en board por columna
+  - [x] Modo `manual` por defecto (orden libre con DnD vertical)
+  - [x] Modo `prioridad` (ordenado por `critical`, `high`, `medium`, `low`)
 - [ ] URL como soporte de estado de vista (no foco principal)
   - [ ] Params minimos: `view`, `order`
   - [ ] Validacion con Zod + defaults seguros
@@ -168,6 +167,7 @@ Tecnologias a usar: Zod (query params) + React Router + DnD + shadcn/ui + Radix 
   - [ ] Panel lateral con acciones rapidas: cambiar `assignee`, `status` y `priority`
   - [ ] Mantener contexto al abrir detalle (filtros, vista y scroll)
   - [ ] Edicion rapida desde card
+  - [ ] Regla de actualizacion de prioridad desde interacciones del board
   - [ ] Usar `Radix AlertDialog` para acciones destructivas desde card
   - [ ] Responsive real (desktop/mobile)
 
