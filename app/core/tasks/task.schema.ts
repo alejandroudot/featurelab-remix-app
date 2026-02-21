@@ -28,6 +28,13 @@ export const taskUpdateSchema = z.object({
   ),
   status: z.enum(['todo', 'in-progress', 'qa', 'ready-to-go-live']).optional(),
   priority: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+  assigneeId: z
+    .preprocess((value) => {
+      if (typeof value !== 'string') return undefined;
+      const parsed = value.trim();
+      return parsed.length > 0 ? parsed : null;
+    }, z.string().min(1).nullable())
+    .optional(),
 });
 
 // Payload de delete: solo id.

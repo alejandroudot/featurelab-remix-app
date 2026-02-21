@@ -4,6 +4,7 @@ import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core
 export const tasks = sqliteTable('tasks', {
   id: text('id').primaryKey(),
 	userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  assigneeId: text("assignee_id").references(() => users.id, { onDelete: "set null" }),
   title: text('title').notNull(),
   description: text('description'),
   status: text('status', { enum: ['todo', 'in-progress', 'qa', 'ready-to-go-live'] })

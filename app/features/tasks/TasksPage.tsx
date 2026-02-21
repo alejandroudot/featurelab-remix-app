@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useSearchParams, useSubmit } from 'react-router';
+import { useLocation, useSearchParams, useSubmit } from 'react-router';
 import type { TaskActionData } from './types';
 import { CreateTaskForm } from './components/CreateTaskForm';
 import { TasksList } from './components/TasksList';
@@ -9,21 +9,25 @@ import { TasksBoardView } from './components/TasksBoardView';
 import { TaskDetailModal } from './components/TaskDetailModal';
 import type { Task } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from './server/task-view-state';
+import type { TaskAssigneeOption } from './types';
 
 export function TasksPage({
   tasks,
+  assignableUsers,
   viewState,
   actionData,
   isSubmitting,
   betaTasksUI,
 }: {
   tasks: Task[];
+  assignableUsers: TaskAssigneeOption[];
   viewState: TasksViewState;
   actionData: TaskActionData;
   isSubmitting: boolean;
   betaTasksUI: boolean;
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const submit = useSubmit();
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -57,12 +61,11 @@ export function TasksPage({
   }
 
   function handleDeleteTask(taskId: string) {
-    if (!confirm('Eliminar esta task?')) return;
-
     submit(
       {
         intent: 'delete',
         id: taskId,
+        redirectTo: `${location.pathname}${location.search}`,
       },
       {
         method: 'post',
@@ -75,6 +78,11 @@ export function TasksPage({
   const selectedTask = useMemo(
     () => tasks.find((task) => task.id === selectedTaskId) ?? null,
     [tasks, selectedTaskId],
+  );
+  const assigneeById = useMemo(
+    () =>
+      Object.fromEntries(assignableUsers.map((user) => [user.id, user.email])) as Record<string, string>,
+    [assignableUsers],
   );
 
   return (
@@ -107,11 +115,12 @@ export function TasksPage({
           onResetViewConfig={resetViewConfig}
         />
       ) : viewState.view === 'list' ? (
-        <TasksList tasks={tasks} />
+        <TasksList tasks={tasks} assigneeById={assigneeById} />
       ) : (
         <TasksBoardView
           tasks={tasks}
           order={viewState.order}
+          assigneeById={assigneeById}
           onOpenTask={handleOpenTask}
           onEditTask={handleEditTask}
           onDeleteTask={handleDeleteTask}
@@ -120,6 +129,7 @@ export function TasksPage({
 
       <TaskDetailModal
         task={selectedTask}
+        assignableUsers={assignableUsers}
         open={isDetailOpen}
         onOpenChange={setIsDetailOpen}
       />

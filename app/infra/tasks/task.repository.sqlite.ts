@@ -46,6 +46,7 @@ export const sqliteTaskService: TaskService = {
       .set({
         ...(input.status ? { status: input.status } : {}),
         ...(input.priority ? { priority: input.priority } : {}),
+        ...(input.assigneeId !== undefined ? { assigneeId: input.assigneeId } : {}),
         updatedAt: new Date(),
       })
       .where(and(eq(tasks.id, input.id), eq(tasks.userId, input.userId)))
@@ -60,4 +61,3 @@ export const sqliteTaskService: TaskService = {
       .run();
   },
 };
-

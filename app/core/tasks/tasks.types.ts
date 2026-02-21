@@ -8,6 +8,7 @@ export type Task = {
   description?: string | null;
   status: TaskStatus;
   priority: TaskPriority;
+  assigneeId?: string | null;
   createdAt: Date;
   updatedAt: Date;
 };

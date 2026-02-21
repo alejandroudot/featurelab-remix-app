@@ -8,10 +8,18 @@ import { flagService } from '~/infra/flags/flags.repository';
 import { getFlagDebugOverrideFromUrl } from '~/infra/flags/flag-debug';
 import { runTaskAction } from '~/features/tasks/server/task.action';
 import { parseTasksViewStateFromUrl } from '~/features/tasks/server/task-view-state';
+import { db } from '~/infra/db/client.sqlite';
+import { users } from '~/infra/db/schema';
+import { asc } from 'drizzle-orm';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
   const tasks = await taskService.listByUser(user.id);
+  const assignableUsers = await db
+    .select({ id: users.id, email: users.email })
+    .from(users)
+    .orderBy(asc(users.email))
+    .all();
   const environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
   const isDevelopment = process.env.NODE_ENV !== 'production';
   const url = new URL(request.url);
@@ -30,6 +38,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   return {
     tasks,
+    assignableUsers,
     viewState,
     betaTasksUI: betaTasksUIResolution.enabled,
   };
@@ -48,7 +57,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function TasksRoute() {
-  const { tasks, viewState, betaTasksUI } =
+  const { tasks, assignableUsers, viewState, betaTasksUI } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<TaskActionData>();
   const navigation = useNavigation();
@@ -57,6 +66,7 @@ export default function TasksRoute() {
   return (
     <TasksPage
       tasks={tasks}
+      assignableUsers={assignableUsers}
       viewState={viewState}
       actionData={actionData}
       isSubmitting={isSubmitting}

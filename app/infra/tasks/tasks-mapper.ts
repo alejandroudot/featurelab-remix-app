@@ -7,6 +7,7 @@ export function mapTasksRow(row: any): Task {
     description: row.description ?? undefined,
     status: row.status as Task['status'],
     priority: row.priority as Task['priority'],
+    assigneeId: row.assigneeId ?? null,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };

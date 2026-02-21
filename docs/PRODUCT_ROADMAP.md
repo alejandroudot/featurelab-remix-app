@@ -137,21 +137,21 @@ Criterio de cierre:
 
 Tecnologias a usar: Zod (query params) + React Router + DnD + shadcn/ui + Radix (dialog/tooltip).
 
-- [ ] Definir direccion UX para `/tasks` (acordada antes de codear)
-  - [ ] Estilo visual elegido y consistente
-  - [ ] Prioridades de lectura claras en pantalla
-  - [ ] Copy de acciones coherente
+- [x] Definir direccion UX para `/tasks` (acordada antes de codear)
+  - [x] Estilo visual elegido y consistente
+  - [x] Prioridades de lectura claras en pantalla
+  - [x] Copy de acciones coherente
 - [x] Definir comportamiento de orden en board por columna
   - [x] Modo `manual` por defecto (orden libre con DnD vertical)
   - [x] Modo `prioridad` (ordenado por `critical`, `high`, `medium`, `low`)
-- [ ] URL como soporte de estado de vista (no foco principal)
-  - [ ] Params minimos: `view`, `order`
-  - [ ] Validacion con Zod + defaults seguros
-  - [ ] Persistencia de estado al navegar/recargar
-- [ ] Estados vacios y feedback de interaccion
-  - [ ] Estado vacio global
-  - [ ] Estado vacio por columna
-  - [ ] CTA clara para crear task o limpiar configuracion de vista
+- [x] URL como soporte de estado de vista (no foco principal)
+  - [x] Params minimos: `view`, `order`
+  - [x] Validacion con Zod + defaults seguros
+  - [x] Persistencia de estado al navegar/recargar
+- [x] Estados vacios y feedback de interaccion
+  - [x] Estado vacio global
+  - [x] Estado vacio por columna
+  - [x] CTA clara para crear task o limpiar configuracion de vista
 - [ ] Vista Board tipo Jira en `/tasks`
   - [x] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
   - [x] Crear task entra en `To Do` por defecto
@@ -160,16 +160,16 @@ Tecnologias a usar: Zod (query params) + React Router + DnD + shadcn/ui + Radix 
   - [ ] Drag and drop entre columnas
   - [ ] Drag and drop vertical dentro de columna
   - [ ] Update optimista al mover cards (horizontal y vertical)
-  - [ ] Card de task con prioridad, labels, responsable, metadata minima
-  - [ ] Card construida con `shadcn/ui` (`Card`, `Badge`, `Avatar`, `DropdownMenu`)
-  - [ ] Abrir detalle de task al clickear card/fila (modal/sheet estilo Jira)
-  - [ ] Detalle con layout simple: contenido principal + comentarios abajo + panel lateral
-  - [ ] Panel lateral con acciones rapidas: cambiar `assignee`, `status` y `priority`
-  - [ ] Mantener contexto al abrir detalle (filtros, vista y scroll)
-  - [ ] Edicion rapida desde card
-  - [ ] Regla de actualizacion de prioridad desde interacciones del board
-  - [ ] Usar `Radix AlertDialog` para acciones destructivas desde card
-  - [ ] Responsive real (desktop/mobile)
+  - [x] Card de task con prioridad, labels, responsable, metadata minima
+  - [x] Card construida con `shadcn/ui` (`Card`, `Badge`, `Avatar`, `DropdownMenu`)
+  - [x] Abrir detalle de task al clickear card/fila (modal/sheet estilo Jira)
+  - [x] Detalle con layout simple: contenido principal + comentarios abajo + panel lateral
+  - [x] Panel lateral con acciones rapidas: cambiar `assignee`, `status` y `priority`
+  - [x] Mantener contexto al abrir detalle (filtros, vista y scroll)
+  - [x] Edicion rapida desde modal de detalle (sin inline edit en card)
+  - [x] Regla de actualizacion de prioridad desde interacciones del board
+  - [x] Usar `Radix AlertDialog` para acciones destructivas desde card
+  - [x] Responsive real (desktop/mobile)
 
 Criterio de cierre:
 
@@ -181,13 +181,14 @@ Criterio de cierre:
 Tecnologias a usar: Drizzle/SQLite + React Router + Zod + Zustand + TanStack Query.
 
 - [ ] Modelo de asignacion
-  - [ ] Agregar `assigneeId` (nullable)
-  - [ ] Soportar `Unassigned`
-  - [ ] Ajustar schemas create/update
+  - [x] Agregar `assigneeId` (nullable)
+  - [x] Soportar `Unassigned`
+  - [x] Ajustar schemas create/update
 - [ ] Flujo de asignacion/reasignacion
   - [ ] Selector de responsable en create/edit
   - [ ] Reasignacion rapida desde board
-  - [ ] Responsable visible en list y board
+  - [x] Reasignacion rapida desde detalle de task (panel lateral)
+  - [x] Responsable visible en list y board
 - [ ] Vistas de trabajo por usuario
   - [ ] `Asignadas a mi`
   - [ ] `Creadas por mi`

@@ -21,17 +21,21 @@ Enfoque principal: `Tasks` colaborativas + `Feature Flags` para lanzar con contr
 - ✅ Autenticacion con sesiones y control por rol (`user`, `admin`).
 - ✅ Gestion de tasks base:
   - create/update/delete
-  - vista lista actual
+  - vista lista + board base
+  - detalle en modal con edicion rapida (`status`, `priority`, `assignee`)
+  - orden de vista (`manual`/`priority`) y estado persistido en URL (`view`, `order`)
+  - acciones destructivas con confirmacion (`AlertDialog`)
+  - responsable visible en list y board
 - ✅ Gestion de feature flags:
   - create/toggle/delete/update rollout
   - panel de `Feature Switches` en Execution Hub (admin)
 - ✅ Home (`Execution Hub`) con metricas, actividad y quick actions.
 - 🟡 Gestion de tasks evolucionada:
-  - vista board-first estilo Jira/Trello
-  - columnas fijas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
-  - orden por columna: `manual` (default) o `prioridad`
-  - drag and drop horizontal (cambio de estado) y vertical (reorden/prioridad)
-  - asignaciones, comentarios, checklist, labels, due dates
+  - drag and drop horizontal (cambio de estado) y vertical (reorden manual)
+  - update optimista al mover cards
+  - selector de responsable en create/edit
+  - vistas de trabajo por usuario (`Asignadas a mi`, `Creadas por mi`, `Todas`)
+  - comentarios, checklist, labels, due dates
   - historial de cambios y notificaciones in-app
 - 🟡 Preferencias de usuario:
   - densidad, vista por defecto, tema (`light`/`dark`/`system`)

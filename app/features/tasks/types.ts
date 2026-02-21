@@ -2,13 +2,14 @@ import type { TaskService } from '~/core/tasks/tasks.port';
 
 export type TaskStatus = 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live';
 export type TaskPriority = 'low' | 'medium' | 'high' | 'critical';
+export type TaskAssigneeOption = { id: string; email: string };
 
 export type TaskActionData =
 	| {
 		success: false;
 		formError?: string;
 		fieldErrors?: Record<string, string[] | undefined>;
-		values?: { title?: string; description?: string; id?: string; status?: string; priority?: string }
+		values?: { title?: string; description?: string; id?: string; status?: string; priority?: string; assigneeId?: string }
 	}
 	| undefined;
 

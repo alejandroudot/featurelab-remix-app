@@ -1,7 +1,7 @@
 import { Form } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
 
-export function TasksList({ tasks }: { tasks: Task[] }) {
+export function TasksList({ tasks, assigneeById }: { tasks: Task[]; assigneeById: Record<string, string> }) {
   return (
     <section className="space-y-2">
       <h2 className="text-lg font-semibold">Listado</h2>
@@ -12,6 +12,9 @@ export function TasksList({ tasks }: { tasks: Task[] }) {
             {task.description ? <p className="text-sm opacity-80">{task.description}</p> : null}
             <div className="text-xs opacity-60 mt-1">
               {task.status} - {task.priority}
+            </div>
+            <div className="text-xs opacity-70 mt-1">
+              Responsible: {task.assigneeId ? assigneeById[task.assigneeId] ?? 'Unknown user' : 'Unassigned'}
             </div>
             <Form method="post" className="flex items-center gap-2 mt-2">
               <input type="hidden" name="intent" value="update" />

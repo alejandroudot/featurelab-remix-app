@@ -236,21 +236,28 @@ Fuente roadmap: [P1.2 direccion UX](./PRODUCT_ROADMAP.md#L134), [P1.2 comportami
 Tecnologias del dia: DnD, shadcn/ui (Tabs/ToggleGroup/Card/Avatar/DropdownMenu), Radix AlertDialog.
 Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
 
-- [ ] Vista Board tipo Jira en `/tasks`
+- [x] Vista Board tipo Jira en `/tasks`
   - [x] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
   - [x] Crear task entra en `To Do` por defecto
   - [x] Toggle `List` / `Board`
   - [x] Toggle de vista con `shadcn/ui` (`Tabs` o `ToggleGroup`)
-  - [ ] Card de task con prioridad, labels, responsable, metadata minima
-  - [ ] Card construida con `shadcn/ui` (`Card`, `Badge`, `Avatar`, `DropdownMenu`)
-  - [ ] Abrir detalle de task al clickear card/fila (modal/sheet estilo Jira)
-  - [ ] Detalle con layout simple: contenido principal + comentarios abajo + panel lateral
-  - [ ] Panel lateral con acciones rapidas: cambiar `assignee`, `status` y `priority`
-  - [ ] Mantener contexto al abrir detalle (filtros, vista y scroll)
-  - [ ] Edicion rapida desde card
-  - [ ] Regla de actualizacion de prioridad desde interacciones del board
-  - [ ] Usar `Radix AlertDialog` para acciones destructivas desde card
-  - [ ] Responsive real (desktop/mobile)
+  - [x] Card de task con prioridad, labels, responsable, metadata minima
+  - [x] Card construida con `shadcn/ui` (`Card`, `Badge`, `Avatar`, `DropdownMenu`)
+  - [x] Abrir detalle de task al clickear card/fila (modal/sheet estilo Jira)
+  - [x] Detalle con layout simple: contenido principal + comentarios abajo + panel lateral
+  - [x] Panel lateral con acciones rapidas: cambiar `status` y `priority`
+  - [x] Panel lateral con accion rapida de `assignee`
+  - [x] Mantener contexto al abrir detalle (filtros, vista y scroll)
+  - [x] Edicion rapida desde modal de detalle (sin edicion inline en card)
+  - [x] Regla de actualizacion de prioridad desde interacciones del board
+    - [x] DnD entre columnas cambia `status`
+    - [x] DnD vertical en modo `manual` solo cambia orden visual/manual
+    - [x] `priority` no cambia por DnD (ni horizontal ni vertical)
+    - [x] `priority` se edita solo desde modal de detalle
+    - [x] Vista `manual`: respeta orden de usuario aunque haya `low` arriba y `critical` abajo
+    - [x] Vista `prioridad`: ordena por `critical` > `high` > `medium` > `low`
+  - [x] Usar `Radix AlertDialog` para acciones destructivas desde card
+  - [x] Responsive real (desktop/mobile)
 
 ## ?? Dia 6 - Sabado 21/02/2026
 
@@ -268,13 +275,14 @@ Tecnologias del dia: Drizzle/SQLite, Zod, React forms.
 Fuente roadmap: [P1.3 modelo asignacion](./PRODUCT_ROADMAP.md#L168), [P1.3 flujo asignacion](./PRODUCT_ROADMAP.md#L172).
 
 - [ ] Modelo de asignacion
-  - [ ] Agregar `assigneeId` (nullable)
-  - [ ] Soportar `Unassigned`
-  - [ ] Ajustar schemas create/update
+  - [x] Agregar `assigneeId` (nullable)
+  - [x] Soportar `Unassigned`
+  - [x] Ajustar schemas create/update
 - [ ] Flujo de asignacion/reasignacion
   - [ ] Selector de responsable en create/edit
   - [ ] Reasignacion rapida desde board
-  - [ ] Responsable visible en list y board
+  - [x] Reasignacion rapida de `assignee` desde el panel lateral del detalle de task
+  - [x] Responsable visible en list y board
 
 ## ?? Dia 8 - Lunes 23/02/2026
 

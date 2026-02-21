@@ -43,6 +43,7 @@ export async function runTaskAction(input: RunTaskActionInput): Promise<TaskActi
       id: formData.get('id'),
       status: formData.get('status'),
       priority: formData.get('priority'),
+      assigneeId: formData.get('assigneeId'),
     });
 
     if (!parsed.success) return validationToActionData(parsed.error, formData);
@@ -53,9 +54,10 @@ export async function runTaskAction(input: RunTaskActionInput): Promise<TaskActi
         userId: input.userId,
         status: parsed.data.status,
         priority: parsed.data.priority,
+        assigneeId: parsed.data.assigneeId,
       });
 
-      return redirect('/tasks');
+      return redirect(getSafeRedirectTo(formData, '/tasks'));
     } catch (err) {
       return jsonTaskError({
         formError: toTaskFormError(err),
@@ -76,7 +78,7 @@ export async function runTaskAction(input: RunTaskActionInput): Promise<TaskActi
       userId: input.userId,
     });
 
-    return redirect('/tasks');
+    return redirect(getSafeRedirectTo(formData, '/tasks'));
   } catch (err) {
     return jsonTaskError({
       formError: toTaskFormError(err),

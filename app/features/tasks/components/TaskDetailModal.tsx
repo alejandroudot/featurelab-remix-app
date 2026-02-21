@@ -1,17 +1,24 @@
-import { useFetcher } from 'react-router';
+import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
+import type { TaskAssigneeOption } from '../types';
 import { Badge } from '~/ui/primitives/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '~/ui/primitives/dialog';
 
 type TaskDetailModalProps = {
   task: Task | null;
+  assignableUsers: TaskAssigneeOption[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export function TaskDetailModal({ task, open, onOpenChange }: TaskDetailModalProps) {
+export function TaskDetailModal({ task, assignableUsers, open, onOpenChange }: TaskDetailModalProps) {
   const fetcher = useFetcher();
+  const location = useLocation();
   const isSubmitting = fetcher.state === 'submitting';
+  const redirectTo = `${location.pathname}${location.search}`;
+  const assigneeLabel = task?.assigneeId
+    ? assignableUsers.find((user) => user.id === task.assigneeId)?.email ?? 'Assigned'
+    : 'Unassigned';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -41,11 +48,13 @@ export function TaskDetailModal({ task, open, onOpenChange }: TaskDetailModalPro
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="outline">{task.status}</Badge>
                   <Badge variant="secondary">{task.priority}</Badge>
+                  <Badge variant="ghost">{assigneeLabel}</Badge>
                 </div>
 
                 <fetcher.Form method="post" className="space-y-2">
                   <input type="hidden" name="intent" value="update" />
                   <input type="hidden" name="id" value={task.id} />
+                  <input type="hidden" name="redirectTo" value={redirectTo} />
 
                   <label className="block text-xs font-medium" htmlFor="detail-status">
                     Status
@@ -75,6 +84,23 @@ export function TaskDetailModal({ task, open, onOpenChange }: TaskDetailModalPro
                     <option value="medium">medium</option>
                     <option value="high">high</option>
                     <option value="critical">critical</option>
+                  </select>
+
+                  <label className="block text-xs font-medium" htmlFor="detail-assignee">
+                    Responsible
+                  </label>
+                  <select
+                    id="detail-assignee"
+                    name="assigneeId"
+                    defaultValue={task.assigneeId ?? ''}
+                    className="w-full rounded border px-2 py-1 text-sm"
+                  >
+                    <option value="">Unassigned</option>
+                    {assignableUsers.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.email}
+                      </option>
+                    ))}
                   </select>
 
                   <button

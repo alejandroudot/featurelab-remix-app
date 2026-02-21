@@ -8,6 +8,7 @@ export function getTaskFormValues(formData: FormData): NonNullable<TaskActionDat
     description: String(formData.get('description') ?? ''),
     status: String(formData.get('status') ?? ''),
     priority: String(formData.get('priority') ?? ''),
+    assigneeId: String(formData.get('assigneeId') ?? ''),
   };
 }
 
