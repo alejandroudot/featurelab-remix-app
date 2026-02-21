@@ -6,13 +6,12 @@ export type HomePageProps = {
   stats: {
     total: number;
     open: number;
-    done: number;
+    ready: number;
     byStatus: {
       todo: number;
       inProgress: number;
       qa: number;
       readyToGoLive: number;
-      done: number;
     };
   };
   recentActivity: Array<{

@@ -20,7 +20,8 @@ export function TasksList({ tasks }: { tasks: Task[] }) {
               <select name="status" defaultValue={task.status} className="border rounded px-2 py-1">
                 <option value="todo">todo</option>
                 <option value="in-progress">in-progress</option>
-                <option value="done">done</option>
+                <option value="qa">qa</option>
+                <option value="ready-to-go-live">ready-to-go-live</option>
               </select>
 
               <select name="priority" defaultValue={task.priority} className="border rounded px-2 py-1">

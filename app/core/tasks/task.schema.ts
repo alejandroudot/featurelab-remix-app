@@ -26,7 +26,7 @@ export const taskUpdateSchema = z.object({
     (value) => (typeof value === 'string' ? value.trim() : ''),
     z.string().min(1, 'ID requerido'),
   ),
-  status: z.enum(['todo', 'in-progress', 'done']).optional(),
+  status: z.enum(['todo', 'in-progress', 'qa', 'ready-to-go-live']).optional(),
   priority: z.enum(['low', 'medium', 'high', 'critical']).optional(),
 });
 

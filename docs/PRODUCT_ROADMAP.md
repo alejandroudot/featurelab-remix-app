@@ -153,10 +153,10 @@ Tecnologias a usar: Zod (query params) + React Router + DnD + shadcn/ui + Radix 
   - [ ] Estado vacio por columna
   - [ ] CTA clara para crear task o limpiar configuracion de vista
 - [ ] Vista Board tipo Jira en `/tasks`
-  - [ ] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
-  - [ ] Crear task entra en `To Do` por defecto
-  - [ ] Toggle `List` / `Board`
-  - [ ] Toggle de vista con `shadcn/ui` (`Tabs` o `ToggleGroup`)
+  - [x] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
+  - [x] Crear task entra en `To Do` por defecto
+  - [x] Toggle `List` / `Board`
+  - [x] Toggle de vista con `shadcn/ui` (`Tabs` o `ToggleGroup`)
   - [ ] Drag and drop entre columnas
   - [ ] Drag and drop vertical dentro de columna
   - [ ] Update optimista al mover cards (horizontal y vertical)

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const tasksViewSearchParamsSchema = z.object({
-  view: z.enum(['list', 'board']).default('list'),
+  view: z.enum(['list', 'board']).default('board'),
   order: z.enum(['manual', 'priority']).default('manual'),
 });
 
@@ -15,7 +15,7 @@ export function parseTasksViewStateFromUrl(url: URL): TasksViewState {
 
   if (!parsed.success) {
     return {
-      view: 'list',
+      view: 'board',
       order: 'manual',
     };
   }

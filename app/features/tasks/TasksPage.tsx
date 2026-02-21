@@ -40,12 +40,12 @@ export function TasksPage({
 
   function resetViewConfig() {
     const next = new URLSearchParams(searchParams);
-    next.set('view', 'list');
+    next.set('view', 'board');
     next.set('order', 'manual');
     setSearchParams(next);
   }
 
-  const hasNonDefaultViewState = viewState.view !== 'list' || viewState.order !== 'manual';
+  const hasNonDefaultViewState = viewState.view !== 'board' || viewState.order !== 'manual';
 
   return (
     <main className="container mx-auto space-y-6 p-4">

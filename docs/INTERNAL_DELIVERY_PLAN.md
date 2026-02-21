@@ -237,10 +237,10 @@ Tecnologias del dia: DnD, shadcn/ui (Tabs/ToggleGroup/Card/Avatar/DropdownMenu),
 Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
 
 - [ ] Vista Board tipo Jira en `/tasks`
-  - [ ] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
-  - [ ] Crear task entra en `To Do` por defecto
-  - [ ] Toggle `List` / `Board`
-  - [ ] Toggle de vista con `shadcn/ui` (`Tabs` o `ToggleGroup`)
+  - [x] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
+  - [x] Crear task entra en `To Do` por defecto
+  - [x] Toggle `List` / `Board`
+  - [x] Toggle de vista con `shadcn/ui` (`Tabs` o `ToggleGroup`)
   - [ ] Card de task con prioridad, labels, responsable, metadata minima
   - [ ] Card construida con `shadcn/ui` (`Card`, `Badge`, `Avatar`, `DropdownMenu`)
   - [ ] Abrir detalle de task al clickear card/fila (modal/sheet estilo Jira)

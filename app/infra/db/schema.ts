@@ -6,7 +6,7 @@ export const tasks = sqliteTable('tasks', {
 	userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   title: text('title').notNull(),
   description: text('description'),
-  status: text('status', { enum: ['todo', 'in-progress', 'done'] })
+  status: text('status', { enum: ['todo', 'in-progress', 'qa', 'ready-to-go-live'] })
     .notNull()
     .default('todo'),
   priority: text('priority', { enum: ['low', 'medium', 'high', 'critical'] })
