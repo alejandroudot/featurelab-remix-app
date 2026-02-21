@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import { useSearchParams, useSubmit } from 'react-router';
 import type { TaskActionData } from './types';
 import { CreateTaskForm } from './components/CreateTaskForm';
@@ -5,6 +6,7 @@ import { TasksList } from './components/TasksList';
 import { TasksViewControls } from './components/TasksViewControls';
 import { TasksEmptyState } from './components/TasksEmptyState';
 import { TasksBoardView } from './components/TasksBoardView';
+import { TaskDetailModal } from './components/TaskDetailModal';
 import type { Task } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from './server/task-view-state';
 
@@ -23,6 +25,8 @@ export function TasksPage({
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const submit = useSubmit();
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   function setView(view: 'list' | 'board') {
     const next = new URLSearchParams(searchParams);
@@ -43,8 +47,13 @@ export function TasksPage({
     setSearchParams(next);
   }
 
-  function handleEditTask(_taskId: string) {
-    setView('list');
+  function handleOpenTask(taskId: string) {
+    setSelectedTaskId(taskId);
+    setIsDetailOpen(true);
+  }
+
+  function handleEditTask(taskId: string) {
+    handleOpenTask(taskId);
   }
 
   function handleDeleteTask(taskId: string) {
@@ -62,6 +71,11 @@ export function TasksPage({
   }
 
   const hasNonDefaultViewState = viewState.view !== 'board' || viewState.order !== 'manual';
+	
+  const selectedTask = useMemo(
+    () => tasks.find((task) => task.id === selectedTaskId) ?? null,
+    [tasks, selectedTaskId],
+  );
 
   return (
     <main className="container mx-auto space-y-6 p-4">
@@ -98,10 +112,17 @@ export function TasksPage({
         <TasksBoardView
           tasks={tasks}
           order={viewState.order}
+          onOpenTask={handleOpenTask}
           onEditTask={handleEditTask}
           onDeleteTask={handleDeleteTask}
         />
       )}
+
+      <TaskDetailModal
+        task={selectedTask}
+        open={isDetailOpen}
+        onOpenChange={setIsDetailOpen}
+      />
     </main>
   );
 }

@@ -1,4 +1,4 @@
-import { Form } from 'react-router';
+import { useFetcher } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
 import { Badge } from '~/ui/primitives/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '~/ui/primitives/dialog';
@@ -7,10 +7,12 @@ type TaskDetailModalProps = {
   task: Task | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  isSubmitting: boolean;
 };
 
-export function TaskDetailModal({ task, open, onOpenChange, isSubmitting }: TaskDetailModalProps) {
+export function TaskDetailModal({ task, open, onOpenChange }: TaskDetailModalProps) {
+  const fetcher = useFetcher();
+  const isSubmitting = fetcher.state === 'submitting';
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="h-[80vh] w-full max-w-5xl p-0 sm:max-w-5xl">
@@ -41,7 +43,7 @@ export function TaskDetailModal({ task, open, onOpenChange, isSubmitting }: Task
                   <Badge variant="secondary">{task.priority}</Badge>
                 </div>
 
-                <Form method="post" className="space-y-2">
+                <fetcher.Form method="post" className="space-y-2">
                   <input type="hidden" name="intent" value="update" />
                   <input type="hidden" name="id" value={task.id} />
 
@@ -82,7 +84,7 @@ export function TaskDetailModal({ task, open, onOpenChange, isSubmitting }: Task
                   >
                     {isSubmitting ? 'Guardando...' : 'Guardar cambios'}
                   </button>
-                </Form>
+                </fetcher.Form>
               </aside>
             </div>
           </>
