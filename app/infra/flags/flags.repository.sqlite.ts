@@ -1,7 +1,7 @@
 import { desc, eq } from 'drizzle-orm';
-import type { FeatureFlagRepository, FlagCreateInput } from '../../core/flags/flags.port';
-import { DuplicateFeatureFlagError } from '~/core/flags/errors';
-import type { FeatureFlag, Environment } from '../../core/flags/flags.types';
+import type { FeatureFlagRepository, FlagCreateInput } from '../../core/flags/contracts/flags.port';
+import { DuplicateFeatureFlagError } from '~/core/flags/contracts/errors';
+import type { FeatureFlag, Environment } from '../../core/flags/contracts/flags.types';
 import { db } from '../db/client.sqlite';
 import { featureFlags } from '../db/schema';
 import { mapFlagRow } from './flags-mapper';

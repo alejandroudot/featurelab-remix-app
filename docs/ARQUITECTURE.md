@@ -23,9 +23,18 @@ Se usa un enfoque pragmatico de:
 - arquitectura por capas;
 - organizacion por feature;
 - puertos/adaptadores en dominio-infra.
+- principios SOLID aplicados de forma pragmatica.
 
 No se busca pureza academica extrema: se aplica Hexagonal/Clean de forma pragmatica,
 priorizando claridad operativa y velocidad de iteracion para un proyecto de estudio real.
+
+### 2.1 SOLID en este repo (practico, no dogmatico)
+
+- `S` (Single Responsibility): `routes` orquestan, `features/*/server/*` manejan casos de uso HTTP, `infra` persiste.
+- `O` (Open/Closed): actions con dispatch por intent (`intent -> handler`) para extender sin romper el flujo principal.
+- `L` (Liskov): implementaciones de servicios respetan contratos definidos en `core/*`.
+- `I` (Interface Segregation): separacion de puertos de lectura/escritura cuando aporta claridad (`Query`/`Command`).
+- `D` (Dependency Inversion): el dominio define puertos en `core`; `infra` provee adaptadores concretos.
 
 ## 3. 🗂️ Estructura del proyecto
 

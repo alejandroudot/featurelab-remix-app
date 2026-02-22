@@ -1,5 +1,5 @@
-import type { FlagService } from '~/core/flags/flags.service';
-import type { FeatureFlag } from '~/core/flags/flags.types';
+import type { FlagCommandService } from '~/core/flags/service/flags.service';
+import type { FeatureFlag } from '~/core/flags/contracts/flags.types';
 
 // View model para la UI, derivado del dominio.
 export type Flag = FeatureFlag;
@@ -22,5 +22,5 @@ export type FlagActionData =
 
 	export type RunFlagActionInput = {
 		formData: FormData;
-		flagService: FlagService;
+		flagCommandService: FlagCommandService;
 	};

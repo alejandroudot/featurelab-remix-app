@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { FlagActionData } from '../types';
 import { getCreateFlagFormValues } from './utils';
 
+// Convierte un ZodError al contrato de error que consume la UI de flags.
 export function validationToActionData(
   error: z.ZodError,
   formData?: FormData,
@@ -13,6 +14,7 @@ export function validationToActionData(
   };
 }
 
+// Normaliza errores desconocidos a un mensaje de formulario consistente.
 export function toFlagFormError(err: unknown): string {
   if (err instanceof Error) {
     return err.message;
@@ -20,6 +22,7 @@ export function toFlagFormError(err: unknown): string {
   return 'No se pudo crear la flag. Intenta nuevamente.';
 }
 
+// Construye la respuesta JSON de error con status HTTP explicito.
 export function jsonFlagsError(
   payload: Pick<NonNullable<FlagActionData>, 'formError' | 'fieldErrors' | 'values'>,
   status: number,

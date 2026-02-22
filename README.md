@@ -10,6 +10,7 @@ Se usa un enfoque pragmatico de:
 - arquitectura por capas;
 - organizacion por feature;
 - puertos/adaptadores en dominio-infra.
+- principios SOLID aplicados de forma practica.
 
 No se busca pureza academica extrema: se aplica Hexagonal/Clean de forma pragmatica,
 priorizando claridad operativa y velocidad de iteracion para un proyecto de estudio real.
@@ -81,6 +82,7 @@ Decisiones clave:
 - Separacion clara entre dominio, infraestructura y UI.
 - Feature flags integradas al flujo de producto.
 - Enfoque hexagonal/clean (simple): `core` define contratos y `infra` implementa.
+- SOLID pragmatico: SRP por capa/feature, DIP con puertos en `core` e implementaciones en `infra`.
 
 ## 🧰 Stack
 

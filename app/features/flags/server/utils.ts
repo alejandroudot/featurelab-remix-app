@@ -1,6 +1,7 @@
 import type { FlagActionData } from "../types";
-import { flagIntentSchema, type FlagIntentSchema } from "~/core/flags/flags.schema";
+import { flagIntentSchema, type FlagIntentSchema } from "~/core/flags/contracts/flags.schema";
 
+// Extrae valores del form de create para poder repintar la UI ante errores.
 export function getCreateFlagFormValues(formData: FormData) {
   return {
     key: String(formData.get('key') ?? ''),
@@ -10,6 +11,7 @@ export function getCreateFlagFormValues(formData: FormData) {
   };
 }
 
+// Valida el intent y devuelve error de contrato si llega un valor invalido.
 export function parseIntent(formData: FormData): FlagIntentSchema | FlagActionData {
 	const parsedIntent = flagIntentSchema.safeParse(formData.get('intent'));
 	if (!parsedIntent.success) {

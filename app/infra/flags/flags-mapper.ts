@@ -1,4 +1,4 @@
-import type { FeatureFlag } from '~/core/flags/flags.types';
+import type { FeatureFlag } from '~/core/flags/contracts/flags.types';
 
 function toBoolean(value: unknown) {
   return value === true || value === 1 || value === '1' || value === 'true';

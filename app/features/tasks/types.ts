@@ -1,4 +1,4 @@
-import type { TaskService } from '~/core/tasks/tasks.port';
+import type { TaskCommandService } from '~/core/tasks/tasks.port';
 
 export type TaskStatus = 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live';
 export type TaskPriority = 'low' | 'medium' | 'high' | 'critical';
@@ -18,5 +18,5 @@ export type TaskActionResult = Response | TaskActionData;
 export type RunTaskActionInput = {
 	formData: FormData;
 	userId: string;
-	taskService: TaskService;
+	taskCommandService: TaskCommandService;
 };

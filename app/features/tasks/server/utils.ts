@@ -1,6 +1,7 @@
 import { taskIntentSchema, type TaskIntentSchema } from '~/core/tasks/task.schema';
 import type { TaskActionData } from '../types';
 
+// Extrae valores del form para repintar inputs cuando hay errores de validacion.
 export function getTaskFormValues(formData: FormData): NonNullable<TaskActionData>['values'] {
   return {
     id: String(formData.get('id') ?? ''),
@@ -12,6 +13,7 @@ export function getTaskFormValues(formData: FormData): NonNullable<TaskActionDat
   };
 }
 
+// Valida el intent y retorna error de contrato si llega un valor invalido.
 export function parseIntent(formData: FormData): TaskIntentSchema | TaskActionData {
   const parsedIntent = taskIntentSchema.safeParse(formData.get('intent'));
   if (!parsedIntent.success) {
@@ -24,6 +26,7 @@ export function parseIntent(formData: FormData): TaskIntentSchema | TaskActionDa
   return parsedIntent.data;
 }
 
+// Sanitiza redirectTo para evitar redirecciones externas o paths invalidos.
 export function getSafeRedirectTo(formData: FormData, fallback = '/tasks'): string {
   const raw = String(formData.get('redirectTo') ?? '').trim();
   if (!raw) return fallback;

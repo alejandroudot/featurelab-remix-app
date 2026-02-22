@@ -1,9 +1,9 @@
 // doc : prepara datos del servidor para esa vista home en homepage.tsx (shape listo para render).
 // lógica server-side del loader de React Router 
 
-import type { FlagService } from '~/core/flags/flags.service';
-import { ensureProductFlagsSeeded } from '~/core/flags/flag-seed';
-import type { TaskService } from '~/core/tasks/tasks.port';
+import type { FlagCommandService, FlagQueryService } from '~/core/flags/service/flags.service';
+import { ensureProductFlagsSeeded } from '~/core/flags/service/flag-seed';
+import type { TaskQueryService } from '~/core/tasks/tasks.port';
 import type { HomePageProps } from '../types';
 
 type RunHomeLoaderInput = {
@@ -12,18 +12,22 @@ type RunHomeLoaderInput = {
     email: string;
     role: 'user' | 'admin';
   };
-  taskService: TaskService;
-  flagService: FlagService;
+  taskQueryService: TaskQueryService;
+  flagQueryService: FlagQueryService;
+  flagCommandService: FlagCommandService;
 };
 
 export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePageProps> {
-  const { user, taskService, flagService } = input;
-  await ensureProductFlagsSeeded(flagService);
+  const { user, taskQueryService, flagQueryService, flagCommandService } = input;
+  await ensureProductFlagsSeeded({
+    listAll: () => flagQueryService.listAll(),
+    create: (createInput) => flagCommandService.create(createInput),
+  });
 
   const environment: 'development' | 'production' =
     process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
-  const tasks = await taskService.listByUser(user.id);
+  const tasks = await taskQueryService.listByUser(user.id);
   const ready = tasks.filter((task) => task.status === 'ready-to-go-live').length;
   const open = tasks.length - ready;
 
@@ -42,7 +46,7 @@ export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePage
 
   const flagsSummary =
     user.role === 'admin'
-      ? await flagService.listAll().then((flags) => {
+      ? await flagQueryService.listAll().then((flags) => {
           const envFlags = flags;
           return {
             environment,

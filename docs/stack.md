@@ -1,5 +1,11 @@
 ## 🧩 Core Frontend / Fullstack
 
+### Principios de diseño aplicados
+
+- Hexagonal/Clean Architecture (pragmatica).
+- SOLID pragmatico (especial foco en SRP, ISP y DIP).
+- Organización por feature y capas para facilitar mantenimiento.
+
 ### React
 
 - **Docs:** [https://react.dev](https://react.dev)

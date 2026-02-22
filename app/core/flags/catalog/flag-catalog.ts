@@ -1,4 +1,4 @@
-import type { Environment, FeatureFlagType } from './flags.types';
+import type { Environment, FeatureFlagType } from '../contracts/flags.types';
 
 export type ProductFlagKey =
   | 'execution-hub-enabled'
