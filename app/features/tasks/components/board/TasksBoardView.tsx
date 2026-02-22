@@ -19,7 +19,7 @@ type TasksBoardViewProps = {
   onEditTask?: (taskId: string) => void;
   onDeleteTask?: (taskId: string) => void;
   onMoveTaskStatus?: (taskId: string, toStatus: TaskStatus, orderIndex?: number) => void;
-  onReorderColumn?: (status: TaskStatus, orderedTaskIds: string[]) => void;
+  onReorderColumn?: (status: BoardColumnId, orderedTaskIds: string[]) => void;
 };
 
 export function TasksBoardView({

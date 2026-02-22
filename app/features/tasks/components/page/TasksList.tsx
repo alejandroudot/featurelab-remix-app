@@ -25,6 +25,8 @@ export function TasksList({ tasks, assigneeById }: { tasks: Task[]; assigneeById
                 <option value="in-progress">in-progress</option>
                 <option value="qa">qa</option>
                 <option value="ready-to-go-live">ready-to-go-live</option>
+                <option value="done">done</option>
+                <option value="discarded">discarded</option>
               </select>
 
               <select name="priority" defaultValue={task.priority} className="border rounded px-2 py-1">

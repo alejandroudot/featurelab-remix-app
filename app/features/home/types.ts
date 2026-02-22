@@ -12,6 +12,8 @@ export type HomePageProps = {
       inProgress: number;
       qa: number;
       readyToGoLive: number;
+      done: number;
+      discarded: number;
     };
   };
   recentActivity: Array<{

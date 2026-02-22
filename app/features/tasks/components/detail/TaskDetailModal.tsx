@@ -69,6 +69,8 @@ export function TaskDetailModal({ task, assignableUsers, open, onOpenChange }: T
                     <option value="in-progress">in-progress</option>
                     <option value="qa">qa</option>
                     <option value="ready-to-go-live">ready-to-go-live</option>
+                    <option value="done">done</option>
+                    <option value="discarded">discarded</option>
                   </select>
 
                   <label className="block text-xs font-medium" htmlFor="detail-priority">

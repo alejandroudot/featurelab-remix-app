@@ -33,6 +33,8 @@ const STATUS_LABEL: Record<Task['status'], string> = {
   'in-progress': 'In Progress',
   qa: 'QA',
   'ready-to-go-live': 'Ready to Go Live',
+  done: 'Done',
+  discarded: 'Discarded',
 };
 
 function priorityBadgeVariant(priority: Task['priority']): 'secondary' | 'outline' | 'destructive' {

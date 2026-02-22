@@ -29,7 +29,10 @@ export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePage
 
   const tasks = await taskQueryService.listByUser(user.id);
   const ready = tasks.filter((task) => task.status === 'ready-to-go-live').length;
-  const open = tasks.length - ready;
+  const closed =
+    tasks.filter((task) => task.status === 'done').length +
+    tasks.filter((task) => task.status === 'discarded').length;
+  const open = tasks.length - closed;
 
   const byStatus = tasks.reduce(
     (acc, task) => {
@@ -38,10 +41,12 @@ export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePage
       if (rawStatus === 'in-progress') acc.inProgress += 1;
       if (rawStatus === 'qa') acc.qa += 1;
       if (rawStatus === 'ready-to-go-live') acc.readyToGoLive += 1;
+      if (rawStatus === 'done') acc.done += 1;
+      if (rawStatus === 'discarded') acc.discarded += 1;
       
       return acc;
     },
-    { todo: 0, inProgress: 0, qa: 0, readyToGoLive: 0 },
+    { todo: 0, inProgress: 0, qa: 0, readyToGoLive: 0, done: 0, discarded: 0 },
   );
 
   const flagsSummary =
@@ -68,7 +73,7 @@ export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePage
     .slice(0, 5)
     .map((task) => {
       const action: HomePageProps['recentActivity'][number]['action'] =
-        task.status === 'ready-to-go-live'
+        task.status === 'ready-to-go-live' || task.status === 'done' || task.status === 'discarded'
           ? 'ha cerrado'
           : task.updatedAt.getTime() === task.createdAt.getTime()
             ? 'ha creado'

@@ -1,6 +1,12 @@
 import type { TaskCommandService } from '~/core/tasks/tasks.port';
 
-export type TaskStatus = 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live';
+export type TaskStatus =
+	| 'todo'
+	| 'in-progress'
+	| 'qa'
+	| 'ready-to-go-live'
+	| 'done'
+	| 'discarded';
 export type TaskPriority = 'low' | 'medium' | 'high' | 'critical';
 export type TaskAssigneeOption = { id: string; email: string };
 

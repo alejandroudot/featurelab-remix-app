@@ -89,7 +89,10 @@ export function TasksPage({
     );
   }
 
-  function handleReorderColumn(status: TaskStatus, orderedTaskIds: string[]) {
+  function handleReorderColumn(
+    status: Extract<TaskStatus, 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live'>,
+    orderedTaskIds: string[],
+  ) {
     submit(
       {
         intent: 'reorder-column',

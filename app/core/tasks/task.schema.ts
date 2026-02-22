@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+const TASK_STATUS_VALUES = ['todo', 'in-progress', 'qa', 'ready-to-go-live', 'done', 'discarded'] as const;
+const BOARD_STATUS_VALUES = ['todo', 'in-progress', 'qa', 'ready-to-go-live'] as const;
+
 // Intent permitido en el endpoint POST /tasks.
 export const taskIntentSchema = z.enum(['create', 'update', 'delete', 'reorder-column']);
 
@@ -32,7 +35,7 @@ export const taskUpdateSchema = z.object({
       const parsed = value.trim();
       return parsed.length > 0 ? parsed : undefined;
     },
-    z.enum(['todo', 'in-progress', 'qa', 'ready-to-go-live']).optional(),
+    z.enum(TASK_STATUS_VALUES).optional(),
   ),
   priority: z.preprocess(
     (value) => {
@@ -61,7 +64,7 @@ export const taskUpdateSchema = z.object({
 });
 
 export const taskReorderColumnSchema = z.object({
-  status: z.enum(['todo', 'in-progress', 'qa', 'ready-to-go-live']),
+  status: z.enum(BOARD_STATUS_VALUES),
   orderedTaskIds: z.preprocess((value) => {
     if (typeof value !== 'string') return [];
     try {

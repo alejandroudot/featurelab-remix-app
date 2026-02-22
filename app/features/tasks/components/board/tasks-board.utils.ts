@@ -1,7 +1,7 @@
 import type { Task, TaskPriority, TaskStatus } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from '../../server/task-view-state';
 
-export type BoardColumnId = TaskStatus;
+export type BoardColumnId = Extract<TaskStatus, 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live'>;
 export type BoardState = Record<BoardColumnId, Task[]>;
 
 export type BoardColumn = {

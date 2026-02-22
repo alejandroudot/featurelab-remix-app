@@ -18,6 +18,8 @@ export function HomeStatsSection({ stats }: HomeStatsSectionProps) {
     { label: 'In Progress', value: stats.byStatus.inProgress },
     { label: 'QA', value: stats.byStatus.qa },
     { label: 'Ready to Go Live', value: stats.byStatus.readyToGoLive },
+    { label: 'Done', value: stats.byStatus.done },
+    { label: 'Discarded', value: stats.byStatus.discarded },
   ];
 
   return (
@@ -36,7 +38,7 @@ export function HomeStatsSection({ stats }: HomeStatsSectionProps) {
       <Card className="gap-3 py-4">
         <CardContent className="space-y-3 px-4">
           <h2 className="text-lg font-semibold">Status breakdown</h2>
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-6">
             {statusCards.map((card) => (
               <Card key={card.label} className="gap-2 py-3">
                 <CardContent className="px-3">
