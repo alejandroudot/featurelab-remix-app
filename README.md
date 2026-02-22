@@ -3,6 +3,17 @@
 Plataforma fullstack para planificar, ejecutar y monitorear trabajo de producto.
 Enfoque principal: `Tasks` colaborativas + `Feature Flags` para lanzar con control.
 
+## 🏗️ Arquitectura
+
+Se usa un enfoque pragmatico de:
+- base de Hexagonal / Clean Architecture;
+- arquitectura por capas;
+- organizacion por feature;
+- puertos/adaptadores en dominio-infra.
+
+No se busca pureza academica extrema: se aplica Hexagonal/Clean de forma pragmatica,
+priorizando claridad operativa y velocidad de iteracion para un proyecto de estudio real.
+
 ## ✨ Quick View
 
 - 🎯 `Tasks-first`: trabajo diario y colaborativo como eje del producto.
@@ -10,6 +21,15 @@ Enfoque principal: `Tasks` colaborativas + `Feature Flags` para lanzar con contr
 - 🚦 `Feature Flags`: control de release por entorno, toggles admin y rollout.
 - 👤 `User Panel`: perfil, seguridad, preferencias y plan.
 - 📈 Escalabilidad progresiva: estado cliente avanzado, integraciones y CI/CD.
+
+Patron general del repo:
+
+- `features/*` (UI de feature): interfaz especifica de dominio (`tasks`, `flags`, etc.), con paginas, formularios, listas/boards y componentes no compartidos.
+- `ui/*`: componentes base reutilizables (primitivos/patrones de interfaz).
+- `routes/*`: orquestacion HTTP request/response.
+- `features/*/server/*`: intents, validacion y manejo de errores de action.
+- `core/*`: contratos de dominio (schemas, ports, tipos).
+- `infra/*`: persistencia e integraciones externas.
 
 ## 🏷️ Estado
 
@@ -53,26 +73,6 @@ Enfoque principal: `Tasks` colaborativas + `Feature Flags` para lanzar con contr
 - `/account` o `/settings` `User Panel`
 - Billing dentro de User Panel (inicialmente)
 - Auth en `app/routes/auth/*`
-
-## 🏗️ Arquitectura
-
-Se usa un enfoque pragmatico de:
-- base de Hexagonal / Clean Architecture;
-- arquitectura por capas;
-- organizacion por feature;
-- puertos/adaptadores en dominio-infra.
-
-No se busca pureza academica extrema: se aplica Hexagonal/Clean de forma pragmatica,
-priorizando claridad operativa y velocidad de iteracion para un proyecto de estudio real.
-
-Patron general del repo:
-
-- `features/*` (UI de feature): interfaz especifica de dominio (`tasks`, `flags`, etc.), con paginas, formularios, listas/boards y componentes no compartidos.
-- `ui/*`: componentes base reutilizables (primitivos/patrones de interfaz).
-- `routes/*`: orquestacion HTTP request/response.
-- `features/*/server/*`: intents, validacion y manejo de errores de action.
-- `core/*`: contratos de dominio (schemas, ports, tipos).
-- `infra/*`: persistencia e integraciones externas.
 
 Decisiones clave:
 
