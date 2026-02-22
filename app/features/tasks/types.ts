@@ -9,7 +9,16 @@ export type TaskActionData =
 		success: false;
 		formError?: string;
 		fieldErrors?: Record<string, string[] | undefined>;
-		values?: { title?: string; description?: string; id?: string; status?: string; priority?: string; assigneeId?: string }
+		values?: {
+			title?: string;
+			description?: string;
+			id?: string;
+			status?: string;
+			priority?: string;
+			orderIndex?: string;
+			assigneeId?: string;
+			orderedTaskIds?: string;
+		}
 	}
 	| undefined;
 

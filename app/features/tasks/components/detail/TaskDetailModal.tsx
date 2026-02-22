@@ -1,6 +1,6 @@
 import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
-import type { TaskAssigneeOption } from '../types';
+import type { TaskAssigneeOption } from '../../types';
 import { Badge } from '~/ui/primitives/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '~/ui/primitives/dialog';
 

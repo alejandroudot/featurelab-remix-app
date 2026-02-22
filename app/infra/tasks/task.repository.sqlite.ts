@@ -39,6 +39,7 @@ export const sqliteTaskCommandService: TaskCommandService = {
         description: input.description ?? null,
         status: 'todo',
         priority: 'medium',
+        orderIndex: Date.now(),
         createdAt: new Date(),
         updatedAt: new Date(),
       })
@@ -54,6 +55,7 @@ export const sqliteTaskCommandService: TaskCommandService = {
       .set({
         ...(input.status ? { status: input.status } : {}),
         ...(input.priority ? { priority: input.priority } : {}),
+        ...(input.orderIndex !== undefined ? { orderIndex: input.orderIndex } : {}),
         ...(input.assigneeId !== undefined ? { assigneeId: input.assigneeId } : {}),
         updatedAt: new Date(),
       })
@@ -62,6 +64,26 @@ export const sqliteTaskCommandService: TaskCommandService = {
 
     if (!row) throw new Response('Task not found', { status: 404 });
     return mapTasksRow(row);
+  },
+
+  async reorderColumn(input: {
+    userId: string;
+    status: 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live';
+    orderedTaskIds: string[];
+  }): Promise<void> {
+    if (input.orderedTaskIds.length === 0) return;
+
+    const now = new Date();
+    input.orderedTaskIds.forEach((taskId, index) => {
+      db.update(tasks)
+        .set({
+          status: input.status,
+          orderIndex: index,
+          updatedAt: now,
+        })
+        .where(and(eq(tasks.id, taskId), eq(tasks.userId, input.userId)))
+        .run();
+    });
   },
 
   async remove(input: { id: string; userId: string }): Promise<void> {

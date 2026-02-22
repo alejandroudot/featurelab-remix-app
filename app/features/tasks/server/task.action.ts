@@ -4,6 +4,7 @@ import {
   taskCreateSchema,
   taskDeleteSchema,
   taskIntentSchema,
+  taskReorderColumnSchema,
   taskUpdateSchema,
 } from '~/core/tasks/task.schema';
 
@@ -42,6 +43,7 @@ const handleUpdate: TaskIntentHandler = async (input) => {
     id: formData.get('id'),
     status: formData.get('status'),
     priority: formData.get('priority'),
+    orderIndex: formData.get('orderIndex'),
     assigneeId: formData.get('assigneeId'),
   });
 
@@ -53,7 +55,34 @@ const handleUpdate: TaskIntentHandler = async (input) => {
       userId: input.userId,
       status: parsed.data.status,
       priority: parsed.data.priority,
+      orderIndex: parsed.data.orderIndex,
       assigneeId: parsed.data.assigneeId,
+    });
+
+    return redirect(getSafeRedirectTo(formData, '/tasks'));
+  } catch (err) {
+    return jsonTaskError({
+      formError: toTaskFormError(err),
+      values: getTaskFormValues(formData),
+    });
+  }
+};
+
+// Handler de reorder-column: persiste orden manual de una columna.
+const handleReorderColumn: TaskIntentHandler = async (input) => {
+  const { formData } = input;
+  const parsed = taskReorderColumnSchema.safeParse({
+    status: formData.get('status'),
+    orderedTaskIds: formData.get('orderedTaskIds'),
+  });
+
+  if (!parsed.success) return validationToActionData(parsed.error, formData);
+
+  try {
+    await input.taskCommandService.reorderColumn({
+      userId: input.userId,
+      status: parsed.data.status,
+      orderedTaskIds: parsed.data.orderedTaskIds,
     });
 
     return redirect(getSafeRedirectTo(formData, '/tasks'));
@@ -94,6 +123,7 @@ const intentHandlers: Record<Intent, TaskIntentHandler> = {
   create: handleCreate,
   update: handleUpdate,
   delete: handleDelete,
+  'reorder-column': handleReorderColumn,
 };
 
 // Orquestador principal: parsea intent y delega al handler correspondiente.

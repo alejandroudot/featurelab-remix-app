@@ -28,6 +28,7 @@ CREATE TABLE `tasks` (
 	`description` text,
 	`status` text DEFAULT 'todo' NOT NULL,
 	`priority` text DEFAULT 'medium' NOT NULL,
+	`order_index` integer DEFAULT 0 NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,

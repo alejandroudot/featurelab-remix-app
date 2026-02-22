@@ -41,6 +41,13 @@ function priorityBadgeVariant(priority: Task['priority']): 'secondary' | 'outlin
   return 'outline';
 }
 
+function formatDateUTC(date: Date): string {
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const year = String(date.getUTCFullYear());
+  return `${day}/${month}/${year}`;
+}
+
 export function TaskCard({
   task,
   assigneeLabel,
@@ -119,7 +126,7 @@ export function TaskCard({
               </Avatar>
               <span className="text-[11px] opacity-80">{assigneeLabel ?? 'Unassigned'}</span>
             </div>
-            <span className="text-[11px] opacity-70">Updated {task.updatedAt.toLocaleDateString()}</span>
+            <span className="text-[11px] opacity-70">Updated {formatDateUTC(task.updatedAt)}</span>
           </div>
         </CardContent>
       </Card>

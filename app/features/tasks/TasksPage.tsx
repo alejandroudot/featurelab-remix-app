@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useLocation, useSearchParams, useSubmit } from 'react-router';
 import type { TaskActionData } from './types';
-import { CreateTaskForm } from './components/CreateTaskForm';
-import { TasksList } from './components/TasksList';
-import { TasksViewControls } from './components/TasksViewControls';
-import { TasksEmptyState } from './components/TasksEmptyState';
-import { TasksBoardView } from './components/TasksBoardView';
-import { TaskDetailModal } from './components/TaskDetailModal';
-import type { Task } from '~/core/tasks/tasks.types';
+import { CreateTaskForm } from './components/page/CreateTaskForm';
+import { TasksList } from './components/page/TasksList';
+import { TasksViewControls } from './components/page/TasksViewControls';
+import { TasksEmptyState } from './components/page/TasksEmptyState';
+import { TasksBoardView } from './components/board/TasksBoardView';
+import { TaskDetailModal } from './components/detail/TaskDetailModal';
+import type { Task, TaskStatus } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from './server/task-view-state';
 import type { TaskAssigneeOption } from './types';
 
@@ -73,6 +73,37 @@ export function TasksPage({
     );
   }
 
+  function handleMoveTaskStatus(taskId: string, toStatus: TaskStatus, orderIndex?: number) {
+    submit(
+      {
+        intent: 'update',
+        id: taskId,
+        status: toStatus,
+        ...(orderIndex !== undefined ? { orderIndex: String(orderIndex) } : {}),
+        redirectTo: `${location.pathname}${location.search}`,
+      },
+      {
+        method: 'post',
+        action: '/tasks',
+      },
+    );
+  }
+
+  function handleReorderColumn(status: TaskStatus, orderedTaskIds: string[]) {
+    submit(
+      {
+        intent: 'reorder-column',
+        status,
+        orderedTaskIds: JSON.stringify(orderedTaskIds),
+        redirectTo: `${location.pathname}${location.search}`,
+      },
+      {
+        method: 'post',
+        action: '/tasks',
+      },
+    );
+  }
+
   const hasNonDefaultViewState = viewState.view !== 'board' || viewState.order !== 'manual';
 	
   const selectedTask = useMemo(
@@ -124,6 +155,8 @@ export function TasksPage({
           onOpenTask={handleOpenTask}
           onEditTask={handleEditTask}
           onDeleteTask={handleDeleteTask}
+          onMoveTaskStatus={handleMoveTaskStatus}
+          onReorderColumn={handleReorderColumn}
         />
       )}
 

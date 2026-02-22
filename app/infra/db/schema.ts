@@ -13,6 +13,7 @@ export const tasks = sqliteTable('tasks', {
   priority: text('priority', { enum: ['low', 'medium', 'high', 'critical'] })
     .notNull()
     .default('medium'),
+  orderIndex: integer('order_index').notNull().default(0),
   createdAt: integer("created_at", { mode: "timestamp_ms" })
   	.notNull()
   	.$defaultFn(() => new Date()),

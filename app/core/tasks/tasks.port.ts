@@ -14,6 +14,7 @@ export type TaskUpdateInput = {
   userId: string;
   status?: 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live';
   priority?: 'low' | 'medium' | 'high' | 'critical';
+  orderIndex?: number;
   assigneeId?: string | null;
 };
 
@@ -25,6 +26,11 @@ export interface TaskQueryService {
 export interface TaskCommandService {
   create(input: TaskCreateInput): Promise<Task>;
   update(input: TaskUpdateInput): Promise<Task>;
+  reorderColumn(input: {
+    userId: string;
+    status: 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live';
+    orderedTaskIds: string[];
+  }): Promise<void>;
   remove(input: { id: string; userId: string }): Promise<void>;
 }
 

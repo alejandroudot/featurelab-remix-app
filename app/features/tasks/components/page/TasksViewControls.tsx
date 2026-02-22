@@ -1,4 +1,4 @@
-import type { TasksViewState } from '../server/task-view-state';
+import type { TasksViewState } from '../../server/task-view-state';
 import { ToggleGroup, ToggleGroupItem } from '~/ui/primitives/toggle-group';
 
 type TasksViewControlsProps = {

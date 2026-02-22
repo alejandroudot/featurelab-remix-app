@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "775d8a69-091f-4fd2-91e2-0aed9b87e2f5",
+  "id": "08befccb-4e54-4f5a-b309-76ef83938d1e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "feature_flags": {
@@ -200,6 +200,14 @@
           "notNull": true,
           "autoincrement": false,
           "default": "'medium'"
+        },
+        "order_index": {
+          "name": "order_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "created_at": {
           "name": "created_at",

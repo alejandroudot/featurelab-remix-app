@@ -7,6 +7,16 @@ type HomeActivitySectionProps = {
   recentActivity: HomePageProps['recentActivity'];
 };
 
+function formatDateTimeUTC(input: Date): string {
+  const day = String(input.getUTCDate()).padStart(2, '0');
+  const month = String(input.getUTCMonth() + 1).padStart(2, '0');
+  const year = String(input.getUTCFullYear());
+  const hours = String(input.getUTCHours()).padStart(2, '0');
+  const minutes = String(input.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(input.getUTCSeconds()).padStart(2, '0');
+  return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds} UTC`;
+}
+
 export function HomeActivitySection({ recentActivity }: HomeActivitySectionProps) {
   return (
     <Card className="py-4 gap-3 lg:col-span-2">
@@ -35,7 +45,7 @@ export function HomeActivitySection({ recentActivity }: HomeActivitySectionProps
                 {item.actor} {item.action} esta task
               </div>
               <div className="text-[11px] opacity-60 mt-1">
-                {new Date(item.timestamp).toLocaleString()}
+                {formatDateTimeUTC(new Date(item.timestamp))}
               </div>
                 </CardContent>
               </Card>
