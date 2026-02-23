@@ -8,7 +8,8 @@ import {
   moveTaskInBoard,
   type BoardColumnId,
   type BoardState,
-} from './tasks-board.utils';
+} from './utils';
+
 type DraggingState = { taskId: string; fromColumn: BoardColumnId } | null;
 
 type TasksBoardViewProps = {
@@ -49,6 +50,7 @@ export function TasksBoardView({
     if (!dragging) return;
 
     const isCrossColumnMove = dragging.fromColumn !== toColumn;
+		//Obtiene el nuevo board con las cards re ordenadas
     const nextBoard = moveTaskInBoard({
       board: boardState,
       order,
@@ -60,13 +62,17 @@ export function TasksBoardView({
 
     setBoardState(nextBoard);
 
+    // Manual: persiste exactamente el orden que deja el usuario.
     if (order === 'manual') {
       if (isCrossColumnMove) {
+        // Cambio de columna: guardar status nuevo + posicion final.
         const movedIndex = nextBoard[toColumn].findIndex((task) => task.id === dragging.taskId);
         onMoveTaskStatus?.(dragging.taskId, toColumn, movedIndex >= 0 ? movedIndex : undefined);
       } else {
+        // Misma columna: guardar solo el reorder de ids.
         onReorderColumn?.(toColumn, nextBoard[toColumn].map((task) => task.id));
       }
+    // Priority: el orden se calcula por prioridad, solo persiste cambio de columna.
     } else if (isCrossColumnMove) {
       onMoveTaskStatus?.(dragging.taskId, toColumn);
     }

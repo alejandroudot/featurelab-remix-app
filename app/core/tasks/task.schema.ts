@@ -63,6 +63,8 @@ export const taskUpdateSchema = z.object({
     }, z.string().min(1).nullable().optional()),
 });
 
+// Reordena una columna del board: recibe el status de la columna y un JSON string
+// con el array de ids en el orden final que queda despues del drag and drop.
 export const taskReorderColumnSchema = z.object({
   status: z.enum(BOARD_STATUS_VALUES),
   orderedTaskIds: z.preprocess((value) => {

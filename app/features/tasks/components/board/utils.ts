@@ -43,6 +43,9 @@ export function buildBoardState(tasks: Task[], order: TasksViewState['order']): 
   };
 }
 
+// Clamp asegura que un numero quede dentro de un rango [min, max].
+// En el board lo usamos para que el indice de insercion del drag-and-drop
+// nunca se salga de los limites de la lista (evita indices negativos o mayores al largo).
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(value, max));
 }
@@ -58,18 +61,22 @@ export function moveTaskInBoard(input: {
   const { board, order, taskId, fromColumn, toColumn, toIndex } = input;
   const sourceTasks = [...board[fromColumn]];
   const sourceIndex = sourceTasks.findIndex((task) => task.id === taskId);
+	// Si no existe la task devuelve sin cambios
   if (sourceIndex === -1) return board;
 
   const [movedTask] = sourceTasks.splice(sourceIndex, 1);
 
+	// Aca actua si estamos moviendo en la misma columna (orden manual)
   if (fromColumn === toColumn) {
     if (order === 'priority') return board;
 
+    // Calcula un indice valido y vuelve a insertar la task movida en esa posicion.
     const insertIndex = clamp(toIndex ?? sourceTasks.length, 0, sourceTasks.length);
     sourceTasks.splice(insertIndex, 0, movedTask);
     return { ...board, [fromColumn]: sourceTasks };
   }
 
+	// La columna objetivo
   const targetTasks = [...board[toColumn]];
   const insertIndex = clamp(toIndex ?? targetTasks.length, 0, targetTasks.length);
   targetTasks.splice(insertIndex, 0, { ...movedTask, status: toColumn });

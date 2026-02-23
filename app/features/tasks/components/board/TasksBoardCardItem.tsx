@@ -1,5 +1,5 @@
 import type { Task } from '~/core/tasks/tasks.types';
-import type { BoardColumnId } from './tasks-board.utils';
+import type { BoardColumnId } from './utils';
 import { TaskCard } from '../card/TaskCard';
 
 type TasksBoardCardItemProps = {
