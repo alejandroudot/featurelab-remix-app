@@ -26,7 +26,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function TasksRoute() {
-  const { tasks, assignableUsers, viewState, betaTasksUI } =
+  const { currentUserId, tasks, assignableUsers, viewState, betaTasksUI } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<TaskActionData>();
   const navigation = useNavigation();
@@ -34,6 +34,7 @@ export default function TasksRoute() {
 
   return (
     <TasksPage
+      currentUserId={currentUserId}
       tasks={tasks}
       assignableUsers={assignableUsers}
       viewState={viewState}

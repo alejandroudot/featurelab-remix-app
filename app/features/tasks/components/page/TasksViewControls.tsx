@@ -5,11 +5,47 @@ type TasksViewControlsProps = {
   viewState: TasksViewState;
   onSetView: (view: 'list' | 'board') => void;
   onSetOrder: (order: 'manual' | 'priority') => void;
+  onSetScope: (scope: 'all' | 'assigned' | 'created') => void;
 };
 
-export function TasksViewControls({ viewState, onSetView, onSetOrder }: TasksViewControlsProps) {
+export function TasksViewControls({
+  viewState,
+  onSetView,
+  onSetOrder,
+  onSetScope,
+}: TasksViewControlsProps) {
   return (
     <div className="space-y-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs opacity-70">Scope</span>
+        <ToggleGroup
+          type="single"
+          value={viewState.scope}
+          onValueChange={(value) => {
+            if (value === 'all' || value === 'assigned' || value === 'created') onSetScope(value);
+          }}
+          className="w-full sm:w-auto"
+        >
+          <ToggleGroupItem value="all" aria-label="Todas" className="flex-1 sm:flex-none">
+            All
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="assigned"
+            aria-label="Asignadas a mi"
+            className="flex-1 sm:flex-none"
+          >
+            Assigned
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="created"
+            aria-label="Creadas por mi"
+            className="flex-1 sm:flex-none"
+          >
+            Created
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs opacity-70">View</span>
         <ToggleGroup

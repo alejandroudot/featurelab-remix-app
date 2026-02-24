@@ -198,11 +198,11 @@ Regla de colaboracion:
   - [x] Sin reasignacion rapida desde board (decision de producto)
   - [x] Reasignacion rapida desde detalle de task (panel lateral)
   - [x] Responsable visible en list y board
-- [ ] Vistas de trabajo por usuario
-  - [ ] `Asignadas a mi`
-  - [ ] `Creadas por mi`
-  - [ ] `Todas`
-  - [ ] Visibilidad compartida: task visible para creador y asignado
+- [x] Vistas de trabajo por usuario
+  - [x] `Asignadas a mi`
+  - [x] `Creadas por mi`
+  - [x] `Todas`
+  - [x] Visibilidad compartida: task visible para creador y asignado
 - [ ] Permisos y reglas
   - [ ] Definir quien puede editar/reasignar/cerrar
   - [ ] Creador: permisos completos sobre la task
@@ -379,5 +379,4 @@ Criterio de cierre:
 3. Ejecutar `P2.1` (TanStack Query + Zustand real).
 4. Ejecutar `P2.2` y `P2.3` (calidad + docs).
 5. Ejecutar `P3.1` a `P3.4` (integraciones + automatizacion).
-
 

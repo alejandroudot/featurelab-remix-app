@@ -1,5 +1,5 @@
 // app/infra/tasks/task.repository.sqlite.ts
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, or } from 'drizzle-orm';
 import type {
   TaskCommandService,
   TaskCreateInput,
@@ -21,7 +21,7 @@ export const sqliteTaskQueryService: TaskQueryService = {
     const rows = db
       .select()
       .from(tasks)
-      .where(eq(tasks.userId, userId))
+      .where(or(eq(tasks.userId, userId), eq(tasks.assigneeId, userId)))
       .orderBy(desc(tasks.createdAt))
       .all();
     return rows.map(mapTasksRow);

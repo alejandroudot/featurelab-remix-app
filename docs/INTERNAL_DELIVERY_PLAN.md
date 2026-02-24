@@ -298,11 +298,11 @@ Regla de colaboracion acordada para este bloque:
 - Si un usuario recibe una task asignada, tambien la ve y la puede trabajar.
 - En el `Execution Hub` (`/`) se prioriza actividad/notificaciones de cambios, no listado completo de tasks.
 
-- [ ] Vistas de trabajo por usuario
-  - [ ] `Asignadas a mi`
-  - [ ] `Creadas por mi`
-  - [ ] `Todas`
-  - [ ] Visibilidad de task para creador y asignado (OR en listado)
+- [x] Vistas de trabajo por usuario
+  - [x] `Asignadas a mi`
+  - [x] `Creadas por mi`
+  - [x] `Todas`
+  - [x] Visibilidad de task para creador y asignado (OR en listado)
 - [ ] Permisos y reglas
   - [ ] Definir quien puede editar/reasignar/cerrar
   - [ ] Regla acordada: creador con permisos completos
@@ -426,7 +426,6 @@ Dia X - Fecha
 - Bloqueado:
 - Riesgo:
 - Primer tarea de manana:
-
 
 
 

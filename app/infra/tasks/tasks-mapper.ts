@@ -3,6 +3,7 @@ import type { Task } from '~/core/tasks/tasks.types';
 export function mapTasksRow(row: any): Task {
   return {
     id: row.id,
+    userId: row.userId,
     title: row.title,
     description: row.description ?? undefined,
     status: row.status as Task['status'],

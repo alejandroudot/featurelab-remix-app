@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { getTaskActionToastError } from './client-errors';
 
 export function TasksPage({
+  currentUserId,
   tasks,
   assignableUsers,
   viewState,
@@ -21,6 +22,7 @@ export function TasksPage({
   isSubmitting,
   betaTasksUI,
 }: {
+  currentUserId: string;
   tasks: Task[];
   assignableUsers: TaskAssigneeOption[];
   viewState: TasksViewState;
@@ -46,10 +48,17 @@ export function TasksPage({
     setSearchParams(next);
   }
 
+  function setScope(scope: 'all' | 'assigned' | 'created') {
+    const next = new URLSearchParams(searchParams);
+    next.set('scope', scope);
+    setSearchParams(next);
+  }
+
   function resetViewConfig() {
     const next = new URLSearchParams(searchParams);
     next.set('view', 'board');
     next.set('order', 'manual');
+    next.set('scope', 'all');
     setSearchParams(next);
   }
 
@@ -109,12 +118,24 @@ export function TasksPage({
     );
   }
 
-  const hasNonDefaultViewState = viewState.view !== 'board' || viewState.order !== 'manual';
-	
+  const hasNonDefaultViewState =
+    viewState.view !== 'board' || viewState.order !== 'manual' || viewState.scope !== 'all';
+
+  const visibleTasks = useMemo(() => {
+    if (viewState.scope === 'assigned') {
+      return tasks.filter((task) => task.assigneeId === currentUserId);
+    }
+    if (viewState.scope === 'created') {
+      return tasks.filter((task) => task.userId === currentUserId);
+    }
+    return tasks;
+  }, [tasks, currentUserId, viewState.scope]);
+
   const selectedTask = useMemo(
     () => tasks.find((task) => task.id === selectedTaskId) ?? null,
     [tasks, selectedTaskId],
   );
+	
   const assigneeById = useMemo(
     () =>
       Object.fromEntries(assignableUsers.map((user) => [user.id, user.email])) as Record<string, string>,
@@ -133,10 +154,16 @@ export function TasksPage({
         <p className="text-sm opacity-80">Aqui puedes crear tus tareas y acomodarlas.</p>
         <p className="text-xs opacity-70">
           View: <span className="font-medium">{viewState.view}</span> - Order:{' '}
-          <span className="font-medium">{viewState.order}</span>
+          <span className="font-medium">{viewState.order}</span> - Scope:{' '}
+          <span className="font-medium">{viewState.scope}</span>
         </p>
 
-        <TasksViewControls viewState={viewState} onSetView={setView} onSetOrder={setOrder} />
+        <TasksViewControls
+          viewState={viewState}
+          onSetView={setView}
+          onSetOrder={setOrder}
+          onSetScope={setScope}
+        />
       </header>
 
       {betaTasksUI ? (
@@ -150,16 +177,16 @@ export function TasksPage({
 
       <CreateTaskForm actionData={actionData} isSubmitting={isSubmitting} />
 
-      {tasks.length === 0 ? (
+      {visibleTasks.length === 0 ? (
         <TasksEmptyState
           hasNonDefaultViewState={hasNonDefaultViewState}
           onResetViewConfig={resetViewConfig}
         />
       ) : viewState.view === 'list' ? (
-        <TasksList tasks={tasks} assigneeById={assigneeById} />
+        <TasksList tasks={visibleTasks} assigneeById={assigneeById} />
       ) : (
         <TasksBoardView
-          tasks={tasks}
+          tasks={visibleTasks}
           order={viewState.order}
           assigneeById={assigneeById}
           onOpenTask={handleOpenTask}

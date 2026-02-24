@@ -44,6 +44,7 @@ export async function runTaskLoader({
   });
 
   return {
+    currentUserId: userId,
     tasks,
     assignableUsers,
     viewState,
