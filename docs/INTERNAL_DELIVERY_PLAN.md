@@ -261,13 +261,14 @@ Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
 
 ## ?? Dia 6 - Sabado 21/02/2026
 
-Tecnologias del dia: DnD + TanStack Query (optimistic updates/rollback).
+Tecnologias del dia: DnD + React Router actions/revalidation (sin Query en esta fase).
 Fuente roadmap: [P1.2 board base (DnD/optimistic)](./PRODUCT_ROADMAP.md#L147).
 
 - [ ] Vista Board tipo Jira en `/tasks`
   - [ ] Drag and drop entre columnas
   - [ ] Drag and drop vertical dentro de columna
-  - [ ] Update optimista al mover cards (horizontal y vertical)
+  - [ ] Update inmediato en UI al mover cards (horizontal y vertical)
+  - [ ] Persistencia + rollback via `action` + revalidacion (sin cache duplicada)
 
 ## ?? Dia 7 - Domingo 22/02/2026
 

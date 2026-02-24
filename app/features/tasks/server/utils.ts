@@ -21,6 +21,7 @@ export function parseIntent(formData: FormData): TaskIntentSchema | TaskActionDa
   if (!parsedIntent.success) {
     return {
       success: false,
+      intent: 'unknown',
       fieldErrors: { intent: ['Intent invalido'] },
       values: getTaskFormValues(formData),
     };

@@ -130,8 +130,9 @@ Objetivo:
 ## 8. 🔄 Estado cliente y datos remotos
 
 Direccion definida por roadmap:
-- Zustand para estado global de UI/preferencias;
-- TanStack Query para cache, invalidacion y optimistic updates.
+- Estado actual (P1): `loader/action` como fuente de verdad para datos de negocio en rutas principales (`/tasks`, `/flags`, `/`).
+- Zustand para estado global de UI/preferencias.
+- TanStack Query planificado para adopcion completa en `P2.1` (evitando enfoque hibrido parcial en `P1`).
 
 Nota:
 - no todo estado debe ir a store global;

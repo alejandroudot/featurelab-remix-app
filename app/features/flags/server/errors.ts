@@ -3,7 +3,7 @@ import type { FlagActionData } from '../types';
 import { getCreateFlagFormValues } from './utils';
 
 // Convierte un ZodError al contrato de error que consume la UI de flags.
-export function validationToActionData(
+export function zodErrorToActionData(
   error: z.ZodError,
   formData?: FormData,
 ): FlagActionData {

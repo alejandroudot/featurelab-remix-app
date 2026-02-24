@@ -10,7 +10,7 @@ import {
 
 import type { RunTaskActionInput, TaskActionResult } from '../types';
 import { getSafeRedirectTo, getTaskFormValues, parseIntent } from './utils';
-import { jsonTaskError, toTaskFormError, validationToActionData } from './errors';
+import { jsonTaskError, toTaskFormError, zodErrorToActionData } from './errors';
 
 type Intent = (typeof taskIntentSchema)['enum'][keyof (typeof taskIntentSchema)['enum']];
 type TaskIntentHandler = (input: RunTaskActionInput) => Promise<TaskActionResult>;
@@ -23,13 +23,14 @@ const handleCreate: TaskIntentHandler = async (input) => {
     description: formData.get('description'),
   });
 
-  if (!parsed.success) return validationToActionData(parsed.error, formData);
+  if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'create');
 
   try {
     await input.taskCommandService.create({ ...parsed.data, userId: input.userId });
     return redirect(getSafeRedirectTo(formData, '/tasks'));
   } catch (err) {
     return jsonTaskError({
+      intent: 'create',
       formError: toTaskFormError(err),
       values: getTaskFormValues(formData),
     });
@@ -47,7 +48,7 @@ const handleUpdate: TaskIntentHandler = async (input) => {
     assigneeId: formData.get('assigneeId'),
   });
 
-  if (!parsed.success) return validationToActionData(parsed.error, formData);
+  if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'update');
 
   try {
     await input.taskCommandService.update({
@@ -62,6 +63,7 @@ const handleUpdate: TaskIntentHandler = async (input) => {
     return redirect(getSafeRedirectTo(formData, '/tasks'));
   } catch (err) {
     return jsonTaskError({
+      intent: 'update',
       formError: toTaskFormError(err),
       values: getTaskFormValues(formData),
     });
@@ -76,7 +78,7 @@ const handleReorderColumn: TaskIntentHandler = async (input) => {
     orderedTaskIds: formData.get('orderedTaskIds'),
   });
 
-  if (!parsed.success) return validationToActionData(parsed.error, formData);
+  if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'reorder-column');
 
   try {
     await input.taskCommandService.reorderColumn({
@@ -88,6 +90,7 @@ const handleReorderColumn: TaskIntentHandler = async (input) => {
     return redirect(getSafeRedirectTo(formData, '/tasks'));
   } catch (err) {
     return jsonTaskError({
+      intent: 'reorder-column',
       formError: toTaskFormError(err),
       values: getTaskFormValues(formData),
     });
@@ -101,7 +104,7 @@ const handleDelete: TaskIntentHandler = async (input) => {
     id: formData.get('id'),
   });
 
-  if (!parsedDelete.success) return validationToActionData(parsedDelete.error, formData);
+  if (!parsedDelete.success) return zodErrorToActionData(parsedDelete.error, formData, 'delete');
 
   try {
     await input.taskCommandService.remove({
@@ -112,6 +115,7 @@ const handleDelete: TaskIntentHandler = async (input) => {
     return redirect(getSafeRedirectTo(formData, '/tasks'));
   } catch (err) {
     return jsonTaskError({
+      intent: 'delete',
       formError: toTaskFormError(err),
       values: getTaskFormValues(formData),
     });

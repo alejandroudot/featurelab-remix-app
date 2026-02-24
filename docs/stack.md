@@ -115,9 +115,9 @@
 - **Docs:** [https://tanstack.com/query/v5/docs/react/overview](https://tanstack.com/query/v5/docs/react/overview) ([TanStack][6])
 - **Qué es:** Librería para manejar “server state”: fetch, cache, revalidación, mutations. ([TanStack][7])
 - **Cómo la usamos:**
-  - Fetch de APIs secundarias (por ej. estadísticas, tablas, integraciones externas).
-  - Cachear respuestas, reintentos, estados de loading/error sin reinventar la rueda.
-  - Comparación conceptual con loaders/actions del router.
+  - Adopcion planificada fuerte en `P2.1` (cache, invalidacion y optimistic updates reales).
+  - En `P1` evitamos enfoque hibrido en `/tasks`: prioridad a `loader/action` para no duplicar fuentes de verdad.
+  - Uso gradual en features puntuales cuando aporte valor claro.
 
 ---
 

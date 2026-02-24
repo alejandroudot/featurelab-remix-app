@@ -13,6 +13,7 @@ export type TaskAssigneeOption = { id: string; email: string };
 export type TaskActionData =
 	| {
 		success: false;
+		intent?: 'create' | 'update' | 'delete' | 'reorder-column' | 'unknown';
 		formError?: string;
 		fieldErrors?: Record<string, string[] | undefined>;
 		values?: {

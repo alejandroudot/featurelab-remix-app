@@ -3,9 +3,14 @@ import { getTaskFormValues } from "./utils";
 import type { TaskActionData } from "../types";
 
 // Convierte un ZodError al contrato de error que entiende la UI de tasks.
-export function validationToActionData(error: z.ZodError, formData: FormData): TaskActionData {
+export function zodErrorToActionData(
+  error: z.ZodError,
+  formData: FormData,
+  intent?: NonNullable<TaskActionData>['intent'],
+): TaskActionData {
 	return {
 		success: false,
+    intent,
 		fieldErrors: z.flattenError(error).fieldErrors,
 		values: getTaskFormValues(formData),
 	};
@@ -20,7 +25,9 @@ export function toTaskFormError(err: unknown): string {
 }
 
 // Arma el payload de error final para responses de actions de tasks.
-export function jsonTaskError(payload: Pick<NonNullable<TaskActionData>, 'formError' | 'fieldErrors' | 'values'>): TaskActionData {
+export function jsonTaskError(
+  payload: Pick<NonNullable<TaskActionData>, 'intent' | 'formError' | 'fieldErrors' | 'values'>,
+): TaskActionData {
 	return {
 		success: false,
 		...payload,

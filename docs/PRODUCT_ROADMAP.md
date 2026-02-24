@@ -135,7 +135,7 @@ Criterio de cierre:
 
 ### P1.2 Tasks UX (Board-first estilo Jira/Trello)
 
-Tecnologias a usar: Zod (query params) + React Router + DnD + shadcn/ui + Radix (dialog/tooltip).
+Tecnologias a usar: Zod (query params) + React Router (loaders/actions) + DnD + shadcn/ui + Radix (dialog/tooltip).
 
 - [x] Definir direccion UX para `/tasks` (acordada antes de codear)
   - [x] Estilo visual elegido y consistente
@@ -159,7 +159,8 @@ Tecnologias a usar: Zod (query params) + React Router + DnD + shadcn/ui + Radix 
   - [x] Toggle de vista con `shadcn/ui` (`Tabs` o `ToggleGroup`)
   - [ ] Drag and drop entre columnas
   - [ ] Drag and drop vertical dentro de columna
-  - [ ] Update optimista al mover cards (horizontal y vertical)
+  - [ ] Update inmediato en UI al mover cards (horizontal y vertical)
+  - [ ] Persistencia/rollback usando flujo actual `loader/action` (sin duplicar cache con Query en esta fase)
   - [x] Card de task con prioridad, labels, responsable, metadata minima
   - [x] Card construida con `shadcn/ui` (`Card`, `Badge`, `Avatar`, `DropdownMenu`)
   - [x] Abrir detalle de task al clickear card/fila (modal/sheet estilo Jira)

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useSearchParams, useSubmit } from 'react-router';
 import type { TaskActionData } from './types';
 import { CreateTaskForm } from './components/page/CreateTaskForm';
@@ -10,6 +10,8 @@ import { TaskDetailModal } from './components/detail/TaskDetailModal';
 import type { Task, TaskStatus } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from './server/task-view-state';
 import type { TaskAssigneeOption } from './types';
+import { toast } from 'sonner';
+import { getTaskActionToastError } from './client-errors';
 
 export function TasksPage({
   tasks,
@@ -118,6 +120,11 @@ export function TasksPage({
       Object.fromEntries(assignableUsers.map((user) => [user.id, user.email])) as Record<string, string>,
     [assignableUsers],
   );
+
+  useEffect(() => {
+    const message = getTaskActionToastError(actionData);
+    if (message) toast.error(message);
+  }, [actionData]);
 
   return (
     <main className="container mx-auto space-y-6 p-4">

@@ -7,7 +7,7 @@ import {
   flagToggleSchema,
   flagUpdateStateSchema,
 } from '~/core/flags/contracts/flags.schema';
-import { jsonFlagsError, toFlagFormError, validationToActionData } from './errors';
+import { jsonFlagsError, toFlagFormError, zodErrorToActionData } from './errors';
 import { DuplicateFeatureFlagError } from '~/core/flags/contracts/errors';
 import { getCreateFlagFormValues, parseIntent } from './utils';
 
@@ -24,7 +24,7 @@ const handleCreate: FlagIntentHandler = async (input) => {
     rolloutPercent: formData.get('rolloutPercent'),
   });
 
-  if (!parsedCreate.success) return validationToActionData(parsedCreate.error, formData);
+  if (!parsedCreate.success) return zodErrorToActionData(parsedCreate.error, formData);
 
   try {
     await flagCommandService.create({
@@ -72,7 +72,7 @@ const handleToggle: FlagIntentHandler = async (input) => {
     environment: formData.get('environment'),
   });
 
-  if (!parsedToggle.success) return validationToActionData(parsedToggle.error, formData);
+  if (!parsedToggle.success) return zodErrorToActionData(parsedToggle.error, formData);
 
   try {
     await flagCommandService.toggle({
@@ -100,7 +100,7 @@ const handleUpdateState: FlagIntentHandler = async (input) => {
     rolloutPercent: formData.get('rolloutPercent'),
   });
 
-  if (!parsedState.success) return validationToActionData(parsedState.error, formData);
+  if (!parsedState.success) return zodErrorToActionData(parsedState.error, formData);
 
   try {
     await flagCommandService.update({
@@ -130,7 +130,7 @@ const handleDelete: FlagIntentHandler = async (input) => {
     id: formData.get('id'),
   });
 
-  if (!parsedDelete.success) return validationToActionData(parsedDelete.error, formData);
+  if (!parsedDelete.success) return zodErrorToActionData(parsedDelete.error, formData);
 
   try {
     await flagCommandService.remove(parsedDelete.data.id);
