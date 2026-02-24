@@ -264,24 +264,25 @@ Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
 Tecnologias del dia: DnD + React Router actions/revalidation (sin Query en esta fase).
 Fuente roadmap: [P1.2 board base (DnD/optimistic)](./PRODUCT_ROADMAP.md#L147).
 
-- [ ] Vista Board tipo Jira en `/tasks`
-  - [ ] Drag and drop entre columnas
-  - [ ] Drag and drop vertical dentro de columna
-  - [ ] Update inmediato en UI al mover cards (horizontal y vertical)
-  - [ ] Persistencia + rollback via `action` + revalidacion (sin cache duplicada)
+- [x] Vista Board tipo Jira en `/tasks`
+  - [x] Drag and drop entre columnas
+  - [x] Drag and drop vertical dentro de columna
+  - [x] Update inmediato en UI al mover cards (horizontal y vertical)
+  - [x] Persistencia + rollback via `action` + revalidacion (sin cache duplicada)
 
 ## ?? Dia 7 - Domingo 22/02/2026
 
 Tecnologias del dia: Drizzle/SQLite, Zod, React forms.
 Fuente roadmap: [P1.3 modelo asignacion](./PRODUCT_ROADMAP.md#L168), [P1.3 flujo asignacion](./PRODUCT_ROADMAP.md#L172).
 
-- [ ] Modelo de asignacion
+- [x] Modelo de asignacion
   - [x] Agregar `assigneeId` (nullable)
   - [x] Soportar `Unassigned`
   - [x] Ajustar schemas create/update
-- [ ] Flujo de asignacion/reasignacion
-  - [ ] Selector de responsable en create/edit
-  - [ ] Reasignacion rapida desde board
+- [x] Flujo de asignacion/reasignacion
+  - [x] Sin selector en create (decision de producto)
+  - [x] Selector/reasignacion de responsable desde modal de detalle (edit)
+  - [x] Sin reasignacion rapida desde board (decision de producto)
   - [x] Reasignacion rapida de `assignee` desde el panel lateral del detalle de task
   - [x] Responsable visible en list y board
 
@@ -290,12 +291,22 @@ Fuente roadmap: [P1.3 modelo asignacion](./PRODUCT_ROADMAP.md#L168), [P1.3 flujo
 Tecnologias del dia: auth/roles, server actions, filtros por usuario.
 Fuente roadmap: [P1.3 vistas por usuario](./PRODUCT_ROADMAP.md#L176), [P1.3 permisos/reglas](./PRODUCT_ROADMAP.md#L180).
 
+Regla de colaboracion acordada para este bloque:
+- Las tasks son compartidas entre `creador` y `asignado`.
+- Ambos ven la task en `/tasks` (list + board), incluyendo movimientos de estado/orden.
+- Si el creador asigna una task, la sigue viendo y monitoreando.
+- Si un usuario recibe una task asignada, tambien la ve y la puede trabajar.
+- En el `Execution Hub` (`/`) se prioriza actividad/notificaciones de cambios, no listado completo de tasks.
+
 - [ ] Vistas de trabajo por usuario
   - [ ] `Asignadas a mi`
   - [ ] `Creadas por mi`
   - [ ] `Todas`
+  - [ ] Visibilidad de task para creador y asignado (OR en listado)
 - [ ] Permisos y reglas
   - [ ] Definir quien puede editar/reasignar/cerrar
+  - [ ] Regla acordada: creador con permisos completos
+  - [ ] Regla acordada: asignado puede editar/status/orden pero no reasignar
   - [ ] Validar permisos en server actions
   - [ ] Mensajes claros en acciones no permitidas
 

@@ -152,15 +152,15 @@ Tecnologias a usar: Zod (query params) + React Router (loaders/actions) + DnD + 
   - [x] Estado vacio global
   - [x] Estado vacio por columna
   - [x] CTA clara para crear task o limpiar configuracion de vista
-- [ ] Vista Board tipo Jira en `/tasks`
+- [x] Vista Board tipo Jira en `/tasks`
   - [x] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
   - [x] Crear task entra en `To Do` por defecto
   - [x] Toggle `List` / `Board`
   - [x] Toggle de vista con `shadcn/ui` (`Tabs` o `ToggleGroup`)
-  - [ ] Drag and drop entre columnas
-  - [ ] Drag and drop vertical dentro de columna
-  - [ ] Update inmediato en UI al mover cards (horizontal y vertical)
-  - [ ] Persistencia/rollback usando flujo actual `loader/action` (sin duplicar cache con Query en esta fase)
+  - [x] Drag and drop entre columnas
+  - [x] Drag and drop vertical dentro de columna
+  - [x] Update inmediato en UI al mover cards (horizontal y vertical)
+  - [x] Persistencia/rollback usando flujo actual `loader/action` (sin duplicar cache con Query en esta fase)
   - [x] Card de task con prioridad, labels, responsable, metadata minima
   - [x] Card construida con `shadcn/ui` (`Card`, `Badge`, `Avatar`, `DropdownMenu`)
   - [x] Abrir detalle de task al clickear card/fila (modal/sheet estilo Jira)
@@ -181,21 +181,32 @@ Criterio de cierre:
 
 Tecnologias a usar: Drizzle/SQLite + React Router + Zod + Zustand + TanStack Query.
 
-- [ ] Modelo de asignacion
+Regla de colaboracion:
+- Las tasks se consideran compartidas entre `creador` y `asignado`.
+- Ambos deben ver la task en `/tasks` (vista list y board), con cambios de estado/orden reflejados para los dos.
+- El creador mantiene visibilidad aunque asigne la task.
+- El asignado obtiene visibilidad y contexto para ejecutarla.
+- El `Execution Hub` muestra actividad/notificaciones de cambios relevantes (no listado completo de tasks).
+
+- [x] Modelo de asignacion
   - [x] Agregar `assigneeId` (nullable)
   - [x] Soportar `Unassigned`
   - [x] Ajustar schemas create/update
-- [ ] Flujo de asignacion/reasignacion
-  - [ ] Selector de responsable en create/edit
-  - [ ] Reasignacion rapida desde board
+- [x] Flujo de asignacion/reasignacion
+  - [x] Sin selector de responsable en create (decision de producto)
+  - [x] Selector/reasignacion de responsable en edit desde modal de detalle
+  - [x] Sin reasignacion rapida desde board (decision de producto)
   - [x] Reasignacion rapida desde detalle de task (panel lateral)
   - [x] Responsable visible en list y board
 - [ ] Vistas de trabajo por usuario
   - [ ] `Asignadas a mi`
   - [ ] `Creadas por mi`
   - [ ] `Todas`
+  - [ ] Visibilidad compartida: task visible para creador y asignado
 - [ ] Permisos y reglas
   - [ ] Definir quien puede editar/reasignar/cerrar
+  - [ ] Creador: permisos completos sobre la task
+  - [ ] Asignado: puede editar/status/orden, pero no reasignar responsable
   - [ ] Validar permisos en server actions
   - [ ] Mensajes claros en acciones no permitidas
 - [ ] Trazabilidad y notificaciones
