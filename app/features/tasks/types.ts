@@ -1,4 +1,4 @@
-import type { TaskCommandService } from '~/core/tasks/tasks.port';
+import type { TaskCommandService, TaskQueryService } from '~/core/tasks/tasks.port';
 
 export type TaskStatus =
 	| 'todo'
@@ -35,4 +35,5 @@ export type RunTaskActionInput = {
 	formData: FormData;
 	userId: string;
 	taskCommandService: TaskCommandService;
+	taskQueryService: TaskQueryService;
 };

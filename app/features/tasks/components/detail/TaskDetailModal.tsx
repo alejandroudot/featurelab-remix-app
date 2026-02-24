@@ -1,24 +1,44 @@
 import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
-import type { TaskAssigneeOption } from '../../types';
+import type { TaskActionData, TaskAssigneeOption } from '../../types';
 import { Badge } from '~/ui/primitives/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '~/ui/primitives/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '~/ui/primitives/dialog';
+import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
+import React from 'react';
 
 type TaskDetailModalProps = {
   task: Task | null;
+  currentUserId: string;
   assignableUsers: TaskAssigneeOption[];
   open: boolean;
+  onDeleteTask?: (taskId: string) => void;
   onOpenChange: (open: boolean) => void;
 };
 
-export function TaskDetailModal({ task, assignableUsers, open, onOpenChange }: TaskDetailModalProps) {
-  const fetcher = useFetcher();
+export function TaskDetailModal({
+  task,
+  currentUserId,
+  assignableUsers,
+  open,
+  onDeleteTask,
+  onOpenChange,
+}: TaskDetailModalProps) {
+  const fetcher = useFetcher<TaskActionData>();
   const location = useLocation();
   const isSubmitting = fetcher.state === 'submitting';
   const redirectTo = `${location.pathname}${location.search}`;
   const assigneeLabel = task?.assigneeId
-    ? assignableUsers.find((user) => user.id === task.assigneeId)?.email ?? 'Assigned'
+    ? (assignableUsers.find((user) => user.id === task.assigneeId)?.email ?? 'Assigned')
     : 'Unassigned';
+  const isCreator = task?.userId === currentUserId;
+  const formActionData = fetcher.data;
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -27,19 +47,24 @@ export function TaskDetailModal({ task, assignableUsers, open, onOpenChange }: T
           <>
             <DialogHeader className="border-b p-4">
               <DialogTitle>{task.title}</DialogTitle>
-              <DialogDescription>Detalle de task estilo Jira: contenido principal + panel lateral.</DialogDescription>
+              <DialogDescription>
+                Detalle de task estilo Jira: contenido principal + panel lateral.
+              </DialogDescription>
             </DialogHeader>
-
             <div className="grid h-[calc(80vh-96px)] gap-4 p-4 lg:grid-cols-[2fr_1fr]">
               <section className="space-y-4 overflow-y-auto pr-1">
                 <div className="rounded border p-3">
                   <h3 className="mb-2 text-sm font-semibold">Descripcion</h3>
-                  <p className="text-sm opacity-85">{task.description || 'Sin descripcion por ahora.'}</p>
+                  <p className="text-sm opacity-85">
+                    {task.description || 'Sin descripcion por ahora.'}
+                  </p>
                 </div>
 
                 <div className="rounded border p-3">
                   <h3 className="mb-2 text-sm font-semibold">Comentarios</h3>
-                  <p className="text-sm opacity-75">Todavia no hay comentarios. Se integra en proximos bloques.</p>
+                  <p className="text-sm opacity-75">
+                    Todavia no hay comentarios. Se integra en proximos bloques.
+                  </p>
                 </div>
               </section>
 
@@ -87,23 +112,28 @@ export function TaskDetailModal({ task, assignableUsers, open, onOpenChange }: T
                     <option value="high">high</option>
                     <option value="critical">critical</option>
                   </select>
-
-                  <label className="block text-xs font-medium" htmlFor="detail-assignee">
-                    Responsible
-                  </label>
-                  <select
-                    id="detail-assignee"
-                    name="assigneeId"
-                    defaultValue={task.assigneeId ?? ''}
-                    className="w-full rounded border px-2 py-1 text-sm"
-                  >
-                    <option value="">Unassigned</option>
-                    {assignableUsers.map((user) => (
-                      <option key={user.id} value={user.id}>
-                        {user.email}
-                      </option>
-                    ))}
-                  </select>
+                  {isCreator ? (
+                    <>
+                      <label className="block text-xs font-medium" htmlFor="detail-assignee">
+                        Responsible
+                      </label>
+                      <select
+                        id="detail-assignee"
+                        name="assigneeId"
+                        defaultValue={task.assigneeId ?? ''}
+                        className="w-full rounded border px-2 py-1 text-sm"
+                      >
+                        <option value="">Unassigned</option>
+                        {assignableUsers.map((user) => (
+                          <option key={user.id} value={user.id}>
+                            {user.email}
+                          </option>
+                        ))}
+                      </select>{' '}
+                    </>
+                  ) : (
+                    ''
+                  )}
 
                   <button
                     type="submit"
@@ -112,6 +142,37 @@ export function TaskDetailModal({ task, assignableUsers, open, onOpenChange }: T
                   >
                     {isSubmitting ? 'Guardando...' : 'Guardar cambios'}
                   </button>
+                  {isCreator ? (
+                    <>
+                      <button
+                        type="button"
+                        className="w-full rounded border px-2 py-1 text-sm font-medium bg-destructive"
+                        onClick={() => {
+                          setTimeout(() => setIsDeleteDialogOpen(true), 0);
+                        }}
+                      >
+														{'Borrar Tarea'}
+											</button>
+                      <DeleteDialog
+                        open={isDeleteDialogOpen}
+                        onOpenChange={setIsDeleteDialogOpen}
+                        id={task.id}
+                        name="task"
+                        description={`Esta accion es permanente. Queres borrar "${task.title}"?`}
+                        onConfirm={() => {
+                          onDeleteTask?.(task.id);
+                          setIsDeleteDialogOpen(false);
+                        }}
+                      />
+                    </>
+                  ) : (
+                    ''
+                  )}
+                  {formActionData?.success === false ? (
+                    <div className="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700">
+                      {formActionData.formError}
+                    </div>
+                  ) : null}
                 </fetcher.Form>
               </aside>
             </div>

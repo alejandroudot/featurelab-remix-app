@@ -203,12 +203,12 @@ Regla de colaboracion:
   - [x] `Creadas por mi`
   - [x] `Todas`
   - [x] Visibilidad compartida: task visible para creador y asignado
-- [ ] Permisos y reglas
-  - [ ] Definir quien puede editar/reasignar/cerrar
-  - [ ] Creador: permisos completos sobre la task
-  - [ ] Asignado: puede editar/status/orden, pero no reasignar responsable
-  - [ ] Validar permisos en server actions
-  - [ ] Mensajes claros en acciones no permitidas
+- [x] Permisos y reglas
+  - [x] Definir quien puede editar/reasignar/cerrar
+  - [x] Creador: permisos completos sobre la task
+  - [x] Asignado: puede editar/status/orden, pero no reasignar responsable
+  - [x] Validar permisos en server actions
+  - [x] Mensajes claros en acciones no permitidas
 - [ ] Trazabilidad y notificaciones
   - [ ] Historial de cambios por task
   - [ ] Notificaciones in-app por asignacion/reasignacion
@@ -379,4 +379,3 @@ Criterio de cierre:
 3. Ejecutar `P2.1` (TanStack Query + Zustand real).
 4. Ejecutar `P2.2` y `P2.3` (calidad + docs).
 5. Ejecutar `P3.1` a `P3.4` (integraciones + automatizacion).
-

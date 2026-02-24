@@ -22,11 +22,12 @@ export async function action({ request }: Route.ActionArgs) {
     formData,
     userId: user.id,
     taskCommandService,
+    taskQueryService,
   });
 }
 
 export default function TasksRoute() {
-  const { currentUserId, tasks, assignableUsers, viewState, betaTasksUI } =
+  const { currentUserId, tasks, assignableUsers, viewState } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<TaskActionData>();
   const navigation = useNavigation();
@@ -40,7 +41,6 @@ export default function TasksRoute() {
       viewState={viewState}
       actionData={actionData}
       isSubmitting={isSubmitting}
-      betaTasksUI={betaTasksUI}
     />
   );
 }

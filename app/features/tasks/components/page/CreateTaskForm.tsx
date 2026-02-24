@@ -1,12 +1,21 @@
 import { Form } from 'react-router';
 import type { TaskActionData } from '../../types';
 
-export function CreateTaskForm({ actionData, isSubmitting }: { actionData: TaskActionData, isSubmitting: boolean }) {
-  const globalError = actionData?.formError ?? actionData?.fieldErrors?.intent?.[0];
+export function CreateTaskForm({
+  actionData,
+  isSubmitting,
+}: {
+  actionData: TaskActionData;
+  isSubmitting: boolean;
+}) {
+  const createActionData =
+    actionData?.success === false && actionData.intent === 'create' ? actionData : undefined;
+  const globalError = createActionData?.formError ?? createActionData?.fieldErrors?.intent?.[0];
 
   return (
     <section id="create-task" className="border rounded p-4 space-y-3 max-w-xl">
-      {actionData?.success === false && globalError ? (
+			
+      {createActionData?.success === false && globalError ? (
         <div className="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700">
           {globalError}
         </div>
@@ -23,10 +32,10 @@ export function CreateTaskForm({ actionData, isSubmitting }: { actionData: TaskA
             id="title"
             name="title"
             className="border rounded px-3 py-2"
-            defaultValue={actionData?.values?.title ?? ''}
+            defaultValue={createActionData?.values?.title ?? ''}
           />
-          {actionData?.success === false && actionData.fieldErrors?.title?.[0] && (
-            <p className="text-sm text-red-600">{actionData.fieldErrors.title[0]}</p>
+          {createActionData?.success === false && createActionData.fieldErrors?.title?.[0] && (
+            <p className="text-sm text-red-600">{createActionData.fieldErrors.title[0]}</p>
           )}
         </div>
 
@@ -38,7 +47,7 @@ export function CreateTaskForm({ actionData, isSubmitting }: { actionData: TaskA
             id="description"
             name="description"
             className="border rounded px-3 py-2"
-            defaultValue={actionData?.values?.description ?? ''}
+            defaultValue={createActionData?.values?.description ?? ''}
           />
         </div>
 

@@ -303,12 +303,12 @@ Regla de colaboracion acordada para este bloque:
   - [x] `Creadas por mi`
   - [x] `Todas`
   - [x] Visibilidad de task para creador y asignado (OR en listado)
-- [ ] Permisos y reglas
-  - [ ] Definir quien puede editar/reasignar/cerrar
-  - [ ] Regla acordada: creador con permisos completos
-  - [ ] Regla acordada: asignado puede editar/status/orden pero no reasignar
-  - [ ] Validar permisos en server actions
-  - [ ] Mensajes claros en acciones no permitidas
+- [x] Permisos y reglas
+  - [x] Definir quien puede editar/reasignar/cerrar
+  - [x] Regla acordada: creador con permisos completos
+  - [x] Regla acordada: asignado puede editar/status/orden pero no reasignar
+  - [x] Validar permisos en server actions
+  - [x] Mensajes claros en acciones no permitidas
 
 ## ?? Dia 9 - Martes 24/02/2026
 
@@ -426,6 +426,5 @@ Dia X - Fecha
 - Bloqueado:
 - Riesgo:
 - Primer tarea de manana:
-
 
 

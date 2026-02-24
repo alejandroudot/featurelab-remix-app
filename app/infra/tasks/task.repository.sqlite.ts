@@ -26,6 +26,22 @@ export const sqliteTaskQueryService: TaskQueryService = {
       .all();
     return rows.map(mapTasksRow);
   },
+
+  async getByIdForUser(input: { id: string; userId: string }): Promise<Task | null> {
+    const [row] = db
+      .select()
+      .from(tasks)
+      .where(
+        and(
+          eq(tasks.id, input.id),
+          or(eq(tasks.userId, input.userId), eq(tasks.assigneeId, input.userId)),
+        ),
+      )
+      .limit(1)
+      .all();
+
+    return row ? mapTasksRow(row) : null;
+  },
 };
 
 export const sqliteTaskCommandService: TaskCommandService = {
@@ -59,7 +75,12 @@ export const sqliteTaskCommandService: TaskCommandService = {
         ...(input.assigneeId !== undefined ? { assigneeId: input.assigneeId } : {}),
         updatedAt: new Date(),
       })
-      .where(and(eq(tasks.id, input.id), eq(tasks.userId, input.userId)))
+      .where(
+        and(
+          eq(tasks.id, input.id),
+          or(eq(tasks.userId, input.userId), eq(tasks.assigneeId, input.userId)),
+        ),
+      )
       .returning();
 
     if (!row) throw new Response('Task not found', { status: 404 });
@@ -81,7 +102,12 @@ export const sqliteTaskCommandService: TaskCommandService = {
           orderIndex: index,
           updatedAt: now,
         })
-        .where(and(eq(tasks.id, taskId), eq(tasks.userId, input.userId)))
+        .where(
+          and(
+            eq(tasks.id, taskId),
+            or(eq(tasks.userId, input.userId), eq(tasks.assigneeId, input.userId)),
+          ),
+        )
         .run();
     });
   },

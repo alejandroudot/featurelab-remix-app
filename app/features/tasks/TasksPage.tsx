@@ -7,7 +7,7 @@ import { TasksViewControls } from './components/page/TasksViewControls';
 import { TasksEmptyState } from './components/page/TasksEmptyState';
 import { TasksBoardView } from './components/board/TasksBoardView';
 import { TaskDetailModal } from './components/detail/TaskDetailModal';
-import type { Task, TaskStatus } from '~/core/tasks/tasks.types';
+import type { Task } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from './server/task-view-state';
 import type { TaskAssigneeOption } from './types';
 import { toast } from 'sonner';
@@ -20,7 +20,6 @@ export function TasksPage({
   viewState,
   actionData,
   isSubmitting,
-  betaTasksUI,
 }: {
   currentUserId: string;
   tasks: Task[];
@@ -28,7 +27,6 @@ export function TasksPage({
   viewState: TasksViewState;
   actionData: TaskActionData;
   isSubmitting: boolean;
-  betaTasksUI: boolean;
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
@@ -36,6 +34,7 @@ export function TasksPage({
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
+  // Setters de estado de vista (URL)
   function setView(view: 'list' | 'board') {
     const next = new URLSearchParams(searchParams);
     next.set('view', view);
@@ -62,6 +61,12 @@ export function TasksPage({
     setSearchParams(next);
   }
 
+  // Handlers de interacción
+  function handleDetailOpenChange(open: boolean) {
+    setIsDetailOpen(open);
+    if (!open) setSelectedTaskId(null);
+  }
+
   function handleOpenTask(taskId: string) {
     setSelectedTaskId(taskId);
     setIsDetailOpen(true);
@@ -84,7 +89,11 @@ export function TasksPage({
     );
   }
 
-  function handleMoveTaskStatus(taskId: string, toStatus: TaskStatus, orderIndex?: number) {
+  function handleMoveTaskStatus(
+    taskId: string,
+    toStatus: 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live' | 'done' | 'discarded',
+    orderIndex?: number,
+  ) {
     submit(
       {
         intent: 'update',
@@ -101,7 +110,7 @@ export function TasksPage({
   }
 
   function handleReorderColumn(
-    status: Extract<TaskStatus, 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live'>,
+    status: 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live',
     orderedTaskIds: string[],
   ) {
     submit(
@@ -135,7 +144,7 @@ export function TasksPage({
     () => tasks.find((task) => task.id === selectedTaskId) ?? null,
     [tasks, selectedTaskId],
   );
-	
+
   const assigneeById = useMemo(
     () =>
       Object.fromEntries(assignableUsers.map((user) => [user.id, user.email])) as Record<string, string>,
@@ -166,15 +175,6 @@ export function TasksPage({
         />
       </header>
 
-      {betaTasksUI ? (
-        <div className="rounded border p-3 text-sm">
-          <div className="font-medium">Beta Tasks UI activa</div>
-          <div className="opacity-80">
-            Aca despues metemos mejoras (filtros, vista kanban, etc.)
-          </div>
-        </div>
-      ) : null}
-
       <CreateTaskForm actionData={actionData} isSubmitting={isSubmitting} />
 
       {visibleTasks.length === 0 ? (
@@ -197,12 +197,16 @@ export function TasksPage({
         />
       )}
 
-      <TaskDetailModal
-        task={selectedTask}
-        assignableUsers={assignableUsers}
-        open={isDetailOpen}
-        onOpenChange={setIsDetailOpen}
-      />
+      {selectedTask ? (
+        <TaskDetailModal
+          task={selectedTask}
+					currentUserId={currentUserId}
+          assignableUsers={assignableUsers}
+          open={isDetailOpen}
+					onDeleteTask={handleDeleteTask}
+          onOpenChange={handleDetailOpenChange}
+        />
+      ) : null}
     </main>
   );
 }

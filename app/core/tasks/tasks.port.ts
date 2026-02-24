@@ -21,6 +21,7 @@ export type TaskUpdateInput = {
 export interface TaskQueryService {
   listAll(): Promise<Task[]>;
   listByUser(userId: string): Promise<Task[]>;
+  getByIdForUser(input: { id: string; userId: string }): Promise<Task | null>;
 }
 
 export interface TaskCommandService {

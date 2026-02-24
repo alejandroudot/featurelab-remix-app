@@ -15,6 +15,10 @@ import { jsonTaskError, toTaskFormError, zodErrorToActionData } from './errors';
 type Intent = (typeof taskIntentSchema)['enum'][keyof (typeof taskIntentSchema)['enum']];
 type TaskIntentHandler = (input: RunTaskActionInput) => Promise<TaskActionResult>;
 
+async function getTaskOrNull(input: RunTaskActionInput, taskId: string) {
+  return input.taskQueryService.getByIdForUser({ id: taskId, userId: input.userId });
+}
+
 // Handler de creacion: valida payload create y persiste la task.
 const handleCreate: TaskIntentHandler = async (input) => {
   const { formData } = input;
@@ -51,6 +55,28 @@ const handleUpdate: TaskIntentHandler = async (input) => {
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'update');
 
   try {
+    const task = await getTaskOrNull(input, parsed.data.id);
+    if (!task) {
+      return jsonTaskError({
+        intent: 'update',
+        formError: 'No tenes permisos para editar esta task.',
+        values: getTaskFormValues(formData),
+      });
+    }
+
+    const isCreator = task.userId === input.userId;
+    const nextAssigneeId = parsed.data.assigneeId;
+    const currentAssigneeId = task.assigneeId ?? null;
+    const isChangingAssignee =
+      nextAssigneeId !== undefined && nextAssigneeId !== currentAssigneeId;
+    if (!isCreator && isChangingAssignee) {
+      return jsonTaskError({
+        intent: 'update',
+        formError: 'Solo el creador puede reasignar responsable.',
+        values: getTaskFormValues(formData),
+      });
+    }
+
     await input.taskCommandService.update({
       id: parsed.data.id,
       userId: input.userId,
@@ -107,6 +133,24 @@ const handleDelete: TaskIntentHandler = async (input) => {
   if (!parsedDelete.success) return zodErrorToActionData(parsedDelete.error, formData, 'delete');
 
   try {
+    const task = await getTaskOrNull(input, parsedDelete.data.id);
+    if (!task) {
+      return jsonTaskError({
+        intent: 'delete',
+        formError: 'No tenes permisos para eliminar esta task.',
+        values: getTaskFormValues(formData),
+      });
+    }
+
+    const isCreator = task.userId === input.userId;
+    if (!isCreator) {
+      return jsonTaskError({
+        intent: 'delete',
+        formError: 'Solo el creador puede eliminar esta task.',
+        values: getTaskFormValues(formData),
+      });
+    }
+
     await input.taskCommandService.remove({
       id: parsedDelete.data.id,
       userId: input.userId,
