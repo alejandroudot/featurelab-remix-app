@@ -35,6 +35,9 @@ export const taskActivities = sqliteTable('task_activities', {
       'updated',
       'labels-changed',
       'checklist-changed',
+      'comment-added',
+      'comment-updated',
+      'comment-deleted',
       'due-date-changed',
       'status-changed',
       'priority-changed',
@@ -44,6 +47,16 @@ export const taskActivities = sqliteTable('task_activities', {
     ],
   }).notNull(),
   metadata: text('metadata'),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
+export const taskComments = sqliteTable('task_comments', {
+  id: text('id').primaryKey(),
+  taskId: text('task_id').notNull().references(() => tasks.id, { onDelete: 'cascade' }),
+  authorUserId: text('author_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  body: text('body').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp_ms' })
     .notNull()
     .$defaultFn(() => new Date()),

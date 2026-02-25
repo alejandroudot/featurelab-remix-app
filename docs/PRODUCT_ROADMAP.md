@@ -217,7 +217,7 @@ Regla de colaboracion:
   - [x] `dueDate` + overdue
   - [x] labels/tags
   - [x] checklist/subtareas
-  - [ ] comentarios
+  - [x] comentarios
   - [ ] `@menciones` de usuarios en comentarios
   - [ ] adjuntos en comentarios (imagenes + archivos)
   - [ ] plantillas rapidas

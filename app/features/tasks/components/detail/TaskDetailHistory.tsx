@@ -20,6 +20,12 @@ function formatActivityAction(action: TaskActivity['action']) {
       return 'Cambio labels';
     case 'checklist-changed':
       return 'Actualizo checklist';
+    case 'comment-added':
+      return 'Agrego un comentario';
+    case 'comment-updated':
+      return 'Edito un comentario';
+    case 'comment-deleted':
+      return 'Borro un comentario';
     case 'due-date-changed':
       return 'Cambio la fecha limite';
     case 'status-changed':

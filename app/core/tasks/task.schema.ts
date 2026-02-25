@@ -9,7 +9,15 @@ const checklistItemSchema = z.object({
 });
 
 // Intent permitido en el endpoint POST /tasks.
-export const taskIntentSchema = z.enum(['create', 'update', 'delete', 'reorder-column']);
+export const taskIntentSchema = z.enum([
+  'create',
+  'update',
+  'delete',
+  'reorder-column',
+  'comment-create',
+  'comment-update',
+  'comment-delete',
+]);
 
 // Schema exclusivo para crear tasks (intent=create).
 export const taskCreateSchema = z
@@ -122,6 +130,38 @@ export const taskDeleteSchema = z.object({
   id: z.preprocess(
     (value) => (typeof value === 'string' ? value.trim() : ''),
     z.string().min(1, 'ID requerido'),
+  ),
+});
+
+// Payload de comentario: id de task + texto.
+export const taskCommentCreateSchema = z.object({
+  id: z.preprocess(
+    (value) => (typeof value === 'string' ? value.trim() : ''),
+    z.string().min(1, 'ID requerido'),
+  ),
+  commentBody: z.preprocess(
+    (value) => (typeof value === 'string' ? value.trim() : ''),
+    z.string().min(1, 'El comentario no puede estar vacio').max(1000, 'Comentario muy largo'),
+  ),
+});
+
+// Payload para editar comentario: id de comentario + texto nuevo.
+export const taskCommentUpdateSchema = z.object({
+  commentId: z.preprocess(
+    (value) => (typeof value === 'string' ? value.trim() : ''),
+    z.string().min(1, 'ID de comentario requerido'),
+  ),
+  commentBody: z.preprocess(
+    (value) => (typeof value === 'string' ? value.trim() : ''),
+    z.string().min(1, 'El comentario no puede estar vacio').max(1000, 'Comentario muy largo'),
+  ),
+});
+
+// Payload para borrar comentario: solo id de comentario.
+export const taskCommentDeleteSchema = z.object({
+  commentId: z.preprocess(
+    (value) => (typeof value === 'string' ? value.trim() : ''),
+    z.string().min(1, 'ID de comentario requerido'),
   ),
 });
 

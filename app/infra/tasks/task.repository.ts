@@ -2,6 +2,8 @@
 import type {
   TaskActivityCommandService,
   TaskActivityQueryService,
+  TaskCommentCommandService,
+  TaskCommentQueryService,
   TaskCommandService,
   TaskQueryService,
   TaskService,
@@ -9,6 +11,8 @@ import type {
 import {
   sqliteTaskActivityCommandService,
   sqliteTaskActivityQueryService,
+  sqliteTaskCommentCommandService,
+  sqliteTaskCommentQueryService,
   sqliteTaskCommandService,
   sqliteTaskQueryService,
 } from './task.repository.sqlite';
@@ -19,6 +23,8 @@ export const taskCommandService: TaskCommandService = sqliteTaskCommandService;
 export const taskActivityQueryService: TaskActivityQueryService = sqliteTaskActivityQueryService;
 export const taskActivityCommandService: TaskActivityCommandService =
   sqliteTaskActivityCommandService;
+export const taskCommentQueryService: TaskCommentQueryService = sqliteTaskCommentQueryService;
+export const taskCommentCommandService: TaskCommentCommandService = sqliteTaskCommentCommandService;
 
 // Alias de transicion para imports legacy.
 export const taskService: TaskService = {

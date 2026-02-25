@@ -34,12 +34,24 @@ export type TaskActivityAction =
   | 'updated'
   | 'labels-changed'
   | 'checklist-changed'
+  | 'comment-added'
+  | 'comment-updated'
+  | 'comment-deleted'
   | 'due-date-changed'
   | 'status-changed'
   | 'priority-changed'
   | 'assignee-changed'
   | 'reordered'
   | 'deleted';
+
+export type TaskComment = {
+  id: string;
+  taskId: string;
+  authorUserId: string;
+  authorEmail: string | null;
+  body: string;
+  createdAt: Date;
+};
 
 export type TaskActivity = {
   id: string;

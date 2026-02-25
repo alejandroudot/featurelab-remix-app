@@ -1,4 +1,4 @@
-import type { Task, TaskActivity } from '~/core/tasks/tasks.types';
+import type { Task, TaskActivity, TaskComment } from '~/core/tasks/tasks.types';
 import type { TaskAssigneeOption } from '../../types';
 import {
   Dialog,
@@ -9,12 +9,14 @@ import {
 } from '~/ui/primitives/dialog';
 import { TaskDetailActions } from './TaskDetailActions';
 import { TaskDetailContent } from './TaskDetailContent';
+import { TaskDetailComments } from './TaskDetailComments';
 import { TaskDetailHistory } from './TaskDetailHistory';
 
 type TaskDetailModalProps = {
   task: Task | null;
   currentUserId: string;
   activities: TaskActivity[];
+  comments: TaskComment[];
   assignableUsers: TaskAssigneeOption[];
   open: boolean;
   onDeleteTask?: (taskId: string) => void;
@@ -25,6 +27,7 @@ export function TaskDetailModal({
   task,
   currentUserId,
   activities,
+  comments,
   assignableUsers,
   open,
   onDeleteTask,
@@ -44,6 +47,7 @@ export function TaskDetailModal({
             <div className="grid h-[calc(80vh-96px)] gap-4 p-4 lg:grid-cols-[2fr_1fr]">
               <section className="space-y-4 overflow-y-auto pr-1">
                 <TaskDetailContent task={task} />
+                <TaskDetailComments taskId={task.id} comments={comments} currentUserId={currentUserId} />
                 <TaskDetailHistory activities={activities} />
               </section>
 

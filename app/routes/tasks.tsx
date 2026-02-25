@@ -4,6 +4,8 @@ import type { Route } from './+types/tasks';
 import {
   taskActivityCommandService,
   taskActivityQueryService,
+  taskCommentCommandService,
+  taskCommentQueryService,
   taskCommandService,
   taskQueryService,
 } from '../infra/tasks/task.repository';
@@ -15,7 +17,13 @@ import { runTaskLoader } from '~/features/tasks/server/task.loader';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
-  return runTaskLoader({ request, userId: user.id, taskQueryService, taskActivityQueryService });
+  return runTaskLoader({
+    request,
+    userId: user.id,
+    taskQueryService,
+    taskActivityQueryService,
+    taskCommentQueryService,
+  });
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -29,12 +37,14 @@ export async function action({ request }: Route.ActionArgs) {
     taskCommandService,
     taskQueryService,
     taskActivityCommandService,
+    taskCommentQueryService,
+    taskCommentCommandService,
     notificationService,
   });
 }
 
 export default function TasksRoute() {
-  const { currentUserId, tasks, taskActivities, assignmentNotifications, assignableUsers, viewState } =
+  const { currentUserId, tasks, taskActivities, taskComments, notifications, assignableUsers, viewState } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<TaskActionData>();
   const navigation = useNavigation();
@@ -45,7 +55,8 @@ export default function TasksRoute() {
       currentUserId={currentUserId}
       tasks={tasks}
       taskActivities={taskActivities}
-      assignmentNotifications={assignmentNotifications}
+      taskComments={taskComments}
+      notifications={notifications}
       assignableUsers={assignableUsers}
       viewState={viewState}
       actionData={actionData}

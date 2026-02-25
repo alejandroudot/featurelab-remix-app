@@ -1,7 +1,13 @@
 // app/core/tasks/task.port.ts
 import type { z } from 'zod';
 import type { taskCreateSchema } from './task.schema';
-import type { Task, TaskActivity, TaskActivityAction, TaskChecklistItem } from './tasks.types';
+import type {
+  Task,
+  TaskActivity,
+  TaskActivityAction,
+  TaskChecklistItem,
+  TaskComment,
+} from './tasks.types';
 
 // 1) Lo que viene del cliente (formData).
 export type TaskCreateDTO = z.infer<typeof taskCreateSchema>;
@@ -31,6 +37,11 @@ export interface TaskActivityQueryService {
   listByUser(userId: string): Promise<TaskActivity[]>;
 }
 
+export interface TaskCommentQueryService {
+  listByUser(userId: string): Promise<TaskComment[]>;
+  getByIdForUser(input: { id: string; userId: string }): Promise<TaskComment | null>;
+}
+
 export interface TaskCommandService {
   create(input: TaskCreateInput): Promise<Task>;
   update(input: TaskUpdateInput): Promise<Task>;
@@ -48,6 +59,23 @@ export interface TaskActivityCommandService {
     actorUserId: string;
     action: TaskActivityAction;
     metadata?: Record<string, string | number | boolean | null>;
+  }): Promise<void>;
+}
+
+export interface TaskCommentCommandService {
+  create(input: {
+    taskId: string;
+    authorUserId: string;
+    body: string;
+  }): Promise<TaskComment>;
+  update(input: {
+    id: string;
+    authorUserId: string;
+    body: string;
+  }): Promise<TaskComment>;
+  remove(input: {
+    id: string;
+    authorUserId: string;
   }): Promise<void>;
 }
 

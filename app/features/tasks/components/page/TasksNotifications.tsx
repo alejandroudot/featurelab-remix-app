@@ -1,13 +1,14 @@
-type AssignmentNotification = {
+type TaskNotification = {
   id: string;
   taskId: string;
   taskTitle: string;
   actorEmail: string;
+  message: string;
   createdAt: Date;
 };
 
 type TasksNotificationsProps = {
-  items: AssignmentNotification[];
+  items: TaskNotification[];
 };
 
 export function TasksNotifications({ items }: TasksNotificationsProps) {
@@ -19,9 +20,7 @@ export function TasksNotifications({ items }: TasksNotificationsProps) {
       <ul className="space-y-2">
         {items.map((item) => (
           <li key={item.id} className="rounded border p-2 text-sm">
-            <div>
-              {item.actorEmail} te asigno: <span className="font-medium">{item.taskTitle}</span>
-            </div>
+            <div>{item.message}</div>
             <div className="text-xs opacity-70">
               {new Date(item.createdAt).toISOString().replace('T', ' ').slice(0, 16)}
             </div>

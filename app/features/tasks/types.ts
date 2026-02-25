@@ -1,5 +1,7 @@
 import type {
   TaskActivityCommandService,
+  TaskCommentQueryService,
+  TaskCommentCommandService,
   TaskQueryService,
   TaskCommandService,
 } from '~/core/tasks/tasks.port';
@@ -18,7 +20,15 @@ export type TaskAssigneeOption = { id: string; email: string };
 export type TaskActionData =
 	| {
 		success: false;
-		intent?: 'create' | 'update' | 'delete' | 'reorder-column' | 'unknown';
+		intent?:
+      | 'create'
+      | 'update'
+      | 'delete'
+      | 'reorder-column'
+      | 'comment-create'
+      | 'comment-update'
+      | 'comment-delete'
+      | 'unknown';
 		formError?: string;
 		fieldErrors?: Record<string, string[] | undefined>;
 		values?: {
@@ -26,6 +36,8 @@ export type TaskActionData =
 			description?: string;
 			labels?: string;
 			checklist?: string;
+			commentBody?: string;
+      commentId?: string;
 			id?: string;
 			status?: string;
 			priority?: string;
@@ -45,5 +57,7 @@ export type RunTaskActionInput = {
 	taskCommandService: TaskCommandService;
 	taskQueryService: TaskQueryService;
 	taskActivityCommandService: TaskActivityCommandService;
+	taskCommentQueryService: TaskCommentQueryService;
+	taskCommentCommandService: TaskCommentCommandService;
 	notificationService: NotificationService;
 };

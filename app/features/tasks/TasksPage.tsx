@@ -8,7 +8,7 @@ import { TasksViewControls } from './components/page/TasksViewControls';
 import { TasksEmptyState } from './components/page/TasksEmptyState';
 import { TasksBoardView } from './components/board/TasksBoardView';
 import { TaskDetailModal } from './components/detail/TaskDetailModal';
-import type { Task, TaskActivity } from '~/core/tasks/tasks.types';
+import type { Task, TaskActivity, TaskComment } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from './server/task-view-state';
 import type { TaskAssigneeOption } from './types';
 import { toast } from 'sonner';
@@ -18,7 +18,8 @@ export function TasksPage({
   currentUserId,
   tasks,
   taskActivities,
-  assignmentNotifications,
+  taskComments,
+  notifications,
   assignableUsers,
   viewState,
   actionData,
@@ -27,11 +28,13 @@ export function TasksPage({
   currentUserId: string;
   tasks: Task[];
   taskActivities: TaskActivity[];
-  assignmentNotifications: Array<{
+  taskComments: TaskComment[];
+  notifications: Array<{
     id: string;
     taskId: string;
     taskTitle: string;
     actorEmail: string;
+    message: string;
     createdAt: Date;
   }>;
   assignableUsers: TaskAssigneeOption[];
@@ -162,6 +165,10 @@ export function TasksPage({
         : [],
     [taskActivities, selectedTaskId],
   );
+  const selectedTaskComments = useMemo(
+    () => (selectedTaskId ? taskComments.filter((comment) => comment.taskId === selectedTaskId) : []),
+    [taskComments, selectedTaskId],
+  );
 
   const assigneeById = useMemo(
     () =>
@@ -195,7 +202,7 @@ export function TasksPage({
 
       <CreateTaskForm actionData={actionData} isSubmitting={isSubmitting} />
 
-      <TasksNotifications items={assignmentNotifications} />
+      <TasksNotifications items={notifications} />
 
       {visibleTasks.length === 0 ? (
         <TasksEmptyState
@@ -222,6 +229,7 @@ export function TasksPage({
           task={selectedTask}
 					currentUserId={currentUserId}
           activities={selectedTaskActivities}
+          comments={selectedTaskComments}
           assignableUsers={assignableUsers}
           open={isDetailOpen}
 					onDeleteTask={handleDeleteTask}

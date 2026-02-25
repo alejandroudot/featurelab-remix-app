@@ -323,7 +323,7 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
   - [x] `dueDate` + overdue
   - [x] labels/tags
   - [x] checklist/subtareas
-  - [ ] comentarios
+  - [x] comentarios
   - [ ] `@menciones` de usuarios en comentarios
   - [ ] adjuntos en comentarios (imagenes + archivos)
   - [ ] plantillas rapidas

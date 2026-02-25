@@ -1,5 +1,9 @@
 import { asc } from 'drizzle-orm';
-import type { TaskActivityQueryService, TaskQueryService } from '~/core/tasks/tasks.port';
+import type {
+  TaskActivityQueryService,
+  TaskCommentQueryService,
+  TaskQueryService,
+} from '~/core/tasks/tasks.port';
 import { parseTasksViewStateFromUrl } from './task-view-state';
 import { db } from '~/infra/db/client.sqlite';
 import { users } from '~/infra/db/schema';
@@ -9,6 +13,7 @@ type RunTaskLoaderInput = {
   userId: string;
   taskQueryService: TaskQueryService;
   taskActivityQueryService: TaskActivityQueryService;
+  taskCommentQueryService: TaskCommentQueryService;
 };
 
 export async function runTaskLoader({
@@ -16,9 +21,11 @@ export async function runTaskLoader({
   userId,
   taskQueryService,
   taskActivityQueryService,
+  taskCommentQueryService,
 }: RunTaskLoaderInput) {
   const tasks = await taskQueryService.listByUser(userId);
   const taskActivities = await taskActivityQueryService.listByUser(userId);
+  const taskComments = await taskCommentQueryService.listByUser(userId);
 	// por ahora trae todos los usuarios
   const assignableUsers = await db
     .select({ id: users.id, email: users.email })
@@ -29,26 +36,72 @@ export async function runTaskLoader({
   const url = new URL(request.url);
   const viewState = parseTasksViewStateFromUrl(url);
   const taskTitleById = new Map(tasks.map((task) => [task.id, task.title]));
-  const assignmentNotifications = taskActivities
+  const notifications = taskActivities
     .filter((activity) => {
-      if (activity.action !== 'assignee-changed') return false;
-      const targetUserId = activity.metadata?.to;
-      return typeof targetUserId === 'string' && targetUserId === userId;
+      if (activity.action === 'assignee-changed') {
+        const targetUserId = activity.metadata?.to;
+        return typeof targetUserId === 'string' && targetUserId === userId;
+      }
+      return (
+        activity.action === 'comment-added' ||
+        activity.action === 'comment-updated' ||
+        activity.action === 'comment-deleted'
+      );
     })
-    .slice(0, 5)
-    .map((activity) => ({
-      id: activity.id,
-      taskId: activity.taskId,
-      taskTitle: taskTitleById.get(activity.taskId) ?? 'Task',
-      actorEmail: activity.actorEmail ?? 'Usuario',
-      createdAt: activity.createdAt,
-    }));
+    .slice(0, 10)
+    .map((activity) => {
+      const taskTitle = taskTitleById.get(activity.taskId) ?? 'Task';
+      const actorEmail = activity.actorEmail ?? 'Usuario';
+
+      if (activity.action === 'assignee-changed') {
+        return {
+          id: activity.id,
+          taskId: activity.taskId,
+          taskTitle,
+          actorEmail,
+          message: `${actorEmail} te asigno: ${taskTitle}`,
+          createdAt: activity.createdAt,
+        };
+      }
+
+      if (activity.action === 'comment-updated') {
+        return {
+          id: activity.id,
+          taskId: activity.taskId,
+          taskTitle,
+          actorEmail,
+          message: `${actorEmail} edito un comentario en: ${taskTitle}`,
+          createdAt: activity.createdAt,
+        };
+      }
+
+      if (activity.action === 'comment-deleted') {
+        return {
+          id: activity.id,
+          taskId: activity.taskId,
+          taskTitle,
+          actorEmail,
+          message: `${actorEmail} borro un comentario en: ${taskTitle}`,
+          createdAt: activity.createdAt,
+        };
+      }
+
+      return {
+        id: activity.id,
+        taskId: activity.taskId,
+        taskTitle,
+        actorEmail,
+        message: `${actorEmail} agrego un comentario en: ${taskTitle}`,
+        createdAt: activity.createdAt,
+      };
+    });
 
   return {
     currentUserId: userId,
     tasks,
     taskActivities,
-    assignmentNotifications,
+    taskComments,
+    notifications,
     assignableUsers,
     viewState
   };
