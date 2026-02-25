@@ -317,7 +317,7 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
 
 - [ ] Trazabilidad y notificaciones
   - [x] Historial de cambios por task
-  - [ ] Notificaciones in-app por asignacion/reasignacion
+  - [x] Notificaciones in-app por asignacion/reasignacion
   - [ ] Preparar hook para Slack
 - [ ] Enriquecer task para valor de producto
   - [ ] `dueDate` + overdue
@@ -426,4 +426,3 @@ Dia X - Fecha
 - Bloqueado:
 - Riesgo:
 - Primer tarea de manana:
-

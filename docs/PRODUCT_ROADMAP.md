@@ -211,7 +211,7 @@ Regla de colaboracion:
   - [x] Mensajes claros en acciones no permitidas
 - [ ] Trazabilidad y notificaciones
   - [x] Historial de cambios por task
-  - [ ] Notificaciones in-app por asignacion/reasignacion
+  - [x] Notificaciones in-app por asignacion/reasignacion
   - [ ] Preparar hook para Slack
 - [ ] Enriquecer task para valor de producto
   - [ ] `dueDate` + overdue

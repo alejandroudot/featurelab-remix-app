@@ -3,6 +3,7 @@ import { useLocation, useSearchParams, useSubmit } from 'react-router';
 import type { TaskActionData } from './types';
 import { CreateTaskForm } from './components/page/CreateTaskForm';
 import { TasksList } from './components/page/TasksList';
+import { TasksNotifications } from './components/page/TasksNotifications';
 import { TasksViewControls } from './components/page/TasksViewControls';
 import { TasksEmptyState } from './components/page/TasksEmptyState';
 import { TasksBoardView } from './components/board/TasksBoardView';
@@ -17,6 +18,7 @@ export function TasksPage({
   currentUserId,
   tasks,
   taskActivities,
+  assignmentNotifications,
   assignableUsers,
   viewState,
   actionData,
@@ -25,6 +27,13 @@ export function TasksPage({
   currentUserId: string;
   tasks: Task[];
   taskActivities: TaskActivity[];
+  assignmentNotifications: Array<{
+    id: string;
+    taskId: string;
+    taskTitle: string;
+    actorEmail: string;
+    createdAt: Date;
+  }>;
   assignableUsers: TaskAssigneeOption[];
   viewState: TasksViewState;
   actionData: TaskActionData;
@@ -185,6 +194,8 @@ export function TasksPage({
       </header>
 
       <CreateTaskForm actionData={actionData} isSubmitting={isSubmitting} />
+
+      <TasksNotifications items={assignmentNotifications} />
 
       {visibleTasks.length === 0 ? (
         <TasksEmptyState

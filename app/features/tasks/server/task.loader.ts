@@ -28,10 +28,27 @@ export async function runTaskLoader({
 
   const url = new URL(request.url);
   const viewState = parseTasksViewStateFromUrl(url);
+  const taskTitleById = new Map(tasks.map((task) => [task.id, task.title]));
+  const assignmentNotifications = taskActivities
+    .filter((activity) => {
+      if (activity.action !== 'assignee-changed') return false;
+      const targetUserId = activity.metadata?.to;
+      return typeof targetUserId === 'string' && targetUserId === userId;
+    })
+    .slice(0, 5)
+    .map((activity) => ({
+      id: activity.id,
+      taskId: activity.taskId,
+      taskTitle: taskTitleById.get(activity.taskId) ?? 'Task',
+      actorEmail: activity.actorEmail ?? 'Usuario',
+      createdAt: activity.createdAt,
+    }));
+
   return {
     currentUserId: userId,
     tasks,
     taskActivities,
+    assignmentNotifications,
     assignableUsers,
     viewState
   };

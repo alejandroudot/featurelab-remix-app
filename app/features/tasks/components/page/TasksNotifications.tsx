@@ -1,0 +1,33 @@
+type AssignmentNotification = {
+  id: string;
+  taskId: string;
+  taskTitle: string;
+  actorEmail: string;
+  createdAt: Date;
+};
+
+type TasksNotificationsProps = {
+  items: AssignmentNotification[];
+};
+
+export function TasksNotifications({ items }: TasksNotificationsProps) {
+  if (items.length === 0) return null;
+
+  return (
+    <section className="space-y-2 rounded border p-3">
+      <h2 className="text-sm font-semibold">Notificaciones</h2>
+      <ul className="space-y-2">
+        {items.map((item) => (
+          <li key={item.id} className="rounded border p-2 text-sm">
+            <div>
+              {item.actorEmail} te asigno: <span className="font-medium">{item.taskTitle}</span>
+            </div>
+            <div className="text-xs opacity-70">
+              {new Date(item.createdAt).toISOString().replace('T', ' ').slice(0, 16)}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
