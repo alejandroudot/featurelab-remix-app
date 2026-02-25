@@ -1,7 +1,7 @@
 // app/core/tasks/task.port.ts
 import type { z } from 'zod';
 import type { taskCreateSchema } from './task.schema';
-import type { Task, TaskActivity, TaskActivityAction } from './tasks.types';
+import type { Task, TaskActivity, TaskActivityAction, TaskChecklistItem } from './tasks.types';
 
 // 1) Lo que viene del cliente (formData).
 export type TaskCreateDTO = z.infer<typeof taskCreateSchema>;
@@ -13,6 +13,7 @@ export type TaskUpdateInput = {
   id: string;
   userId: string;
   labels?: string[];
+  checklist?: TaskChecklistItem[];
   dueDate?: Date | null;
   status?: 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live' | 'done' | 'discarded';
   priority?: 'low' | 'medium' | 'high' | 'critical';

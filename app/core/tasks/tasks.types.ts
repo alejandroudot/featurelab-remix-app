@@ -7,6 +7,11 @@ export type TaskStatus =
   | 'done'
   | 'discarded';
 export type TaskPriority = 'low' | 'medium' | 'high' | 'critical';
+export type TaskChecklistItem = {
+  id: string;
+  text: string;
+  done: boolean;
+};
 
 export type Task = {
   id: string;
@@ -14,6 +19,7 @@ export type Task = {
   title: string;
   description?: string | null;
   labels: string[];
+  checklist: TaskChecklistItem[];
   dueDate?: Date | null;
   status: TaskStatus;
   priority: TaskPriority;
@@ -27,6 +33,7 @@ export type TaskActivityAction =
   | 'created'
   | 'updated'
   | 'labels-changed'
+  | 'checklist-changed'
   | 'due-date-changed'
   | 'status-changed'
   | 'priority-changed'

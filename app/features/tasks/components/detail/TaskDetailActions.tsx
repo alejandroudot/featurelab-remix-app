@@ -29,7 +29,36 @@ export function TaskDetailActions({
   const isCreator = task.userId === currentUserId;
   const formActionData = fetcher.data;
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [checklist, setChecklist] = React.useState(task.checklist);
+  const [newChecklistText, setNewChecklistText] = React.useState('');
   const overdue = isTaskOverdue(task);
+  const checklistDone = checklist.filter((item) => item.done).length;
+
+  React.useEffect(() => {
+    setChecklist(task.checklist);
+    setNewChecklistText('');
+  }, [task.id, task.checklist]);
+
+  function addChecklistItem() {
+    const text = newChecklistText.trim();
+    if (!text) return;
+    const id =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `tmp-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    setChecklist((prev) => [...prev, { id, text, done: false }]);
+    setNewChecklistText('');
+  }
+
+  function toggleChecklistItem(itemId: string) {
+    setChecklist((prev) =>
+      prev.map((item) => (item.id === itemId ? { ...item, done: !item.done } : item)),
+    );
+  }
+
+  function removeChecklistItem(itemId: string) {
+    setChecklist((prev) => prev.filter((item) => item.id !== itemId));
+  }
 
   return (
     <aside className="flex flex-col justify-between space-y-3 overflow-y-auto rounded border p-3">
@@ -49,6 +78,11 @@ export function TaskDetailActions({
                 #{label}
               </Badge>
             ))}
+            {checklist.length > 0 ? (
+              <Badge variant="outline">
+                Checklist {checklistDone}/{checklist.length}
+              </Badge>
+            ) : null}
             <Badge variant="ghost">{assigneeLabel}</Badge>
           </div>
         </div>
@@ -56,6 +90,7 @@ export function TaskDetailActions({
           <input type="hidden" name="intent" value="update" />
           <input type="hidden" name="id" value={task.id} />
           <input type="hidden" name="redirectTo" value={redirectTo} />
+          <input type="hidden" name="checklist" value={JSON.stringify(checklist)} />
 
           <label className="block text-xs font-medium" htmlFor="detail-status">
             Status
@@ -111,6 +146,55 @@ export function TaskDetailActions({
             className="w-full rounded border px-2 py-1 text-sm"
             placeholder="frontend, bug, urgente"
           />
+
+          <div className="space-y-2">
+            <label className="block text-xs font-medium">Checklist / subtareas</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newChecklistText}
+                onChange={(event) => setNewChecklistText(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    addChecklistItem();
+                  }
+                }}
+                className="w-full rounded border px-2 py-1 text-sm"
+                placeholder="Agregar subtarea..."
+              />
+              <button
+                type="button"
+                onClick={addChecklistItem}
+                className="rounded border px-2 py-1 text-sm"
+              >
+                Agregar
+              </button>
+            </div>
+            {checklist.length > 0 ? (
+              <ul className="space-y-1">
+                {checklist.map((item) => (
+                  <li key={item.id} className="flex items-center gap-2 rounded border px-2 py-1 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={item.done}
+                      onChange={() => toggleChecklistItem(item.id)}
+                    />
+                    <span className={item.done ? 'line-through opacity-70' : ''}>{item.text}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeChecklistItem(item.id)}
+                      className="ml-auto text-xs opacity-70 hover:opacity-100"
+                    >
+                      quitar
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs opacity-70">Sin subtareas.</p>
+            )}
+          </div>
           {isCreator ? (
             <>
               <label className="block text-xs font-medium" htmlFor="detail-assignee">

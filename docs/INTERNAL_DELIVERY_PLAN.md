@@ -322,7 +322,7 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
 - [ ] Enriquecer task para valor de producto
   - [x] `dueDate` + overdue
   - [x] labels/tags
-  - [ ] checklist/subtareas
+  - [x] checklist/subtareas
   - [ ] comentarios
   - [ ] `@menciones` de usuarios en comentarios
   - [ ] adjuntos en comentarios (imagenes + archivos)

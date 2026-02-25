@@ -216,7 +216,7 @@ Regla de colaboracion:
 - [ ] Enriquecer task para valor de producto
   - [x] `dueDate` + overdue
   - [x] labels/tags
-  - [ ] checklist/subtareas
+  - [x] checklist/subtareas
   - [ ] comentarios
   - [ ] `@menciones` de usuarios en comentarios
   - [ ] adjuntos en comentarios (imagenes + archivos)

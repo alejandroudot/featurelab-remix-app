@@ -20,6 +20,12 @@ export function TasksList({ tasks, assigneeById }: { tasks: Task[]; assigneeById
             <div className="text-xs opacity-70 mt-1">
               Labels: {task.labels.length > 0 ? task.labels.map((label) => `#${label}`).join(', ') : 'None'}
             </div>
+            <div className="text-xs opacity-70 mt-1">
+              Checklist:{' '}
+              {task.checklist.length > 0
+                ? `${task.checklist.filter((item) => item.done).length}/${task.checklist.length}`
+                : 'None'}
+            </div>
             {task.dueDate ? (
               <div className={`text-xs mt-1 ${isTaskOverdue(task) ? 'text-red-600' : 'opacity-70'}`}>
                 Due: {formatDateUTC(task.dueDate)} {isTaskOverdue(task) ? '(overdue)' : ''}

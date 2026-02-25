@@ -25,6 +25,7 @@ export type TaskActionData =
 			title?: string;
 			description?: string;
 			labels?: string;
+			checklist?: string;
 			id?: string;
 			status?: string;
 			priority?: string;

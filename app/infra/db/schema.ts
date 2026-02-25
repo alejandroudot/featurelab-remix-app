@@ -8,6 +8,7 @@ export const tasks = sqliteTable('tasks', {
   title: text('title').notNull(),
   description: text('description'),
   labels: text('labels').notNull().default('[]'),
+  checklist: text('checklist').notNull().default('[]'),
   dueDate: integer('due_date', { mode: 'timestamp_ms' }),
   status: text('status', { enum: ['todo', 'in-progress', 'qa', 'ready-to-go-live', 'done', 'discarded'] })
     .notNull()
@@ -33,6 +34,7 @@ export const taskActivities = sqliteTable('task_activities', {
       'created',
       'updated',
       'labels-changed',
+      'checklist-changed',
       'due-date-changed',
       'status-changed',
       'priority-changed',

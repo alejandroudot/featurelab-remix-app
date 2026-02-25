@@ -66,6 +66,7 @@ export function TaskCard({
   }
 
   const overdue = isTaskOverdue(task);
+  const checklistDone = task.checklist.filter((item) => item.done).length;
 
   return (
     <>
@@ -128,6 +129,11 @@ export function TaskCard({
                 </Badge>
               ))
             )}
+            {task.checklist.length > 0 ? (
+              <Badge variant="outline">
+                Checklist {checklistDone}/{task.checklist.length}
+              </Badge>
+            ) : null}
           </div>
 
           <div className="flex items-center justify-between">

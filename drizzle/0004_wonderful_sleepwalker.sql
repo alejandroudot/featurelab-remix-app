@@ -1,0 +1,1 @@
+ALTER TABLE `tasks` ADD `checklist` text DEFAULT '[]' NOT NULL;

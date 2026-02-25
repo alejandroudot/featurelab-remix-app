@@ -24,6 +24,19 @@ function labelsEqual(left: string[], right: string[]) {
   return left.every((label, index) => label === right[index]);
 }
 
+function checklistEqual(
+  left: Array<{ id: string; text: string; done: boolean }>,
+  right: Array<{ id: string; text: string; done: boolean }>,
+) {
+  if (left.length !== right.length) return false;
+  return left.every(
+    (item, index) =>
+      item.id === right[index]?.id &&
+      item.text === right[index]?.text &&
+      item.done === right[index]?.done,
+  );
+}
+
 // Handler de creacion: valida payload create y persiste la task.
 const handleCreate: TaskIntentHandler = async (input) => {
   const { formData } = input;
@@ -58,6 +71,7 @@ const handleUpdate: TaskIntentHandler = async (input) => {
   const parsed = taskUpdateSchema.safeParse({
     id: formData.get('id'),
     labels: formData.get('labels'),
+    checklist: formData.get('checklist'),
     status: formData.get('status'),
     priority: formData.get('priority'),
     orderIndex: formData.get('orderIndex'),
@@ -94,6 +108,7 @@ const handleUpdate: TaskIntentHandler = async (input) => {
       id: parsed.data.id,
       userId: input.userId,
       labels: parsed.data.labels,
+      checklist: parsed.data.checklist,
       dueDate: parsed.data.dueDate,
       status: parsed.data.status,
       priority: parsed.data.priority,
@@ -111,6 +126,20 @@ const handleUpdate: TaskIntentHandler = async (input) => {
           metadata: {
             from: task.labels.join(', '),
             to: updatedTask.labels.join(', '),
+          },
+        }),
+      );
+    }
+    if (!checklistEqual(task.checklist, updatedTask.checklist)) {
+      const doneCount = updatedTask.checklist.filter((item) => item.done).length;
+      activityWrites.push(
+        input.taskActivityCommandService.create({
+          taskId: updatedTask.id,
+          actorUserId: input.userId,
+          action: 'checklist-changed',
+          metadata: {
+            total: updatedTask.checklist.length,
+            done: doneCount,
           },
         }),
       );

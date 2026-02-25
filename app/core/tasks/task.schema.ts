@@ -2,6 +2,11 @@ import { z } from 'zod';
 
 const TASK_STATUS_VALUES = ['todo', 'in-progress', 'qa', 'ready-to-go-live', 'done', 'discarded'] as const;
 const BOARD_STATUS_VALUES = ['todo', 'in-progress', 'qa', 'ready-to-go-live'] as const;
+const checklistItemSchema = z.object({
+  id: z.string().min(1),
+  text: z.string().min(1).max(120),
+  done: z.boolean(),
+});
 
 // Intent permitido en el endpoint POST /tasks.
 export const taskIntentSchema = z.enum(['create', 'update', 'delete', 'reorder-column']);
@@ -72,6 +77,19 @@ export const taskUpdateSchema = z.object({
     const unique = [...new Set(parsed)];
     return unique;
   }, z.array(z.string().min(1).max(20)).optional()),
+  checklist: z.preprocess((value) => {
+    if (value == null) return undefined;
+    if (typeof value !== 'string') return undefined;
+    const parsed = value.trim();
+    if (!parsed) return [];
+    try {
+      const asJson = JSON.parse(parsed);
+      if (!Array.isArray(asJson)) return undefined;
+      return asJson;
+    } catch {
+      return undefined;
+    }
+  }, z.array(checklistItemSchema).max(50).optional()),
   dueDate: z.preprocess((value) => {
     if (value == null) return undefined;
     if (typeof value !== 'string') return undefined;
