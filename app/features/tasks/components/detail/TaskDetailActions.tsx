@@ -92,6 +92,34 @@ export function TaskDetailActions({
           <input type="hidden" name="redirectTo" value={redirectTo} />
           <input type="hidden" name="checklist" value={JSON.stringify(checklist)} />
 
+          <label className="block text-xs font-medium" htmlFor="detail-title">
+            Titulo
+          </label>
+          <input
+            id="detail-title"
+            type="text"
+            name="title"
+            defaultValue={formActionData?.values?.title ?? task.title}
+            className="w-full rounded border px-2 py-1 text-sm"
+          />
+          {formActionData?.fieldErrors?.title?.[0] ? (
+            <p className="text-xs text-red-600">{formActionData.fieldErrors.title[0]}</p>
+          ) : null}
+
+          <label className="block text-xs font-medium" htmlFor="detail-description">
+            Descripcion
+          </label>
+          <textarea
+            id="detail-description"
+            name="description"
+            defaultValue={formActionData?.values?.description ?? (task.description ?? '')}
+            className="w-full rounded border px-2 py-1 text-sm"
+            rows={3}
+          />
+          {formActionData?.fieldErrors?.description?.[0] ? (
+            <p className="text-xs text-red-600">{formActionData.fieldErrors.description[0]}</p>
+          ) : null}
+
           <label className="block text-xs font-medium" htmlFor="detail-status">
             Status
           </label>

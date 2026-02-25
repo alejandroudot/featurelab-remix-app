@@ -18,6 +18,8 @@ export type TaskCreateInput = TaskCreateDTO & { userId: string };
 export type TaskUpdateInput = {
   id: string;
   userId: string;
+  title?: string;
+  description?: string | null;
   labels?: string[];
   checklist?: TaskChecklistItem[];
   dueDate?: Date | null;

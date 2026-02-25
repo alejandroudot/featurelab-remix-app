@@ -42,6 +42,21 @@ export const taskUpdateSchema = z.object({
     (value) => (typeof value === 'string' ? value.trim() : ''),
     z.string().min(1, 'ID requerido'),
   ),
+  title: z.preprocess(
+    (value) => {
+      if (typeof value !== 'string') return undefined;
+      return value.trim();
+    },
+    z.string().min(1, 'El titulo es obligatorio').optional(),
+  ),
+  description: z.preprocess(
+    (value) => {
+      if (typeof value !== 'string') return undefined;
+      const parsed = value.trim();
+      return parsed.length > 0 ? parsed : null;
+    },
+    z.string().max(5000, 'Descripcion muy larga').nullable().optional(),
+  ),
   status: z.preprocess(
     (value) => {
       if (typeof value !== 'string') return undefined;

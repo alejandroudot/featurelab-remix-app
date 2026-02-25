@@ -75,6 +75,8 @@ export const sqliteTaskCommandService: TaskCommandService = {
     const [row] = await db
       .update(tasks)
       .set({
+        ...(input.title !== undefined ? { title: input.title } : {}),
+        ...(input.description !== undefined ? { description: input.description } : {}),
         ...(input.labels !== undefined ? { labels: JSON.stringify(input.labels) } : {}),
         ...(input.checklist !== undefined ? { checklist: JSON.stringify(input.checklist) } : {}),
         ...(input.dueDate !== undefined ? { dueDate: input.dueDate } : {}),

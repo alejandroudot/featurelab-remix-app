@@ -77,6 +77,8 @@ const handleUpdate: TaskIntentHandler = async (input) => {
   const { formData } = input;
   const parsed = taskUpdateSchema.safeParse({
     id: formData.get('id'),
+    title: formData.get('title'),
+    description: formData.get('description'),
     labels: formData.get('labels'),
     checklist: formData.get('checklist'),
     status: formData.get('status'),
@@ -114,6 +116,8 @@ const handleUpdate: TaskIntentHandler = async (input) => {
     const updatedTask = await input.taskCommandService.update({
       id: parsed.data.id,
       userId: input.userId,
+      title: parsed.data.title,
+      description: parsed.data.description,
       labels: parsed.data.labels,
       checklist: parsed.data.checklist,
       dueDate: parsed.data.dueDate,
