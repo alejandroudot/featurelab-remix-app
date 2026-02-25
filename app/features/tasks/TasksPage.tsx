@@ -7,7 +7,7 @@ import { TasksViewControls } from './components/page/TasksViewControls';
 import { TasksEmptyState } from './components/page/TasksEmptyState';
 import { TasksBoardView } from './components/board/TasksBoardView';
 import { TaskDetailModal } from './components/detail/TaskDetailModal';
-import type { Task } from '~/core/tasks/tasks.types';
+import type { Task, TaskActivity } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from './server/task-view-state';
 import type { TaskAssigneeOption } from './types';
 import { toast } from 'sonner';
@@ -16,6 +16,7 @@ import { getTaskActionToastError } from './client-errors';
 export function TasksPage({
   currentUserId,
   tasks,
+  taskActivities,
   assignableUsers,
   viewState,
   actionData,
@@ -23,6 +24,7 @@ export function TasksPage({
 }: {
   currentUserId: string;
   tasks: Task[];
+  taskActivities: TaskActivity[];
   assignableUsers: TaskAssigneeOption[];
   viewState: TasksViewState;
   actionData: TaskActionData;
@@ -144,6 +146,13 @@ export function TasksPage({
     () => tasks.find((task) => task.id === selectedTaskId) ?? null,
     [tasks, selectedTaskId],
   );
+  const selectedTaskActivities = useMemo(
+    () =>
+      selectedTaskId
+        ? taskActivities.filter((activity) => activity.taskId === selectedTaskId)
+        : [],
+    [taskActivities, selectedTaskId],
+  );
 
   const assigneeById = useMemo(
     () =>
@@ -201,6 +210,7 @@ export function TasksPage({
         <TaskDetailModal
           task={selectedTask}
 					currentUserId={currentUserId}
+          activities={selectedTaskActivities}
           assignableUsers={assignableUsers}
           open={isDetailOpen}
 					onDeleteTask={handleDeleteTask}

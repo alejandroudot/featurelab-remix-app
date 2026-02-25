@@ -1,6 +1,5 @@
 import { asc } from 'drizzle-orm';
-import type { FlagQueryService } from '~/core/flags/service/flags.service';
-import type { TaskQueryService } from '~/core/tasks/tasks.port';
+import type { TaskActivityQueryService, TaskQueryService } from '~/core/tasks/tasks.port';
 import { parseTasksViewStateFromUrl } from './task-view-state';
 import { db } from '~/infra/db/client.sqlite';
 import { users } from '~/infra/db/schema';
@@ -9,15 +8,17 @@ type RunTaskLoaderInput = {
   request: Request;
   userId: string;
   taskQueryService: TaskQueryService;
-  flagQueryService: FlagQueryService;
+  taskActivityQueryService: TaskActivityQueryService;
 };
 
 export async function runTaskLoader({
   request,
   userId,
   taskQueryService,
+  taskActivityQueryService,
 }: RunTaskLoaderInput) {
   const tasks = await taskQueryService.listByUser(userId);
+  const taskActivities = await taskActivityQueryService.listByUser(userId);
 	// por ahora trae todos los usuarios
   const assignableUsers = await db
     .select({ id: users.id, email: users.email })
@@ -30,6 +31,7 @@ export async function runTaskLoader({
   return {
     currentUserId: userId,
     tasks,
+    taskActivities,
     assignableUsers,
     viewState
   };

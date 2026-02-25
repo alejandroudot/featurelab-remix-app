@@ -30,7 +30,13 @@ const handleCreate: TaskIntentHandler = async (input) => {
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'create');
 
   try {
-    await input.taskCommandService.create({ ...parsed.data, userId: input.userId });
+		// crea la tarea y actualiza el historial
+    const createdTask = await input.taskCommandService.create({ ...parsed.data, userId: input.userId });
+    await input.taskActivityCommandService.create({
+      taskId: createdTask.id,
+      actorUserId: input.userId,
+      action: 'created',
+    });
     return redirect(getSafeRedirectTo(formData, '/tasks'));
   } catch (err) {
     return jsonTaskError({
@@ -77,7 +83,7 @@ const handleUpdate: TaskIntentHandler = async (input) => {
       });
     }
 
-    await input.taskCommandService.update({
+    const updatedTask = await input.taskCommandService.update({
       id: parsed.data.id,
       userId: input.userId,
       status: parsed.data.status,
@@ -85,6 +91,62 @@ const handleUpdate: TaskIntentHandler = async (input) => {
       orderIndex: parsed.data.orderIndex,
       assigneeId: parsed.data.assigneeId,
     });
+
+    const activityWrites: Array<Promise<void>> = [];
+    if (task.status !== updatedTask.status) {
+      activityWrites.push(
+        input.taskActivityCommandService.create({
+          taskId: updatedTask.id,
+          actorUserId: input.userId,
+          action: 'status-changed',
+          metadata: { from: task.status, to: updatedTask.status },
+        }),
+      );
+    }
+    if (task.priority !== updatedTask.priority) {
+      activityWrites.push(
+        input.taskActivityCommandService.create({
+          taskId: updatedTask.id,
+          actorUserId: input.userId,
+          action: 'priority-changed',
+          metadata: { from: task.priority, to: updatedTask.priority },
+        }),
+      );
+    }
+    if ((task.assigneeId ?? null) !== (updatedTask.assigneeId ?? null)) {
+      activityWrites.push(
+        input.taskActivityCommandService.create({
+          taskId: updatedTask.id,
+          actorUserId: input.userId,
+          action: 'assignee-changed',
+          metadata: {
+            from: task.assigneeId ?? null,
+            to: updatedTask.assigneeId ?? null,
+          },
+        }),
+      );
+    }
+    if (task.orderIndex !== updatedTask.orderIndex) {
+      activityWrites.push(
+        input.taskActivityCommandService.create({
+          taskId: updatedTask.id,
+          actorUserId: input.userId,
+          action: 'reordered',
+          metadata: { from: task.orderIndex, to: updatedTask.orderIndex },
+        }),
+      );
+    }
+
+    if (activityWrites.length === 0) {
+      activityWrites.push(
+        input.taskActivityCommandService.create({
+          taskId: updatedTask.id,
+          actorUserId: input.userId,
+          action: 'updated',
+        }),
+      );
+    }
+    await Promise.all(activityWrites);
 
     return redirect(getSafeRedirectTo(formData, '/tasks'));
   } catch (err) {
@@ -112,6 +174,16 @@ const handleReorderColumn: TaskIntentHandler = async (input) => {
       status: parsed.data.status,
       orderedTaskIds: parsed.data.orderedTaskIds,
     });
+    await Promise.all(
+      parsed.data.orderedTaskIds.map((taskId, index) =>
+        input.taskActivityCommandService.create({
+          taskId,
+          actorUserId: input.userId,
+          action: 'reordered',
+          metadata: { status: parsed.data.status, orderIndex: index },
+        }),
+      ),
+    );
 
     return redirect(getSafeRedirectTo(formData, '/tasks'));
   } catch (err) {
@@ -150,6 +222,12 @@ const handleDelete: TaskIntentHandler = async (input) => {
         values: getTaskFormValues(formData),
       });
     }
+
+    await input.taskActivityCommandService.create({
+      taskId: parsedDelete.data.id,
+      actorUserId: input.userId,
+      action: 'deleted',
+    });
 
     await input.taskCommandService.remove({
       id: parsedDelete.data.id,

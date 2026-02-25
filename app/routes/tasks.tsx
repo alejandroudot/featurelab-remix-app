@@ -1,8 +1,12 @@
 import { useActionData, useLoaderData, useNavigation } from 'react-router';
 import { TasksPage } from '~/features/tasks/TasksPage';
 import type { Route } from './+types/tasks';
-import { taskCommandService, taskQueryService } from '../infra/tasks/task.repository';
-import { flagQueryService } from '../infra/flags/flags.repository';
+import {
+  taskActivityCommandService,
+  taskActivityQueryService,
+  taskCommandService,
+  taskQueryService,
+} from '../infra/tasks/task.repository';
 import type { TaskActionData } from '~/features/tasks/types';
 import { requireUser } from '~/infra/auth/require-user';
 import { runTaskAction } from '~/features/tasks/server/task.action';
@@ -10,7 +14,7 @@ import { runTaskLoader } from '~/features/tasks/server/task.loader';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
-  return runTaskLoader({ request, userId: user.id, taskQueryService, flagQueryService });
+  return runTaskLoader({ request, userId: user.id, taskQueryService, taskActivityQueryService });
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -23,11 +27,12 @@ export async function action({ request }: Route.ActionArgs) {
     userId: user.id,
     taskCommandService,
     taskQueryService,
+    taskActivityCommandService,
   });
 }
 
 export default function TasksRoute() {
-  const { currentUserId, tasks, assignableUsers, viewState } =
+  const { currentUserId, tasks, taskActivities, assignableUsers, viewState } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<TaskActionData>();
   const navigation = useNavigation();
@@ -37,6 +42,7 @@ export default function TasksRoute() {
     <TasksPage
       currentUserId={currentUserId}
       tasks={tasks}
+      taskActivities={taskActivities}
       assignableUsers={assignableUsers}
       viewState={viewState}
       actionData={actionData}
@@ -44,4 +50,3 @@ export default function TasksRoute() {
     />
   );
 }
-

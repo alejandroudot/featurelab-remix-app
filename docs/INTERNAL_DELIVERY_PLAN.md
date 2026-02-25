@@ -316,7 +316,7 @@ Tecnologias del dia: timeline UI, notifications UI, modelado de eventos.
 Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [P1.3 enriquecer task](./PRODUCT_ROADMAP.md#L188).
 
 - [ ] Trazabilidad y notificaciones
-  - [ ] Historial de cambios por task
+  - [x] Historial de cambios por task
   - [ ] Notificaciones in-app por asignacion/reasignacion
   - [ ] Preparar hook para Slack
 - [ ] Enriquecer task para valor de producto
@@ -426,5 +426,4 @@ Dia X - Fecha
 - Bloqueado:
 - Riesgo:
 - Primer tarea de manana:
-
 

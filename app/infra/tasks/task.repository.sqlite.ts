@@ -1,14 +1,16 @@
 // app/infra/tasks/task.repository.sqlite.ts
-import { and, desc, eq, or } from 'drizzle-orm';
+import { and, desc, eq, inArray, or } from 'drizzle-orm';
 import type {
+  TaskActivityCommandService,
+  TaskActivityQueryService,
   TaskCommandService,
   TaskCreateInput,
   TaskQueryService,
   TaskUpdateInput,
 } from '../../core/tasks/tasks.port';
-import type { Task } from '../../core/tasks/tasks.types';
+import type { Task, TaskActivity } from '../../core/tasks/tasks.types';
 import { db } from '../db/client.sqlite';
-import { tasks } from '../db/schema';
+import { taskActivities, tasks, users } from '../db/schema';
 import { mapTasksRow } from './tasks-mapper';
 
 export const sqliteTaskQueryService: TaskQueryService = {
@@ -115,6 +117,60 @@ export const sqliteTaskCommandService: TaskCommandService = {
   async remove(input: { id: string; userId: string }): Promise<void> {
     db.delete(tasks)
       .where(and(eq(tasks.id, input.id), eq(tasks.userId, input.userId)))
+      .run();
+  },
+};
+
+export const sqliteTaskActivityQueryService: TaskActivityQueryService = {
+  async listByUser(userId: string): Promise<TaskActivity[]> {
+    const visibleTaskRows = db
+      .select({ id: tasks.id })
+      .from(tasks)
+      .where(or(eq(tasks.userId, userId), eq(tasks.assigneeId, userId)))
+      .all();
+
+    const visibleTaskIds = visibleTaskRows.map((row) => row.id);
+    if (visibleTaskIds.length === 0) return [];
+
+    const rows = db
+      .select({
+        id: taskActivities.id,
+        taskId: taskActivities.taskId,
+        actorUserId: taskActivities.actorUserId,
+        actorEmail: users.email,
+        action: taskActivities.action,
+        metadata: taskActivities.metadata,
+        createdAt: taskActivities.createdAt,
+      })
+      .from(taskActivities)
+      .leftJoin(users, eq(taskActivities.actorUserId, users.id))
+      .where(inArray(taskActivities.taskId, visibleTaskIds))
+      .orderBy(desc(taskActivities.createdAt))
+      .all();
+
+    return rows.map((row) => ({
+      id: row.id,
+      taskId: row.taskId,
+      actorUserId: row.actorUserId,
+      actorEmail: row.actorEmail ?? null,
+      action: row.action as TaskActivity['action'],
+      metadata: row.metadata ? (JSON.parse(row.metadata) as TaskActivity['metadata']) : null,
+      createdAt: row.createdAt,
+    }));
+  },
+};
+
+export const sqliteTaskActivityCommandService: TaskActivityCommandService = {
+  async create(input): Promise<void> {
+    db.insert(taskActivities)
+      .values({
+        id: crypto.randomUUID(),
+        taskId: input.taskId,
+        actorUserId: input.actorUserId,
+        action: input.action,
+        metadata: input.metadata ? JSON.stringify(input.metadata) : null,
+        createdAt: new Date(),
+      })
       .run();
   },
 };

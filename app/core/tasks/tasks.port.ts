@@ -1,7 +1,7 @@
 // app/core/tasks/task.port.ts
 import type { z } from 'zod';
 import type { taskCreateSchema } from './task.schema';
-import type { Task } from './tasks.types';
+import type { Task, TaskActivity, TaskActivityAction } from './tasks.types';
 
 // 1) Lo que viene del cliente (formData).
 export type TaskCreateDTO = z.infer<typeof taskCreateSchema>;
@@ -24,6 +24,10 @@ export interface TaskQueryService {
   getByIdForUser(input: { id: string; userId: string }): Promise<Task | null>;
 }
 
+export interface TaskActivityQueryService {
+  listByUser(userId: string): Promise<TaskActivity[]>;
+}
+
 export interface TaskCommandService {
   create(input: TaskCreateInput): Promise<Task>;
   update(input: TaskUpdateInput): Promise<Task>;
@@ -33,6 +37,15 @@ export interface TaskCommandService {
     orderedTaskIds: string[];
   }): Promise<void>;
   remove(input: { id: string; userId: string }): Promise<void>;
+}
+
+export interface TaskActivityCommandService {
+  create(input: {
+    taskId: string;
+    actorUserId: string;
+    action: TaskActivityAction;
+    metadata?: Record<string, string | number | boolean | null>;
+  }): Promise<void>;
 }
 
 // Alias de transicion para mantener compatibilidad mientras migramos imports.

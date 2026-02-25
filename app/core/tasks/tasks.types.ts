@@ -20,3 +20,22 @@ export type Task = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type TaskActivityAction =
+  | 'created'
+  | 'updated'
+  | 'status-changed'
+  | 'priority-changed'
+  | 'assignee-changed'
+  | 'reordered'
+  | 'deleted';
+
+export type TaskActivity = {
+  id: string;
+  taskId: string;
+  actorUserId: string;
+  actorEmail: string | null;
+  action: TaskActivityAction;
+  metadata: Record<string, string | number | boolean | null> | null;
+  createdAt: Date;
+};

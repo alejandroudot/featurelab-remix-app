@@ -22,6 +22,27 @@ export const tasks = sqliteTable('tasks', {
   	.$defaultFn(() => new Date()),
 });
 
+export const taskActivities = sqliteTable('task_activities', {
+  id: text('id').primaryKey(),
+  taskId: text('task_id').notNull().references(() => tasks.id, { onDelete: 'cascade' }),
+  actorUserId: text('actor_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  action: text('action', {
+    enum: [
+      'created',
+      'updated',
+      'status-changed',
+      'priority-changed',
+      'assignee-changed',
+      'reordered',
+      'deleted',
+    ],
+  }).notNull(),
+  metadata: text('metadata'),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
