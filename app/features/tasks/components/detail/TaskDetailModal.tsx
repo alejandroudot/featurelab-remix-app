@@ -5,12 +5,12 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
 } from '~/ui/primitives/dialog';
 import { TaskDetailActions } from './TaskDetailActions';
 import { TaskDetailContent } from './TaskDetailContent';
 import { TaskDetailComments } from './TaskDetailComments';
 import { TaskDetailHistory } from './TaskDetailHistory';
+import { TaskDetailEditableTitle } from './TaskDetailEditableTitle';
 
 type TaskDetailModalProps = {
   task: Task | null;
@@ -39,7 +39,7 @@ export function TaskDetailModal({
         {task ? (
           <>
             <DialogHeader className="border-b p-4">
-              <DialogTitle>{task.title}</DialogTitle>
+              <TaskDetailEditableTitle taskId={task.id} title={task.title} />
               <DialogDescription>
                 Detalle de task estilo Jira: contenido principal + panel lateral.
               </DialogDescription>
