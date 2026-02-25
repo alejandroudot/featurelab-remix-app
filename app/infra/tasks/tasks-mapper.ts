@@ -6,6 +6,7 @@ export function mapTasksRow(row: any): Task {
     userId: row.userId,
     title: row.title,
     description: row.description ?? undefined,
+    dueDate: row.dueDate ?? null,
     status: row.status as Task['status'],
     priority: row.priority as Task['priority'],
     orderIndex: Number(row.orderIndex ?? 0),

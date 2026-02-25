@@ -214,7 +214,7 @@ Regla de colaboracion:
   - [x] Notificaciones in-app por asignacion/reasignacion
   - [x] Preparar hook para Slack
 - [ ] Enriquecer task para valor de producto
-  - [ ] `dueDate` + overdue
+  - [x] `dueDate` + overdue
   - [ ] labels/tags
   - [ ] checklist/subtareas
   - [ ] comentarios

@@ -5,6 +5,7 @@ import { Badge } from '~/ui/primitives/badge';
 import { Card, CardContent } from '~/ui/primitives/card';
 import { Avatar, AvatarFallback } from '~/ui/primitives/avatar';
 import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
+import { formatDateUTC, isTaskOverdue } from '../utils/task-due-date';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,13 +44,6 @@ function priorityBadgeVariant(priority: Task['priority']): 'secondary' | 'outlin
   return 'outline';
 }
 
-function formatDateUTC(date: Date): string {
-  const day = String(date.getUTCDate()).padStart(2, '0');
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const year = String(date.getUTCFullYear());
-  return `${day}/${month}/${year}`;
-}
-
 export function TaskCard({
   task,
   assigneeLabel,
@@ -70,6 +64,8 @@ export function TaskCard({
 
     onOpen(task.id);
   }
+
+  const overdue = isTaskOverdue(task);
 
   return (
     <>
@@ -118,6 +114,11 @@ export function TaskCard({
           <div className="flex items-center gap-2">
             <Badge variant={priorityBadgeVariant(task.priority)}>{PRIORITY_LABEL[task.priority]}</Badge>
             <Badge variant="outline">{STATUS_LABEL[task.status]}</Badge>
+            {task.dueDate ? (
+              <Badge variant={overdue ? 'destructive' : 'outline'}>
+                Due {formatDateUTC(task.dueDate)}
+              </Badge>
+            ) : null}
             <Badge variant="ghost">No labels</Badge>
           </div>
 

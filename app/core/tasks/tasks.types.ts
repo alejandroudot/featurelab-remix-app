@@ -13,6 +13,7 @@ export type Task = {
   userId: string;
   title: string;
   description?: string | null;
+  dueDate?: Date | null;
   status: TaskStatus;
   priority: TaskPriority;
   orderIndex: number;
@@ -24,6 +25,7 @@ export type Task = {
 export type TaskActivityAction =
   | 'created'
   | 'updated'
+  | 'due-date-changed'
   | 'status-changed'
   | 'priority-changed'
   | 'assignee-changed'

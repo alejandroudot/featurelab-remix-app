@@ -1,4 +1,4 @@
-import type { TaskActionData } from './types';
+import type { TaskActionData } from '../../types';
 
 export function getTaskActionToastError(actionData: TaskActionData): string | null {
   if (!actionData || actionData.success !== false) return null;

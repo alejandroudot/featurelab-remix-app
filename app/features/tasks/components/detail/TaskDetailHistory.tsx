@@ -8,6 +8,8 @@ function formatActivityAction(action: TaskActivity['action']) {
   switch (action) {
     case 'created':
       return 'Creo la task';
+    case 'due-date-changed':
+      return 'Cambio la fecha limite';
     case 'status-changed':
       return 'Cambio status';
     case 'priority-changed':

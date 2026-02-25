@@ -27,6 +27,7 @@ export type TaskActionData =
 			id?: string;
 			status?: string;
 			priority?: string;
+			dueDate?: string;
 			orderIndex?: string;
 			assigneeId?: string;
 			orderedTaskIds?: string;

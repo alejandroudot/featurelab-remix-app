@@ -71,6 +71,7 @@ export const sqliteTaskCommandService: TaskCommandService = {
     const [row] = await db
       .update(tasks)
       .set({
+        ...(input.dueDate !== undefined ? { dueDate: input.dueDate } : {}),
         ...(input.status ? { status: input.status } : {}),
         ...(input.priority ? { priority: input.priority } : {}),
         ...(input.orderIndex !== undefined ? { orderIndex: input.orderIndex } : {}),

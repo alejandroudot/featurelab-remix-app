@@ -56,6 +56,7 @@ const handleUpdate: TaskIntentHandler = async (input) => {
     priority: formData.get('priority'),
     orderIndex: formData.get('orderIndex'),
     assigneeId: formData.get('assigneeId'),
+    dueDate: formData.get('dueDate'),
   });
 
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'update');
@@ -86,6 +87,7 @@ const handleUpdate: TaskIntentHandler = async (input) => {
     const updatedTask = await input.taskCommandService.update({
       id: parsed.data.id,
       userId: input.userId,
+      dueDate: parsed.data.dueDate,
       status: parsed.data.status,
       priority: parsed.data.priority,
       orderIndex: parsed.data.orderIndex,
@@ -93,6 +95,21 @@ const handleUpdate: TaskIntentHandler = async (input) => {
     });
 
     const activityWrites: Array<Promise<void>> = [];
+    const beforeDueDate = task.dueDate?.getTime() ?? null;
+    const afterDueDate = updatedTask.dueDate?.getTime() ?? null;
+    if (beforeDueDate !== afterDueDate) {
+      activityWrites.push(
+        input.taskActivityCommandService.create({
+          taskId: updatedTask.id,
+          actorUserId: input.userId,
+          action: 'due-date-changed',
+          metadata: {
+            from: task.dueDate ? task.dueDate.toISOString() : null,
+            to: updatedTask.dueDate ? updatedTask.dueDate.toISOString() : null,
+          },
+        }),
+      );
+    }
     if (task.status !== updatedTask.status) {
       activityWrites.push(
         input.taskActivityCommandService.create({

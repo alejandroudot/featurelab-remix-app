@@ -61,6 +61,15 @@ export const taskUpdateSchema = z.object({
       const parsed = value.trim();
       return parsed.length > 0 ? parsed : null;
     }, z.string().min(1).nullable().optional()),
+  dueDate: z.preprocess((value) => {
+    if (value == null) return undefined;
+    if (typeof value !== 'string') return undefined;
+    const parsed = value.trim();
+    if (!parsed) return null;
+    // type=date envia YYYY-MM-DD; guardamos UTC para estabilidad SSR.
+    const nextDate = new Date(`${parsed}T00:00:00.000Z`);
+    return Number.isNaN(nextDate.getTime()) ? undefined : nextDate;
+  }, z.date().nullable().optional()),
 });
 
 // Reordena una columna del board: recibe el status de la columna y un JSON string

@@ -1,5 +1,6 @@
 import { Form } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
+import { formatDateUTC, isTaskOverdue } from '../utils/task-due-date';
 
 export function TasksList({ tasks, assigneeById }: { tasks: Task[]; assigneeById: Record<string, string> }) {
   return (
@@ -16,6 +17,11 @@ export function TasksList({ tasks, assigneeById }: { tasks: Task[]; assigneeById
             <div className="text-xs opacity-70 mt-1">
               Responsible: {task.assigneeId ? assigneeById[task.assigneeId] ?? 'Unknown user' : 'Unassigned'}
             </div>
+            {task.dueDate ? (
+              <div className={`text-xs mt-1 ${isTaskOverdue(task) ? 'text-red-600' : 'opacity-70'}`}>
+                Due: {formatDateUTC(task.dueDate)} {isTaskOverdue(task) ? '(overdue)' : ''}
+              </div>
+            ) : null}
             <Form method="post" className="flex items-center gap-2 mt-2">
               <input type="hidden" name="intent" value="update" />
               <input type="hidden" name="id" value={task.id} />
@@ -35,6 +41,13 @@ export function TasksList({ tasks, assigneeById }: { tasks: Task[]; assigneeById
                 <option value="high">high</option>
                 <option value="critical">critical</option>
               </select>
+
+              <input
+                type="date"
+                name="dueDate"
+                defaultValue={task.dueDate ? task.dueDate.toISOString().slice(0, 10) : ''}
+                className="border rounded px-2 py-1"
+              />
 
               <button type="submit" className="border rounded px-2 py-1">
                 Guardar

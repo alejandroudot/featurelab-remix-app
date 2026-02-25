@@ -12,7 +12,7 @@ import type { Task, TaskActivity } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from './server/task-view-state';
 import type { TaskAssigneeOption } from './types';
 import { toast } from 'sonner';
-import { getTaskActionToastError } from './client-errors';
+import { getTaskActionToastError } from './components/utils/client-errors';
 
 export function TasksPage({
   currentUserId,

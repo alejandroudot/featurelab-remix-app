@@ -320,7 +320,7 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
   - [x] Notificaciones in-app por asignacion/reasignacion
   - [x] Preparar hook para Slack
 - [ ] Enriquecer task para valor de producto
-  - [ ] `dueDate` + overdue
+  - [x] `dueDate` + overdue
   - [ ] labels/tags
   - [ ] checklist/subtareas
   - [ ] comentarios

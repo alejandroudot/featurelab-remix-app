@@ -4,6 +4,7 @@ import type { Task } from '~/core/tasks/tasks.types';
 import type { TaskActionData, TaskAssigneeOption } from '../../types';
 import { Badge } from '~/ui/primitives/badge';
 import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
+import { formatDateUTC, isTaskOverdue } from '../utils/task-due-date';
 
 type TaskDetailActionsProps = {
   task: Task;
@@ -28,6 +29,7 @@ export function TaskDetailActions({
   const isCreator = task.userId === currentUserId;
   const formActionData = fetcher.data;
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const overdue = isTaskOverdue(task);
 
   return (
     <aside className="flex flex-col justify-between space-y-3 overflow-y-auto rounded border p-3">
@@ -37,6 +39,11 @@ export function TaskDetailActions({
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline">{task.status}</Badge>
             <Badge variant="secondary">{task.priority}</Badge>
+            {task.dueDate ? (
+              <Badge variant={overdue ? 'destructive' : 'outline'}>
+                Due {formatDateUTC(task.dueDate)}
+              </Badge>
+            ) : null}
             <Badge variant="ghost">{assigneeLabel}</Badge>
           </div>
         </div>
@@ -76,6 +83,17 @@ export function TaskDetailActions({
             <option value="high">high</option>
             <option value="critical">critical</option>
           </select>
+
+          <label className="block text-xs font-medium" htmlFor="detail-due-date">
+            Due date
+          </label>
+          <input
+            id="detail-due-date"
+            type="date"
+            name="dueDate"
+            defaultValue={task.dueDate ? task.dueDate.toISOString().slice(0, 10) : ''}
+            className="w-full rounded border px-2 py-1 text-sm"
+          />
           {isCreator ? (
             <>
               <label className="block text-xs font-medium" htmlFor="detail-assignee">
