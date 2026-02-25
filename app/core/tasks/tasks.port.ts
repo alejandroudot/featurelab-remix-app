@@ -12,6 +12,7 @@ export type TaskCreateInput = TaskCreateDTO & { userId: string };
 export type TaskUpdateInput = {
   id: string;
   userId: string;
+  labels?: string[];
   dueDate?: Date | null;
   status?: 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live' | 'done' | 'discarded';
   priority?: 'low' | 'medium' | 'high' | 'critical';

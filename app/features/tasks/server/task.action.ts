@@ -19,6 +19,11 @@ async function getTaskOrNull(input: RunTaskActionInput, taskId: string) {
   return input.taskQueryService.getByIdForUser({ id: taskId, userId: input.userId });
 }
 
+function labelsEqual(left: string[], right: string[]) {
+  if (left.length !== right.length) return false;
+  return left.every((label, index) => label === right[index]);
+}
+
 // Handler de creacion: valida payload create y persiste la task.
 const handleCreate: TaskIntentHandler = async (input) => {
   const { formData } = input;
@@ -52,6 +57,7 @@ const handleUpdate: TaskIntentHandler = async (input) => {
   const { formData } = input;
   const parsed = taskUpdateSchema.safeParse({
     id: formData.get('id'),
+    labels: formData.get('labels'),
     status: formData.get('status'),
     priority: formData.get('priority'),
     orderIndex: formData.get('orderIndex'),
@@ -87,6 +93,7 @@ const handleUpdate: TaskIntentHandler = async (input) => {
     const updatedTask = await input.taskCommandService.update({
       id: parsed.data.id,
       userId: input.userId,
+      labels: parsed.data.labels,
       dueDate: parsed.data.dueDate,
       status: parsed.data.status,
       priority: parsed.data.priority,
@@ -95,6 +102,19 @@ const handleUpdate: TaskIntentHandler = async (input) => {
     });
 
     const activityWrites: Array<Promise<void>> = [];
+    if (!labelsEqual(task.labels, updatedTask.labels)) {
+      activityWrites.push(
+        input.taskActivityCommandService.create({
+          taskId: updatedTask.id,
+          actorUserId: input.userId,
+          action: 'labels-changed',
+          metadata: {
+            from: task.labels.join(', '),
+            to: updatedTask.labels.join(', '),
+          },
+        }),
+      );
+    }
     const beforeDueDate = task.dueDate?.getTime() ?? null;
     const afterDueDate = updatedTask.dueDate?.getTime() ?? null;
     if (beforeDueDate !== afterDueDate) {

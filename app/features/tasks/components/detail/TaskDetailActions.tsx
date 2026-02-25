@@ -44,6 +44,11 @@ export function TaskDetailActions({
                 Due {formatDateUTC(task.dueDate)}
               </Badge>
             ) : null}
+            {task.labels.map((label) => (
+              <Badge key={label} variant="outline">
+                #{label}
+              </Badge>
+            ))}
             <Badge variant="ghost">{assigneeLabel}</Badge>
           </div>
         </div>
@@ -93,6 +98,18 @@ export function TaskDetailActions({
             name="dueDate"
             defaultValue={task.dueDate ? task.dueDate.toISOString().slice(0, 10) : ''}
             className="w-full rounded border px-2 py-1 text-sm"
+          />
+
+          <label className="block text-xs font-medium" htmlFor="detail-labels">
+            Labels (comma separated)
+          </label>
+          <input
+            id="detail-labels"
+            type="text"
+            name="labels"
+            defaultValue={task.labels.join(', ')}
+            className="w-full rounded border px-2 py-1 text-sm"
+            placeholder="frontend, bug, urgente"
           />
           {isCreator ? (
             <>

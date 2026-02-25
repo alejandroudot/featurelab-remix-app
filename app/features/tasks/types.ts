@@ -24,6 +24,7 @@ export type TaskActionData =
 		values?: {
 			title?: string;
 			description?: string;
+			labels?: string;
 			id?: string;
 			status?: string;
 			priority?: string;

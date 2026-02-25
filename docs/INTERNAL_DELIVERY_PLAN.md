@@ -321,7 +321,7 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
   - [x] Preparar hook para Slack
 - [ ] Enriquecer task para valor de producto
   - [x] `dueDate` + overdue
-  - [ ] labels/tags
+  - [x] labels/tags
   - [ ] checklist/subtareas
   - [ ] comentarios
   - [ ] `@menciones` de usuarios en comentarios

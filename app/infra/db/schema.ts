@@ -7,6 +7,7 @@ export const tasks = sqliteTable('tasks', {
   assigneeId: text("assignee_id").references(() => users.id, { onDelete: "set null" }),
   title: text('title').notNull(),
   description: text('description'),
+  labels: text('labels').notNull().default('[]'),
   dueDate: integer('due_date', { mode: 'timestamp_ms' }),
   status: text('status', { enum: ['todo', 'in-progress', 'qa', 'ready-to-go-live', 'done', 'discarded'] })
     .notNull()
@@ -31,6 +32,7 @@ export const taskActivities = sqliteTable('task_activities', {
     enum: [
       'created',
       'updated',
+      'labels-changed',
       'due-date-changed',
       'status-changed',
       'priority-changed',

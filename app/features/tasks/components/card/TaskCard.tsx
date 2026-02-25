@@ -111,7 +111,7 @@ export function TaskCard({
             </DropdownMenu>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Badge variant={priorityBadgeVariant(task.priority)}>{PRIORITY_LABEL[task.priority]}</Badge>
             <Badge variant="outline">{STATUS_LABEL[task.status]}</Badge>
             {task.dueDate ? (
@@ -119,7 +119,15 @@ export function TaskCard({
                 Due {formatDateUTC(task.dueDate)}
               </Badge>
             ) : null}
-            <Badge variant="ghost">No labels</Badge>
+            {task.labels.length === 0 ? (
+              <Badge variant="ghost">No labels</Badge>
+            ) : (
+              task.labels.map((label) => (
+                <Badge key={label} variant="outline">
+                  #{label}
+                </Badge>
+              ))
+            )}
           </div>
 
           <div className="flex items-center justify-between">

@@ -215,7 +215,7 @@ Regla de colaboracion:
   - [x] Preparar hook para Slack
 - [ ] Enriquecer task para valor de producto
   - [x] `dueDate` + overdue
-  - [ ] labels/tags
+  - [x] labels/tags
   - [ ] checklist/subtareas
   - [ ] comentarios
   - [ ] `@menciones` de usuarios en comentarios

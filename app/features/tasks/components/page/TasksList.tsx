@@ -17,6 +17,9 @@ export function TasksList({ tasks, assigneeById }: { tasks: Task[]; assigneeById
             <div className="text-xs opacity-70 mt-1">
               Responsible: {task.assigneeId ? assigneeById[task.assigneeId] ?? 'Unknown user' : 'Unassigned'}
             </div>
+            <div className="text-xs opacity-70 mt-1">
+              Labels: {task.labels.length > 0 ? task.labels.map((label) => `#${label}`).join(', ') : 'None'}
+            </div>
             {task.dueDate ? (
               <div className={`text-xs mt-1 ${isTaskOverdue(task) ? 'text-red-600' : 'opacity-70'}`}>
                 Due: {formatDateUTC(task.dueDate)} {isTaskOverdue(task) ? '(overdue)' : ''}
@@ -47,6 +50,13 @@ export function TasksList({ tasks, assigneeById }: { tasks: Task[]; assigneeById
                 name="dueDate"
                 defaultValue={task.dueDate ? task.dueDate.toISOString().slice(0, 10) : ''}
                 className="border rounded px-2 py-1"
+              />
+              <input
+                type="text"
+                name="labels"
+                defaultValue={task.labels.join(', ')}
+                className="border rounded px-2 py-1"
+                placeholder="frontend, bug"
               />
 
               <button type="submit" className="border rounded px-2 py-1">

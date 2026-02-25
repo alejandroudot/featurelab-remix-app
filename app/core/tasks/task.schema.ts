@@ -61,6 +61,17 @@ export const taskUpdateSchema = z.object({
       const parsed = value.trim();
       return parsed.length > 0 ? parsed : null;
     }, z.string().min(1).nullable().optional()),
+  labels: z.preprocess((value) => {
+    if (value == null) return undefined;
+    if (typeof value !== 'string') return undefined;
+    const parsed = value
+      .split(',')
+      .map((label) => label.trim())
+      .filter(Boolean)
+      .slice(0, 10);
+    const unique = [...new Set(parsed)];
+    return unique;
+  }, z.array(z.string().min(1).max(20)).optional()),
   dueDate: z.preprocess((value) => {
     if (value == null) return undefined;
     if (typeof value !== 'string') return undefined;

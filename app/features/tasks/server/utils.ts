@@ -7,6 +7,7 @@ export function getTaskFormValues(formData: FormData): NonNullable<TaskActionDat
     id: String(formData.get('id') ?? ''),
     title: String(formData.get('title') ?? ''),
     description: String(formData.get('description') ?? ''),
+    labels: String(formData.get('labels') ?? ''),
     status: String(formData.get('status') ?? ''),
     priority: String(formData.get('priority') ?? ''),
     dueDate: String(formData.get('dueDate') ?? ''),

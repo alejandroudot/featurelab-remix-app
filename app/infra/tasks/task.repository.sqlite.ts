@@ -55,6 +55,7 @@ export const sqliteTaskCommandService: TaskCommandService = {
         userId: input.userId,
         title: input.title,
         description: input.description ?? null,
+        labels: '[]',
         status: 'todo',
         priority: 'medium',
         orderIndex: Date.now(),
@@ -71,6 +72,7 @@ export const sqliteTaskCommandService: TaskCommandService = {
     const [row] = await db
       .update(tasks)
       .set({
+        ...(input.labels !== undefined ? { labels: JSON.stringify(input.labels) } : {}),
         ...(input.dueDate !== undefined ? { dueDate: input.dueDate } : {}),
         ...(input.status ? { status: input.status } : {}),
         ...(input.priority ? { priority: input.priority } : {}),

@@ -22,6 +22,13 @@
       "when": 1772025307500,
       "tag": "0002_fuzzy_wind_dancer",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1772026112215,
+      "tag": "0003_panoramic_logan",
+      "breakpoints": true
     }
   ]
 }
