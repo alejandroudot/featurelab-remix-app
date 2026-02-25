@@ -125,6 +125,16 @@ const handleUpdate: TaskIntentHandler = async (input) => {
           },
         }),
       );
+      if (updatedTask.assigneeId) {
+        activityWrites.push(
+          input.notificationService.notifyTaskAssigned({
+            taskId: updatedTask.id,
+            taskTitle: updatedTask.title,
+            actorUserId: input.userId,
+            assigneeUserId: updatedTask.assigneeId,
+          }),
+        );
+      }
     }
     if (task.orderIndex !== updatedTask.orderIndex) {
       activityWrites.push(

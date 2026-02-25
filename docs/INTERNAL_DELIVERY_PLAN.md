@@ -315,10 +315,10 @@ Regla de colaboracion acordada para este bloque:
 Tecnologias del dia: timeline UI, notifications UI, modelado de eventos.
 Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [P1.3 enriquecer task](./PRODUCT_ROADMAP.md#L188).
 
-- [ ] Trazabilidad y notificaciones
+- [x] Trazabilidad y notificaciones
   - [x] Historial de cambios por task
   - [x] Notificaciones in-app por asignacion/reasignacion
-  - [ ] Preparar hook para Slack
+  - [x] Preparar hook para Slack
 - [ ] Enriquecer task para valor de producto
   - [ ] `dueDate` + overdue
   - [ ] labels/tags

@@ -209,10 +209,10 @@ Regla de colaboracion:
   - [x] Asignado: puede editar/status/orden, pero no reasignar responsable
   - [x] Validar permisos en server actions
   - [x] Mensajes claros en acciones no permitidas
-- [ ] Trazabilidad y notificaciones
+- [x] Trazabilidad y notificaciones
   - [x] Historial de cambios por task
   - [x] Notificaciones in-app por asignacion/reasignacion
-  - [ ] Preparar hook para Slack
+  - [x] Preparar hook para Slack
 - [ ] Enriquecer task para valor de producto
   - [ ] `dueDate` + overdue
   - [ ] labels/tags

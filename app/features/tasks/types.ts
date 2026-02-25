@@ -3,6 +3,7 @@ import type {
   TaskQueryService,
   TaskCommandService,
 } from '~/core/tasks/tasks.port';
+import type { NotificationService } from '~/core/notifications/notification.port';
 
 export type TaskStatus =
 	| 'todo'
@@ -41,4 +42,5 @@ export type RunTaskActionInput = {
 	taskCommandService: TaskCommandService;
 	taskQueryService: TaskQueryService;
 	taskActivityCommandService: TaskActivityCommandService;
+	notificationService: NotificationService;
 };

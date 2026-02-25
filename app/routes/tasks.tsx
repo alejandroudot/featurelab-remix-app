@@ -7,6 +7,7 @@ import {
   taskCommandService,
   taskQueryService,
 } from '../infra/tasks/task.repository';
+import { notificationService } from '~/infra/notifications/notification.service';
 import type { TaskActionData } from '~/features/tasks/types';
 import { requireUser } from '~/infra/auth/require-user';
 import { runTaskAction } from '~/features/tasks/server/task.action';
@@ -28,6 +29,7 @@ export async function action({ request }: Route.ActionArgs) {
     taskCommandService,
     taskQueryService,
     taskActivityCommandService,
+    notificationService,
   });
 }
 
