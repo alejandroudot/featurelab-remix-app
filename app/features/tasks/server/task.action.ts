@@ -16,6 +16,7 @@ import { getSafeRedirectTo, getTaskFormValues, parseIntent } from './utils';
 import { jsonTaskError, toTaskFormError, zodErrorToActionData } from './errors';
 import { db } from '~/infra/db/client.sqlite';
 import { users } from '~/infra/db/schema';
+import { cleanupRichTextTempImagesNotInPersistedHtml } from '~/infra/files/rich-text-images.storage';
 
 type Intent = (typeof taskIntentSchema)['enum'][keyof (typeof taskIntentSchema)['enum']];
 type TaskIntentHandler = (input: RunTaskActionInput) => Promise<TaskActionResult>;
@@ -186,6 +187,13 @@ const handleUpdate: TaskIntentHandler = async (input) => {
       assigneeId: parsed.data.assigneeId,
     });
 
+    // Si la descripcion cambió, limpiamos imagenes tmp que quedaron fuera del nuevo contenido.
+    const beforeDescription = task.description ?? '';
+    const afterDescription = updatedTask.description ?? '';
+    if (beforeDescription !== afterDescription) {
+      await cleanupRichTextTempImagesNotInPersistedHtml(beforeDescription, afterDescription);
+    }
+
     const activityWrites: Array<Promise<void>> = [];
     if (!labelsEqual(task.labels, updatedTask.labels)) {
       activityWrites.push(
@@ -282,9 +290,9 @@ const handleUpdate: TaskIntentHandler = async (input) => {
         }),
       );
     }
-    const beforeDescription = task.description ?? null;
-    const afterDescription = updatedTask.description ?? null;
-    if (beforeDescription !== afterDescription) {
+    const beforeDescriptionForMentions = task.description ?? null;
+    const afterDescriptionForMentions = updatedTask.description ?? null;
+    if (beforeDescriptionForMentions !== afterDescriptionForMentions) {
       await createMentionActivities({
         taskId: updatedTask.id,
         actorUserId: input.userId,

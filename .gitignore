@@ -8,3 +8,6 @@
 
 # SQLite dev DB
 featurelab.db
+
+# Runtime uploads (rich text images)
+/public/uploads/

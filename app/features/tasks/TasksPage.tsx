@@ -169,7 +169,6 @@ export function TasksPage({
     () => (selectedTaskId ? taskComments.filter((comment) => comment.taskId === selectedTaskId) : []),
     [taskComments, selectedTaskId],
   );
-
   const assigneeById = useMemo(
     () =>
       Object.fromEntries(assignableUsers.map((user) => [user.id, user.email])) as Record<string, string>,

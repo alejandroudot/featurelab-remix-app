@@ -35,8 +35,8 @@ export type TaskActionData =
 			title?: string;
 			description?: string;
 			labels?: string;
-			checklist?: string;
-			commentBody?: string;
+      checklist?: string;
+      commentBody?: string;
       commentId?: string;
 			id?: string;
 			status?: string;

@@ -44,7 +44,15 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function TasksRoute() {
-  const { currentUserId, tasks, taskActivities, taskComments, notifications, assignableUsers, viewState } =
+  const {
+    currentUserId,
+    tasks,
+    taskActivities,
+    taskComments,
+    notifications,
+    assignableUsers,
+    viewState,
+  } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<TaskActionData>();
   const navigation = useNavigation();

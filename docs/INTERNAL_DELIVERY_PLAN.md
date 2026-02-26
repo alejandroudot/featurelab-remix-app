@@ -3,7 +3,7 @@
 
 Plan interno de ejecucion.
 Inicio: lunes 16/02/2026
-Fin: domingo 01/03/2026
+Fin: lunes 02/03/2026
 
 Regla de oro: este plan es una division diaria del `docs/PRODUCT_ROADMAP.md`.
 No se agregan features fuera de roadmap. No se omiten bullets del roadmap.
@@ -326,15 +326,36 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
   - [x] checklist/subtareas
   - [x] comentarios
   - [x] `@menciones` de usuarios en comentarios y descripcion de la task
-  - [ ] adjuntos en comentarios y descripcion (imagenes + archivos)
+  - [ ] adjuntos en comentarios y descripcion (imagenes + archivos) (base lista, UX rich text pasa a Dia 10)
   - [ ] plantillas rapidas
 
 ## ?? Dia 10 - Miercoles 25/02/2026
 
+Tecnologias del dia: TypeScript refactor, arquitectura por capas, limpieza de deuda tecnica, naming conventions, Tiptap (`@tiptap/react` + `starter-kit`, `image`, `link`, `placeholder`, `mention`), API route de upload y storage local para rich text.
+Fuente roadmap: [P0 estabilidad/consistencia](./PRODUCT_ROADMAP.md#-p0---estabilidad-y-consistencia), [P1.2/P1.3 hardening tecnico](./PRODUCT_ROADMAP.md#-p12-tasks-ux-board-first-estilo-jiratrello).
+
+- [ ] Refactor general de aplicacion (cleanup day)
+  - [ ] Eliminar codigo muerto y flujos legacy no usados
+  - [ ] Unificar naming de funciones, handlers, tipos e intents
+  - [ ] Reordenar carpetas por responsabilidad real (page/feature/server/core/infra)
+  - [ ] Reducir componentes gigantes en piezas chicas y legibles
+  - [ ] Limpiar imports, exports y contratos obsoletos
+  - [ ] Dejar checklist de deuda tecnica residual (si queda algo)
+- [ ] Hardening de editor rich text
+  - [ ] Flujo estable de imagen embebida (boton + copy/paste)
+  - [ ] Upload de imagen embebida via API (`/api/tasks/attachments`) con validaciones de permiso, tipo y tamano
+  - [ ] Preview local estable y reemplazo por URL final sin parpadeos rotos
+  - [ ] Definir politica de lifecycle de archivos (cancelacion/cleanup) para evitar basura en storage
+  - [ ] Documentar limite tecnico de archivos (tipos soportados + max size)
+  - [ ] Sin persistencia accidental de logica legacy de adjuntos
+  - [ ] UX consistente en preview/guardado/cancelacion
+
+## ?? Dia 11 - Jueves 26/02/2026
+
 Tecnologias del dia: shadcn/ui (Tabs/Card/Form/Input/Button), Zod forms, Zustand preferencias.
 Fuente roadmap: [P1.4 user panel](./PRODUCT_ROADMAP.md#L204), [P1.4 perfil/seguridad](./PRODUCT_ROADMAP.md#L208), [P1.4 preferencias](./PRODUCT_ROADMAP.md#L212), [P1.4 plan](./PRODUCT_ROADMAP.md#L216).
 
-- [ ] Crear vista dedicada de cuenta
+- [ ] Crear vista dedicada de cuenta (corrida desde Dia 10)
   - [ ] Bloques: Perfil, Seguridad, Preferencias, Plan
   - [ ] Layout con `shadcn/ui` (`Tabs`, `Card`, `Form`, `Input`, `Button`)
   - [ ] Navegacion visible desde header
@@ -350,9 +371,9 @@ Fuente roadmap: [P1.4 user panel](./PRODUCT_ROADMAP.md#L204), [P1.4 perfil/segur
   - [ ] Mostrar plan actual y limites
   - [ ] CTA de upgrade
 
-## ?? Dia 11 - Jueves 26/02/2026
+## ?? Dia 12 - Viernes 27/02/2026
 
-Tecnologias del dia: Radix Toast + shadcn styling, design tokens.
+Tecnologias del dia: Radix Toast + shadcn/ui + design tokens.
 Fuente roadmap: [P1.5 feedback](./PRODUCT_ROADMAP.md#L229), [P1.5 base visual](./PRODUCT_ROADMAP.md#L233).
 
 - [ ] Sistema consistente de feedback
@@ -365,7 +386,7 @@ Fuente roadmap: [P1.5 feedback](./PRODUCT_ROADMAP.md#L229), [P1.5 base visual](.
   - [ ] Jerarquia clara de bloques y acciones
   - [ ] Microinteracciones y estados de carga prolijos
 
-## ?? Dia 12 - Viernes 27/02/2026
+## ?? Dia 13 - Sabado 28/02/2026
 
 Tecnologias del dia: TanStack Query + Zustand.
 Fuente roadmap: [P2.1 TanStack Query + Zustand](./PRODUCT_ROADMAP.md#L249).
@@ -378,7 +399,7 @@ Fuente roadmap: [P2.1 TanStack Query + Zustand](./PRODUCT_ROADMAP.md#L249).
 - [ ] Cola local de acciones pendientes con reintento manual
 - [ ] Sincronia URL <-> store <-> query keys
 
-## ?? Dia 13 - Sabado 28/02/2026
+## ?? Dia 14 - Domingo 01/03/2026
 
 Tecnologias del dia: Vitest, Testing Library, Playwright.
 Fuente roadmap: [P2.2 minimo calidad tecnica](./PRODUCT_ROADMAP.md#L266).
@@ -391,7 +412,7 @@ Fuente roadmap: [P2.2 minimo calidad tecnica](./PRODUCT_ROADMAP.md#L266).
   - [ ] `login -> create task -> assign -> mover board -> cerrar`
   - [ ] `create flag -> toggle`
 
-## ?? Dia 14 - Domingo 01/03/2026
+## ?? Dia 15 - Lunes 02/03/2026
 
 Tecnologias del dia: documentacion operativa, Stripe, Slack API, Gemini API, GitHub Actions.
 Fuente roadmap: [P2.3 documentacion](./PRODUCT_ROADMAP.md#L282), [P3.1 stripe](./PRODUCT_ROADMAP.md#L296), [P3.2 slack](./PRODUCT_ROADMAP.md#L310), [P3.3 gemini](./PRODUCT_ROADMAP.md#L323), [P3.4 github actions](./PRODUCT_ROADMAP.md#L336).

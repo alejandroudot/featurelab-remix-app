@@ -55,7 +55,7 @@ export const taskUpdateSchema = z.object({
       const parsed = value.trim();
       return parsed.length > 0 ? parsed : null;
     },
-    z.string().max(5000, 'Descripcion muy larga').nullable().optional(),
+    z.string().max(30000, 'Descripcion muy larga').nullable().optional(),
   ),
   status: z.preprocess(
     (value) => {

@@ -78,6 +78,19 @@ Criterio de cierre:
 - Nombres de tipos e imports coherentes
 - Sin alias de path rotos ni modulos faltantes
 
+### P0.4 Refactor y limpieza transversal
+
+- [ ] Eliminar codigo muerto y caminos legacy no usados
+- [ ] Ordenar carpetas y modulos por responsabilidad real
+- [ ] Homogeneizar naming de funciones, handlers, tipos e intents
+- [ ] Reducir componentes grandes en piezas pequenas y mantenibles
+- [ ] Limpiar contratos obsoletos entre `core`, `features` e `infra`
+
+Criterio de cierre:
+
+- El codigo queda entendible sin contexto historico extra
+- No quedan dependencias o tipos "zombie" en el flujo principal
+
 ## 🚀 P1 - Producto (Tasks-first)
 
 ### P1.1 Home como Execution Hub
@@ -221,6 +234,9 @@ Regla de colaboracion:
   - [x] comentarios
   - [x] `@menciones` de usuarios en comentarios y descripcion de la task
   - [ ] adjuntos en comentarios y descripcion (imagenes + archivos)
+  - [ ] editor rich text para descripcion/comentarios (Tiptap + imagen inline + resize + menciones)
+  - [ ] flujo de imagen embebida: boton + copy/paste + preview estable + upload por API
+  - [ ] politica de archivos de rich text (cleanup, limites de tipo/tamano, permisos)
   - [ ] plantillas rapidas
 
 Criterio de cierre:
@@ -380,3 +396,7 @@ Criterio de cierre:
 3. Ejecutar `P2.1` (TanStack Query + Zustand real).
 4. Ejecutar `P2.2` y `P2.3` (calidad + docs).
 5. Ejecutar `P3.1` a `P3.4` (integraciones + automatizacion).
+
+Nota de replanificacion:
+- El corrimiento diario del calendario operativo se gestiona en `docs/INTERNAL_DELIVERY_PLAN.md`.
+- El orden de roadmap por fases (`P0 -> P1 -> P2 -> P3`) se mantiene igual.

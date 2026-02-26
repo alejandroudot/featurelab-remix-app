@@ -52,7 +52,9 @@ export function TaskDetailModal({
             </DialogHeader>
             <div className="grid h-[calc(80vh-96px)] gap-4 p-4 lg:grid-cols-[2fr_1fr]">
               <section className="space-y-4 overflow-y-auto pr-1">
-                <TaskDetailContent task={task} mentionCandidates={mentionCandidates} />
+                <TaskDetailContent
+                  task={task}
+                />
                 <TaskDetailComments
                   taskId={task.id}
                   comments={comments}
