@@ -51,14 +51,14 @@ export const PRODUCT_FLAG_CATALOG: readonly ProductFlagCatalogItem[] = [
   },
   {
     key: 'tasks-mentions-enabled',
-    description: 'Habilita menciones (@usuario) en comentarios de tasks.',
+    description: 'Habilita menciones (@usuario) en comentarios y descripcion de tasks.',
     type: 'boolean',
     rolloutPercent: null,
     defaultsByEnvironment: { development: true, production: false },
   },
   {
     key: 'tasks-attachments-enabled',
-    description: 'Habilita adjuntos (imagenes/archivos) en comentarios de tasks.',
+    description: 'Habilita adjuntos (imagenes/archivos) en comentarios y descripcion de tasks.',
     type: 'boolean',
     rolloutPercent: null,
     defaultsByEnvironment: { development: true, production: false },

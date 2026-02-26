@@ -1,21 +1,31 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { TaskComment } from '~/core/tasks/tasks.types';
 import type { TaskActionData } from '../../types';
+import { MentionTextarea } from './MentionTextarea';
+import { renderMentions } from './mention-render';
 
 type TaskDetailCommentsProps = {
   taskId: string;
   comments: TaskComment[];
   currentUserId: string;
+  mentionCandidates: string[];
 };
 
-export function TaskDetailComments({ taskId, comments, currentUserId }: TaskDetailCommentsProps) {
+export function TaskDetailComments({
+  taskId,
+  comments,
+  currentUserId,
+  mentionCandidates,
+}: TaskDetailCommentsProps) {
   const createFetcher = useFetcher<TaskActionData>();
   const updateFetcher = useFetcher<TaskActionData>();
   const deleteFetcher = useFetcher<TaskActionData>();
   const location = useLocation();
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingBody, setEditingBody] = useState('');
+  const [createBody, setCreateBody] = useState('');
+  const [didSubmitUpdate, setDidSubmitUpdate] = useState(false);
 
   const redirectTo = `${location.pathname}${location.search}`;
 
@@ -32,6 +42,22 @@ export function TaskDetailComments({ taskId, comments, currentUserId }: TaskDeta
       ? deleteFetcher.data
       : undefined;
 
+  useEffect(() => {
+    setCreateBody(createFormActionData?.values?.commentBody ?? '');
+  }, [createFormActionData?.values?.commentBody, taskId]);
+
+  useEffect(() => {
+    if (!didSubmitUpdate) return;
+    if (updateFetcher.state !== 'idle') return;
+
+    // Si no hay error de action, cerramos modo edicion automaticamente.
+    if (!updateFormActionData) {
+      setEditingCommentId(null);
+      setEditingBody('');
+    }
+    setDidSubmitUpdate(false);
+  }, [didSubmitUpdate, updateFetcher.state, updateFormActionData]);
+
   return (
     <div className="rounded border p-3">
       <h3 className="mb-2 text-sm font-semibold">Comentarios</h3>
@@ -40,11 +66,14 @@ export function TaskDetailComments({ taskId, comments, currentUserId }: TaskDeta
         <input type="hidden" name="intent" value="comment-create" />
         <input type="hidden" name="id" value={taskId} />
         <input type="hidden" name="redirectTo" value={redirectTo} />
-        <textarea
+        <MentionTextarea
           name="commentBody"
-          defaultValue={createFormActionData?.values?.commentBody ?? ''}
+          value={createBody}
+          onChange={setCreateBody}
+          candidates={mentionCandidates}
           className="w-full rounded border px-2 py-1 text-sm"
           placeholder="Escribe un comentario..."
+          rows={4}
         />
         {createFormActionData?.fieldErrors?.commentBody?.[0] ? (
           <p className="text-xs text-red-600">{createFormActionData.fieldErrors.commentBody[0]}</p>
@@ -69,15 +98,21 @@ export function TaskDetailComments({ taskId, comments, currentUserId }: TaskDeta
             <li key={comment.id} className="rounded border p-2 text-sm">
               <div className="font-medium">{comment.authorEmail ?? 'Usuario'}</div>
               {editingCommentId === comment.id ? (
-                <updateFetcher.Form method="post" className="mt-2 space-y-2">
+                <updateFetcher.Form
+                  method="post"
+                  className="mt-2 space-y-2"
+                  onSubmit={() => setDidSubmitUpdate(true)}
+                >
                   <input type="hidden" name="intent" value="comment-update" />
                   <input type="hidden" name="commentId" value={comment.id} />
                   <input type="hidden" name="redirectTo" value={redirectTo} />
-                  <textarea
+                  <MentionTextarea
                     name="commentBody"
                     value={editingBody}
-                    onChange={(event) => setEditingBody(event.target.value)}
+                    onChange={setEditingBody}
+                    candidates={mentionCandidates}
                     className="w-full rounded border px-2 py-1 text-sm"
+                    rows={4}
                   />
                   {updateFormActionData?.fieldErrors?.commentBody?.[0] ? (
                     <p className="text-xs text-red-600">{updateFormActionData.fieldErrors.commentBody[0]}</p>
@@ -106,7 +141,7 @@ export function TaskDetailComments({ taskId, comments, currentUserId }: TaskDeta
                   </div>
                 </updateFetcher.Form>
               ) : (
-                <div className="opacity-90">{comment.body}</div>
+                <div className="opacity-90">{renderMentions(comment.body)}</div>
               )}
               <div className="text-xs opacity-70">
                 {new Date(comment.createdAt).toISOString().replace('T', ' ').slice(0, 16)}

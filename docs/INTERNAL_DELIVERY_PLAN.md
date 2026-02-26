@@ -249,6 +249,7 @@ Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
   - [x] Panel lateral con accion rapida de `assignee`
   - [x] Mantener contexto al abrir detalle (filtros, vista y scroll)
   - [x] Edicion rapida desde modal de detalle (sin edicion inline en card)
+  - [x] Edicion inline de titulo y descripcion dentro del modal de detalle (click para editar)
   - [x] Regla de actualizacion de prioridad desde interacciones del board
     - [x] DnD entre columnas cambia `status`
     - [x] DnD vertical en modo `manual` solo cambia orden visual/manual
@@ -324,8 +325,8 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
   - [x] labels/tags
   - [x] checklist/subtareas
   - [x] comentarios
-  - [ ] `@menciones` de usuarios en comentarios
-  - [ ] adjuntos en comentarios (imagenes + archivos)
+  - [x] `@menciones` de usuarios en comentarios y descripcion de la task
+  - [ ] adjuntos en comentarios y descripcion (imagenes + archivos)
   - [ ] plantillas rapidas
 
 ## ?? Dia 10 - Miercoles 25/02/2026

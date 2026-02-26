@@ -168,6 +168,7 @@ Tecnologias a usar: Zod (query params) + React Router (loaders/actions) + DnD + 
   - [x] Panel lateral con acciones rapidas: cambiar `assignee`, `status` y `priority`
   - [x] Mantener contexto al abrir detalle (filtros, vista y scroll)
   - [x] Edicion rapida desde modal de detalle (sin inline edit en card)
+  - [x] Edicion inline de titulo y descripcion dentro del modal de detalle (click para editar)
   - [x] Regla de actualizacion de prioridad desde interacciones del board
   - [x] Usar `Radix AlertDialog` para acciones destructivas desde card
   - [x] Responsive real (desktop/mobile)
@@ -218,8 +219,8 @@ Regla de colaboracion:
   - [x] labels/tags
   - [x] checklist/subtareas
   - [x] comentarios
-  - [ ] `@menciones` de usuarios en comentarios
-  - [ ] adjuntos en comentarios (imagenes + archivos)
+  - [x] `@menciones` de usuarios en comentarios y descripcion de la task
+  - [ ] adjuntos en comentarios y descripcion (imagenes + archivos)
   - [ ] plantillas rapidas
 
 Criterio de cierre:

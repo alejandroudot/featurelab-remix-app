@@ -43,6 +43,14 @@ function formatActivityAction(action: TaskActivity['action']) {
   }
 }
 
+function formatActivity(item: TaskActivity) {
+  if (item.action === 'updated' && item.metadata?.kind === 'mention') {
+    const source = item.metadata?.source;
+    return source === 'description' ? 'Menciono en descripcion' : 'Menciono en comentario';
+  }
+  return formatActivityAction(item.action);
+}
+
 export function TaskDetailHistory({ activities }: TaskDetailHistoryProps) {
   const [isHistoryOpen, setIsHistoryOpen] = React.useState(false);
   const latest = activities[0];
@@ -62,7 +70,7 @@ export function TaskDetailHistory({ activities }: TaskDetailHistoryProps) {
             <div className="font-medium">Historial de actualizaciones ({activities.length})</div>
             {latest ? (
               <div className="text-xs opacity-70">
-                Ultima: {latest.actorEmail ?? 'Usuario'} - {formatActivityAction(latest.action)}
+                Ultima: {latest.actorEmail ?? 'Usuario'} - {formatActivity(latest)}
               </div>
             ) : null}
           </button>
@@ -79,7 +87,7 @@ export function TaskDetailHistory({ activities }: TaskDetailHistoryProps) {
                 {activities.map((item) => (
                   <li key={item.id} className="rounded border p-2 text-sm">
                     <div className="font-medium">
-                      {item.actorEmail ?? 'Usuario'}: {formatActivityAction(item.action)}
+                      {item.actorEmail ?? 'Usuario'}: {formatActivity(item)}
                     </div>
                     <div className="text-xs opacity-70">
                       {new Date(item.createdAt).toISOString().replace('T', ' ').slice(0, 16)}

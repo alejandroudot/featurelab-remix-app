@@ -80,6 +80,3 @@ export interface TaskCommentCommandService {
     authorUserId: string;
   }): Promise<void>;
 }
-
-// Alias de transicion para mantener compatibilidad mientras migramos imports.
-export type TaskService = TaskQueryService & TaskCommandService;

@@ -14,6 +14,8 @@ import {
 import type { RunTaskActionInput, TaskActionResult } from '../types';
 import { getSafeRedirectTo, getTaskFormValues, parseIntent } from './utils';
 import { jsonTaskError, toTaskFormError, zodErrorToActionData } from './errors';
+import { db } from '~/infra/db/client.sqlite';
+import { users } from '~/infra/db/schema';
 
 type Intent = (typeof taskIntentSchema)['enum'][keyof (typeof taskIntentSchema)['enum']];
 type TaskIntentHandler = (input: RunTaskActionInput) => Promise<TaskActionResult>;
@@ -41,6 +43,63 @@ function checklistEqual(
       item.id === right[index]?.id &&
       item.text === right[index]?.text &&
       item.done === right[index]?.done,
+  );
+}
+
+function extractMentionTokens(text: string | null | undefined): string[] {
+  if (!text) return [];
+  const atTokens = (text.match(/@([a-zA-Z0-9._%+-]+)/g) ?? []).map((token) =>
+    token.slice(1).toLowerCase(),
+  );
+  return [...new Set(atTokens)];
+}
+
+async function resolveMentionedUserIds(tokens: string[]): Promise<string[]> {
+  if (tokens.length === 0) return [];
+  const tokenSet = new Set(tokens.map((token) => token.toLowerCase()));
+
+  const rows = await db
+    .select({ id: users.id, email: users.email })
+    .from(users)
+    .all();
+
+  return rows
+    .filter((row) => {
+      const email = row.email.toLowerCase();
+      const localPart = email.split('@')[0] ?? '';
+      return tokenSet.has(email) || tokenSet.has(localPart);
+    })
+    .map((row) => row.id);
+}
+
+async function createMentionActivities(input: {
+  taskId: string;
+  actorUserId: string;
+  source: 'comment' | 'description';
+  text: string | null | undefined;
+  skipNotificationForUserId?: string;
+  writer: RunTaskActionInput['taskActivityCommandService'];
+}) {
+  const mentionTokens = extractMentionTokens(input.text);
+  const mentionedUserIds = await resolveMentionedUserIds(mentionTokens);
+  // Evita auto-notificacion cuando el actor se menciona a si mismo.
+  const usersToNotify = input.skipNotificationForUserId
+    ? mentionedUserIds.filter((userId) => userId !== input.skipNotificationForUserId)
+    : mentionedUserIds;
+
+  await Promise.all(
+    usersToNotify.map((targetUserId) =>
+      input.writer.create({
+        taskId: input.taskId,
+        actorUserId: input.actorUserId,
+        action: 'updated',
+        metadata: {
+          kind: 'mention',
+          source: input.source,
+          targetUserId,
+        },
+      }),
+    ),
   );
 }
 
@@ -223,6 +282,18 @@ const handleUpdate: TaskIntentHandler = async (input) => {
         }),
       );
     }
+    const beforeDescription = task.description ?? null;
+    const afterDescription = updatedTask.description ?? null;
+    if (beforeDescription !== afterDescription) {
+      await createMentionActivities({
+        taskId: updatedTask.id,
+        actorUserId: input.userId,
+        source: 'description',
+        text: updatedTask.description ?? null,
+        skipNotificationForUserId: input.userId,
+        writer: input.taskActivityCommandService,
+      });
+    }
 
     if (activityWrites.length === 0) {
       activityWrites.push(
@@ -361,6 +432,14 @@ const handleCommentCreate: TaskIntentHandler = async (input) => {
       actorUserId: input.userId,
       action: 'comment-added',
     });
+    await createMentionActivities({
+      taskId: parsed.data.id,
+      actorUserId: input.userId,
+      source: 'comment',
+      text: parsed.data.commentBody,
+      skipNotificationForUserId: input.userId,
+      writer: input.taskActivityCommandService,
+    });
 
     return redirect(getSafeRedirectTo(formData, '/tasks'));
   } catch (err) {
@@ -410,6 +489,14 @@ const handleCommentUpdate: TaskIntentHandler = async (input) => {
       actorUserId: input.userId,
       action: 'comment-updated',
       metadata: { commentId: comment.id },
+    });
+    await createMentionActivities({
+      taskId: comment.taskId,
+      actorUserId: input.userId,
+      source: 'comment',
+      text: parsed.data.commentBody,
+      skipNotificationForUserId: input.userId,
+      writer: input.taskActivityCommandService,
     });
 
     return redirect(getSafeRedirectTo(formData, '/tasks'));

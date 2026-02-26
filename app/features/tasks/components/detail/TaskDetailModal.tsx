@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import type { Task, TaskActivity, TaskComment } from '~/core/tasks/tasks.types';
 import type { TaskAssigneeOption } from '../../types';
 import {
@@ -33,6 +34,11 @@ export function TaskDetailModal({
   onDeleteTask,
   onOpenChange,
 }: TaskDetailModalProps) {
+  const mentionCandidates = useMemo(
+    () => [...new Set(assignableUsers.map((user) => user.email.toLowerCase()))],
+    [assignableUsers],
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="h-[80vh] w-full max-w-5xl p-0 sm:max-w-5xl">
@@ -46,8 +52,13 @@ export function TaskDetailModal({
             </DialogHeader>
             <div className="grid h-[calc(80vh-96px)] gap-4 p-4 lg:grid-cols-[2fr_1fr]">
               <section className="space-y-4 overflow-y-auto pr-1">
-                <TaskDetailContent task={task} />
-                <TaskDetailComments taskId={task.id} comments={comments} currentUserId={currentUserId} />
+                <TaskDetailContent task={task} mentionCandidates={mentionCandidates} />
+                <TaskDetailComments
+                  taskId={task.id}
+                  comments={comments}
+                  currentUserId={currentUserId}
+                  mentionCandidates={mentionCandidates}
+                />
                 <TaskDetailHistory activities={activities} />
               </section>
 

@@ -42,6 +42,11 @@ export async function runTaskLoader({
         const targetUserId = activity.metadata?.to;
         return typeof targetUserId === 'string' && targetUserId === userId;
       }
+      if (activity.action === 'updated') {
+        const kind = activity.metadata?.kind;
+        const targetUserId = activity.metadata?.targetUserId;
+        return kind === 'mention' && typeof targetUserId === 'string' && targetUserId === userId;
+      }
       return (
         activity.action === 'comment-added' ||
         activity.action === 'comment-updated' ||
@@ -82,6 +87,19 @@ export async function runTaskLoader({
           taskTitle,
           actorEmail,
           message: `${actorEmail} borro un comentario en: ${taskTitle}`,
+          createdAt: activity.createdAt,
+        };
+      }
+
+      if (activity.action === 'updated' && activity.metadata?.kind === 'mention') {
+        const source = activity.metadata?.source;
+        const sourceLabel = source === 'description' ? 'descripcion' : 'comentario';
+        return {
+          id: activity.id,
+          taskId: activity.taskId,
+          taskTitle,
+          actorEmail,
+          message: `${actorEmail} te menciono en ${sourceLabel}: ${taskTitle}`,
           createdAt: activity.createdAt,
         };
       }

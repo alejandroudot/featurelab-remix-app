@@ -6,7 +6,6 @@ import type {
   TaskCommentQueryService,
   TaskCommandService,
   TaskQueryService,
-  TaskService,
 } from '../../core/tasks/tasks.port';
 import {
   sqliteTaskActivityCommandService,
@@ -21,13 +20,6 @@ import {
 export const taskQueryService: TaskQueryService = sqliteTaskQueryService;
 export const taskCommandService: TaskCommandService = sqliteTaskCommandService;
 export const taskActivityQueryService: TaskActivityQueryService = sqliteTaskActivityQueryService;
-export const taskActivityCommandService: TaskActivityCommandService =
-  sqliteTaskActivityCommandService;
+export const taskActivityCommandService: TaskActivityCommandService = sqliteTaskActivityCommandService;
 export const taskCommentQueryService: TaskCommentQueryService = sqliteTaskCommentQueryService;
 export const taskCommentCommandService: TaskCommentCommandService = sqliteTaskCommentCommandService;
-
-// Alias de transicion para imports legacy.
-export const taskService: TaskService = {
-  ...taskQueryService,
-  ...taskCommandService,
-};

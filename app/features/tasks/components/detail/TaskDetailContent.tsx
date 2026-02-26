@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
 import type { TaskActionData } from '../../types';
+import { MentionTextarea } from './MentionTextarea';
+import { renderMentions } from './mention-render';
 
 type TaskDetailContentProps = {
   task: Task;
+  mentionCandidates: string[];
 };
 
-export function TaskDetailContent({ task }: TaskDetailContentProps) {
+export function TaskDetailContent({ task, mentionCandidates }: TaskDetailContentProps) {
   const fetcher = useFetcher<TaskActionData>();
   const location = useLocation();
   const [isEditingDescription, setIsEditingDescription] = useState(false);
@@ -29,10 +32,11 @@ export function TaskDetailContent({ task }: TaskDetailContentProps) {
           <input type="hidden" name="intent" value="update" />
           <input type="hidden" name="id" value={task.id} />
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <textarea
+          <MentionTextarea
             name="description"
             value={draftDescription}
-            onChange={(event) => setDraftDescription(event.target.value)}
+            onChange={setDraftDescription}
+            candidates={mentionCandidates}
             className="w-full rounded border px-2 py-1 text-sm"
             rows={4}
             autoFocus
@@ -69,7 +73,7 @@ export function TaskDetailContent({ task }: TaskDetailContentProps) {
           }}
           className="w-full rounded border border-dashed p-2 text-left text-sm opacity-85 hover:bg-accent"
         >
-          {task.description || 'Sin descripcion por ahora. Click para editar.'}
+          {task.description ? renderMentions(task.description) : 'Sin descripcion por ahora. Click para editar.'}
         </button>
       )}
     </div>
