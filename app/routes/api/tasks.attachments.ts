@@ -10,9 +10,6 @@ export async function action({ request }: { request: Request }) {
   const taskId = String(formData.get('taskId') ?? '').trim();
   const file = formData.get('attachmentFile');
 
-  if (!taskId) {
-    return Response.json({ success: false, formError: 'Task requerida.' }, { status: 400 });
-  }
   if (!(file instanceof File) || file.size === 0) {
     return Response.json({ success: false, formError: 'Selecciona una imagen valida.' }, { status: 400 });
   }
@@ -23,9 +20,12 @@ export async function action({ request }: { request: Request }) {
     return Response.json({ success: false, formError: 'El archivo supera el limite de 10MB.' }, { status: 400 });
   }
 
-  const task = await taskQueryService.getByIdForUser({ id: taskId, userId: user.id });
-  if (!task) {
-    return Response.json({ success: false, formError: 'No tenes permisos para editar esta task.' }, { status: 403 });
+  // Si viene taskId validamos permisos. Sin taskId permitimos upload temporal para create form.
+  if (taskId) {
+    const task = await taskQueryService.getByIdForUser({ id: taskId, userId: user.id });
+    if (!task) {
+      return Response.json({ success: false, formError: 'No tenes permisos para editar esta task.' }, { status: 403 });
+    }
   }
 
   const storedFile = await saveRichTextImageTemp(file);

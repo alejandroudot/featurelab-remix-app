@@ -76,10 +76,7 @@ export function TaskCard({
       >
         <CardContent className={compact ? 'space-y-2 px-3' : 'space-y-3 px-4'}>
           <div className="flex items-start justify-between gap-2">
-            <div className="space-y-1">
-              <div className="text-sm font-semibold">{task.title}</div>
-              {task.description ? <p className="text-xs opacity-80">{task.description}</p> : null}
-            </div>
+            <div className="text-sm font-semibold">{task.title}</div>
 
             <DropdownMenu>
               <DropdownMenuTrigger

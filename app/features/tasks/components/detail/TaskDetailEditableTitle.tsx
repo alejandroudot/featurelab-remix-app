@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { TaskActionData } from '../../types';
 
 type TaskDetailEditableTitleProps = {
   taskId: string;
   title: string;
+  closeSignal?: number;
 };
 
-export function TaskDetailEditableTitle({ taskId, title }: TaskDetailEditableTitleProps) {
+export function TaskDetailEditableTitle({ taskId, title, closeSignal = 0 }: TaskDetailEditableTitleProps) {
   const fetcher = useFetcher<TaskActionData>();
   const location = useLocation();
   const [isEditing, setIsEditing] = useState(false);
@@ -15,6 +16,27 @@ export function TaskDetailEditableTitle({ taskId, title }: TaskDetailEditableTit
   const redirectTo = `${location.pathname}${location.search}`;
   const formError =
     fetcher.data?.success === false && fetcher.data.intent === 'update' ? fetcher.data : undefined;
+
+  useEffect(() => {
+    if (!isEditing) return;
+    const nextTitle = draft.trim();
+    const currentTitle = title.trim();
+    if (nextTitle === currentTitle) {
+      setIsEditing(false);
+      return;
+    }
+
+    fetcher.submit(
+      {
+        intent: 'update',
+        id: taskId,
+        title: draft,
+        redirectTo,
+      },
+      { method: 'post' },
+    );
+    setIsEditing(false);
+  }, [closeSignal]);
 
   if (!isEditing) {
     return (

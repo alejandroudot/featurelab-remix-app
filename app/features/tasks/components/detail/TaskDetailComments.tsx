@@ -2,21 +2,30 @@ import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { TaskComment } from '~/core/tasks/tasks.types';
 import type { TaskActionData } from '../../types';
-import { MentionTextarea } from './MentionTextarea';
-import { renderMentions } from './mention-render';
+import { RichTextEditor, RichTextViewer } from './RichTextEditor';
 
 type TaskDetailCommentsProps = {
   taskId: string;
   comments: TaskComment[];
   currentUserId: string;
   mentionCandidates: string[];
+  closeSignal?: number;
 };
+
+function getMeaningfulTextFromHtml(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 export function TaskDetailComments({
   taskId,
   comments,
   currentUserId,
   mentionCandidates,
+  closeSignal = 0,
 }: TaskDetailCommentsProps) {
   const createFetcher = useFetcher<TaskActionData>();
   const updateFetcher = useFetcher<TaskActionData>();
@@ -25,6 +34,8 @@ export function TaskDetailComments({
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingBody, setEditingBody] = useState('');
   const [createBody, setCreateBody] = useState('');
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [didSubmitCreate, setDidSubmitCreate] = useState(false);
   const [didSubmitUpdate, setDidSubmitUpdate] = useState(false);
 
   const redirectTo = `${location.pathname}${location.search}`;
@@ -47,6 +58,17 @@ export function TaskDetailComments({
   }, [createFormActionData?.values?.commentBody, taskId]);
 
   useEffect(() => {
+    if (!didSubmitCreate) return;
+    if (createFetcher.state !== 'idle') return;
+
+    if (!createFormActionData) {
+      setCreateBody('');
+      setIsCreateOpen(false);
+    }
+    setDidSubmitCreate(false);
+  }, [didSubmitCreate, createFetcher.state, createFormActionData]);
+
+  useEffect(() => {
     if (!didSubmitUpdate) return;
     if (updateFetcher.state !== 'idle') return;
 
@@ -58,39 +80,102 @@ export function TaskDetailComments({
     setDidSubmitUpdate(false);
   }, [didSubmitUpdate, updateFetcher.state, updateFormActionData]);
 
+  useEffect(() => {
+    if (createFetcher.state !== 'idle' || updateFetcher.state !== 'idle') return;
+
+    if (editingCommentId) {
+      const currentComment = comments.find((comment) => comment.id === editingCommentId);
+      const currentBody = currentComment?.body ?? '';
+      const nextMeaningfulBody = getMeaningfulTextFromHtml(editingBody);
+
+      if (!nextMeaningfulBody) {
+        deleteFetcher.submit(
+          {
+            intent: 'comment-delete',
+            commentId: editingCommentId,
+            redirectTo,
+          },
+          { method: 'post' },
+        );
+      } else if (editingBody !== currentBody) {
+        updateFetcher.submit(
+          {
+            intent: 'comment-update',
+            commentId: editingCommentId,
+            commentBody: editingBody,
+            redirectTo,
+          },
+          { method: 'post' },
+        );
+      }
+      setEditingCommentId(null);
+      setEditingBody('');
+    }
+
+    if (isCreateOpen) {
+      if (getMeaningfulTextFromHtml(createBody)) {
+        createFetcher.submit(
+          {
+            intent: 'comment-create',
+            id: taskId,
+            commentBody: createBody,
+            redirectTo,
+          },
+          { method: 'post' },
+        );
+      }
+      setIsCreateOpen(false);
+      setCreateBody('');
+    }
+  }, [closeSignal]);
+
   return (
     <div className="rounded border p-3">
-      <h3 className="mb-2 text-sm font-semibold">Comentarios</h3>
-
-      <createFetcher.Form method="post" className="space-y-2">
-        <input type="hidden" name="intent" value="comment-create" />
-        <input type="hidden" name="id" value={taskId} />
-        <input type="hidden" name="redirectTo" value={redirectTo} />
-        <MentionTextarea
-          name="commentBody"
-          value={createBody}
-          onChange={setCreateBody}
-          candidates={mentionCandidates}
-          className="w-full rounded border px-2 py-1 text-sm"
-          placeholder="Escribe un comentario..."
-          rows={4}
-        />
-        {createFormActionData?.fieldErrors?.commentBody?.[0] ? (
-          <p className="text-xs text-red-600">{createFormActionData.fieldErrors.commentBody[0]}</p>
-        ) : null}
-        {createFormActionData?.formError ? (
-          <p className="text-xs text-red-600">{createFormActionData.formError}</p>
-        ) : null}
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold">Comentarios</h3>
         <button
-          type="submit"
-          disabled={createFetcher.state === 'submitting'}
-          className="rounded bg-slate-900 px-3 py-1 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
+          type="button"
+          onClick={() => setIsCreateOpen((prev) => !prev)}
+          className="rounded border px-2 py-1 text-xs font-medium"
         >
-          {createFetcher.state === 'submitting' ? 'Comentando...' : 'Comentar'}
+          {isCreateOpen ? 'Ocultar' : 'Agregar comentario'}
         </button>
-      </createFetcher.Form>
+      </div>
 
-      <ul className="mt-3 space-y-2">
+      {isCreateOpen ? (
+        <createFetcher.Form
+          method="post"
+          className="mb-3 space-y-2"
+          onSubmit={() => setDidSubmitCreate(true)}
+        >
+          <input type="hidden" name="intent" value="comment-create" />
+          <input type="hidden" name="id" value={taskId} />
+          <input type="hidden" name="redirectTo" value={redirectTo} />
+          <RichTextEditor
+            name="commentBody"
+            value={createBody}
+            onChange={setCreateBody}
+            mentionCandidates={mentionCandidates}
+            enableImageUpload={false}
+            placeholder="Escribe un comentario..."
+          />
+          {createFormActionData?.fieldErrors?.commentBody?.[0] ? (
+            <p className="text-xs text-red-600">{createFormActionData.fieldErrors.commentBody[0]}</p>
+          ) : null}
+          {createFormActionData?.formError ? (
+            <p className="text-xs text-red-600">{createFormActionData.formError}</p>
+          ) : null}
+          <button
+            type="submit"
+            disabled={createFetcher.state === 'submitting'}
+            className="rounded bg-slate-900 px-3 py-1 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
+          >
+            {createFetcher.state === 'submitting' ? 'Comentando...' : 'Comentar'}
+          </button>
+        </createFetcher.Form>
+      ) : null}
+
+      <ul className="space-y-2">
         {comments.length === 0 ? (
           <li className="text-sm opacity-70">Sin comentarios todavia.</li>
         ) : (
@@ -101,18 +186,35 @@ export function TaskDetailComments({
                 <updateFetcher.Form
                   method="post"
                   className="mt-2 space-y-2"
-                  onSubmit={() => setDidSubmitUpdate(true)}
+                  onSubmit={(event) => {
+                    const nextMeaningfulBody = getMeaningfulTextFromHtml(editingBody);
+                    if (!nextMeaningfulBody) {
+                      event.preventDefault();
+                      setDidSubmitUpdate(false);
+                      deleteFetcher.submit(
+                        {
+                          intent: 'comment-delete',
+                          commentId: comment.id,
+                          redirectTo,
+                        },
+                        { method: 'post' },
+                      );
+                      setEditingCommentId(null);
+                      setEditingBody('');
+                      return;
+                    }
+                    setDidSubmitUpdate(true);
+                  }}
                 >
                   <input type="hidden" name="intent" value="comment-update" />
                   <input type="hidden" name="commentId" value={comment.id} />
                   <input type="hidden" name="redirectTo" value={redirectTo} />
-                  <MentionTextarea
+                  <RichTextEditor
                     name="commentBody"
                     value={editingBody}
                     onChange={setEditingBody}
-                    candidates={mentionCandidates}
-                    className="w-full rounded border px-2 py-1 text-sm"
-                    rows={4}
+                    mentionCandidates={mentionCandidates}
+                    enableImageUpload={false}
                   />
                   {updateFormActionData?.fieldErrors?.commentBody?.[0] ? (
                     <p className="text-xs text-red-600">{updateFormActionData.fieldErrors.commentBody[0]}</p>
@@ -141,7 +243,9 @@ export function TaskDetailComments({
                   </div>
                 </updateFetcher.Form>
               ) : (
-                <div className="opacity-90">{renderMentions(comment.body)}</div>
+                <div className="opacity-90">
+                  <RichTextViewer content={comment.body} />
+                </div>
               )}
               <div className="text-xs opacity-70">
                 {new Date(comment.createdAt).toISOString().replace('T', ' ').slice(0, 16)}

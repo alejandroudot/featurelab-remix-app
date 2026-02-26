@@ -78,7 +78,6 @@ export function TasksPage({
   // Handlers de interacción
   function handleDetailOpenChange(open: boolean) {
     setIsDetailOpen(open);
-    if (!open) setSelectedTaskId(null);
   }
 
   function handleOpenTask(taskId: string) {
@@ -174,6 +173,10 @@ export function TasksPage({
       Object.fromEntries(assignableUsers.map((user) => [user.id, user.email])) as Record<string, string>,
     [assignableUsers],
   );
+  const mentionCandidates = useMemo(
+    () => [...new Set(assignableUsers.map((user) => user.email.toLowerCase()))],
+    [assignableUsers],
+  );
 
   useEffect(() => {
     const message = getTaskActionToastError(actionData);
@@ -199,7 +202,11 @@ export function TasksPage({
         />
       </header>
 
-      <CreateTaskForm actionData={actionData} isSubmitting={isSubmitting} />
+      <CreateTaskForm
+        actionData={actionData}
+        isSubmitting={isSubmitting}
+        mentionCandidates={mentionCandidates}
+      />
 
       <TasksNotifications items={notifications} />
 

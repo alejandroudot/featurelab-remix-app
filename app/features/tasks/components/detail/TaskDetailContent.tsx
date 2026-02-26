@@ -15,9 +15,15 @@ type AttachmentUploadApiResponse = {
 
 type TaskDetailContentProps = {
   task: Task;
+  mentionCandidates: string[];
+  closeSignal?: number;
 };
 
-export function TaskDetailContent({ task }: TaskDetailContentProps) {
+export function TaskDetailContent({
+  task,
+  mentionCandidates,
+  closeSignal = 0,
+}: TaskDetailContentProps) {
   const fetcher = useFetcher<TaskActionData>();
   const location = useLocation();
   const [isEditingDescription, setIsEditingDescription] = useState(false);
@@ -36,6 +42,47 @@ export function TaskDetailContent({ task }: TaskDetailContentProps) {
     setHasPendingEditorUploads(false);
   }, [task.id, task.description]);
 
+  useEffect(() => {
+    if (!isEditingDescription) return;
+
+    const persistDraft = async () => {
+      if (hasPendingEditorUploads || hasInlineBase64Images) {
+        if (draftDescription.includes('/uploads/tasks/tmp/')) {
+          const cleanupFormData = new FormData();
+          cleanupFormData.set('taskId', task.id);
+          cleanupFormData.set('html', draftDescription);
+          await fetch('/api/tasks/images/cleanup', {
+            method: 'POST',
+            body: cleanupFormData,
+          });
+        }
+        setIsEditingDescription(false);
+        setEditorImageError(null);
+        setHasPendingEditorUploads(false);
+        return;
+      }
+
+      if (draftDescription === (task.description ?? '')) {
+        setIsEditingDescription(false);
+        setEditorImageError(null);
+        return;
+      }
+
+      fetcher.submit(
+        {
+          intent: 'update',
+          id: task.id,
+          description: draftDescription,
+          redirectTo,
+        },
+        { method: 'post' },
+      );
+      setIsEditingDescription(false);
+    };
+
+    void persistDraft();
+  }, [closeSignal]);
+
   return (
     <div className="rounded border p-3">
       <h3 className="mb-2 text-sm font-semibold">Descripcion</h3>
@@ -44,6 +91,12 @@ export function TaskDetailContent({ task }: TaskDetailContentProps) {
           method="post"
           className="space-y-2"
           onSubmit={(event) => {
+            if (draftDescription === (task.description ?? '')) {
+              event.preventDefault();
+              setIsEditingDescription(false);
+              setEditorImageError(null);
+              return;
+            }
             if (hasPendingEditorUploads) {
               event.preventDefault();
               return;
@@ -63,6 +116,7 @@ export function TaskDetailContent({ task }: TaskDetailContentProps) {
             name="description"
             value={draftDescription}
             onChange={setDraftDescription}
+            mentionCandidates={mentionCandidates}
             autoFocus
             placeholder="Describe la task..."
             onPendingUploadsChange={setHasPendingEditorUploads}

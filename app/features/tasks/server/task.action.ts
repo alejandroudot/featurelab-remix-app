@@ -16,7 +16,10 @@ import { getSafeRedirectTo, getTaskFormValues, parseIntent } from './utils';
 import { jsonTaskError, toTaskFormError, zodErrorToActionData } from './errors';
 import { db } from '~/infra/db/client.sqlite';
 import { users } from '~/infra/db/schema';
-import { cleanupRichTextTempImagesNotInPersistedHtml } from '~/infra/files/rich-text-images.storage';
+import {
+  cleanupRichTextTempImagesNotInPersistedHtml,
+  finalizeRichTextTempImagesInHtml,
+} from '~/infra/files/rich-text-images.storage';
 
 type Intent = (typeof taskIntentSchema)['enum'][keyof (typeof taskIntentSchema)['enum']];
 type TaskIntentHandler = (input: RunTaskActionInput) => Promise<TaskActionResult>;
@@ -107,9 +110,13 @@ async function createMentionActivities(input: {
 // Handler de creacion: valida payload create y persiste la task.
 const handleCreate: TaskIntentHandler = async (input) => {
   const { formData } = input;
+  const rawDescription = String(formData.get('description') ?? '');
+  const description = rawDescription
+    ? await finalizeRichTextTempImagesInHtml(rawDescription)
+    : rawDescription;
   const parsed = taskCreateSchema.safeParse({
     title: formData.get('title'),
-    description: formData.get('description'),
+    description,
   });
 
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'create');
@@ -121,6 +128,14 @@ const handleCreate: TaskIntentHandler = async (input) => {
       taskId: createdTask.id,
       actorUserId: input.userId,
       action: 'created',
+    });
+    await createMentionActivities({
+      taskId: createdTask.id,
+      actorUserId: input.userId,
+      source: 'description',
+      text: createdTask.description ?? null,
+      skipNotificationForUserId: input.userId,
+      writer: input.taskActivityCommandService,
     });
     return redirect(getSafeRedirectTo(formData, '/tasks'));
   } catch (err) {

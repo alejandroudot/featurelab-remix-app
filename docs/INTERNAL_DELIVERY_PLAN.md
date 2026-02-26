@@ -326,8 +326,15 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
   - [x] checklist/subtareas
   - [x] comentarios
   - [x] `@menciones` de usuarios en comentarios y descripcion de la task
-  - [ ] adjuntos en comentarios y descripcion (imagenes + archivos) (base lista, UX rich text pasa a Dia 10)
-  - [ ] plantillas rapidas
+  - [x] `@menciones` tambien en create task (descripcion rich text)
+  - [ ] adjuntos en comentarios y descripcion (imagenes + archivos)
+    - [x] imagenes embebidas en descripcion con editor rich text (boton + copy/paste)
+    - [x] upload por API con validaciones basicas (permiso, tipo imagen, limite 10MB)
+    - [x] cleanup de temporales en cancel y al editar contenido (evitar huerfanas)
+    - [ ] adjuntos de archivos generales
+    - [ ] adjuntos en comentarios
+  - [x] plantillas rapidas
+  - [x] create task con descripcion rich text (toolbar + links + listas + imagen embebida)
 
 ## ?? Dia 10 - Miercoles 25/02/2026
 
@@ -341,14 +348,15 @@ Fuente roadmap: [P0 estabilidad/consistencia](./PRODUCT_ROADMAP.md#-p0---estabil
   - [ ] Reducir componentes gigantes en piezas chicas y legibles
   - [ ] Limpiar imports, exports y contratos obsoletos
   - [ ] Dejar checklist de deuda tecnica residual (si queda algo)
-- [ ] Hardening de editor rich text
-  - [ ] Flujo estable de imagen embebida (boton + copy/paste)
-  - [ ] Upload de imagen embebida via API (`/api/tasks/attachments`) con validaciones de permiso, tipo y tamano
-  - [ ] Preview local estable y reemplazo por URL final sin parpadeos rotos
-  - [ ] Definir politica de lifecycle de archivos (cancelacion/cleanup) para evitar basura en storage
-  - [ ] Documentar limite tecnico de archivos (tipos soportados + max size)
-  - [ ] Sin persistencia accidental de logica legacy de adjuntos
-  - [ ] UX consistente en preview/guardado/cancelacion
+- [x] Hardening de editor rich text
+  - [x] Flujo estable de imagen embebida (boton + copy/paste)
+  - [x] Upload de imagen embebida via API (`/api/tasks/attachments`) con validaciones de permiso, tipo y tamano
+  - [x] Preview local estable y reemplazo por URL final sin parpadeos rotos
+  - [x] Definir politica de lifecycle de archivos (cancelacion/cleanup) para evitar basura en storage
+  - [x] Documentar limite tecnico de archivos (tipos soportados + max size)
+  - [x] Sin persistencia accidental de logica legacy de adjuntos
+  - [x] UX consistente en preview/guardado/cancelacion
+  - [x] Mensionador estable: replace correcto del token, navegacion con teclado y cierre por click afuera
 
 ## ?? Dia 11 - Jueves 26/02/2026
 

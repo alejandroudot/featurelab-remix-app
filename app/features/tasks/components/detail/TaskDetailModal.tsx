@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { Task, TaskActivity, TaskComment } from '~/core/tasks/tasks.types';
 import type { TaskAssigneeOption } from '../../types';
 import {
@@ -34,18 +34,30 @@ export function TaskDetailModal({
   onDeleteTask,
   onOpenChange,
 }: TaskDetailModalProps) {
+  const [closeSignal, setCloseSignal] = useState(0);
   const mentionCandidates = useMemo(
     () => [...new Set(assignableUsers.map((user) => user.email.toLowerCase()))],
     [assignableUsers],
   );
 
+  function handleModalOpenChange(nextOpen: boolean) {
+    if (!nextOpen && typeof document !== 'undefined') {
+      setCloseSignal((prev) => prev + 1);
+      const activeElement = document.activeElement;
+      if (activeElement instanceof HTMLElement) {
+        activeElement.blur();
+      }
+    }
+    onOpenChange(nextOpen);
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleModalOpenChange}>
       <DialogContent className="h-[80vh] w-full max-w-5xl p-0 sm:max-w-5xl">
         {task ? (
           <>
             <DialogHeader className="border-b p-4">
-              <TaskDetailEditableTitle taskId={task.id} title={task.title} />
+              <TaskDetailEditableTitle taskId={task.id} title={task.title} closeSignal={closeSignal} />
               <DialogDescription>
                 Detalle de task estilo Jira: contenido principal + panel lateral.
               </DialogDescription>
@@ -54,12 +66,15 @@ export function TaskDetailModal({
               <section className="space-y-4 overflow-y-auto pr-1">
                 <TaskDetailContent
                   task={task}
+                  mentionCandidates={mentionCandidates}
+                  closeSignal={closeSignal}
                 />
                 <TaskDetailComments
                   taskId={task.id}
                   comments={comments}
                   currentUserId={currentUserId}
                   mentionCandidates={mentionCandidates}
+                  closeSignal={closeSignal}
                 />
                 <TaskDetailHistory activities={activities} />
               </section>

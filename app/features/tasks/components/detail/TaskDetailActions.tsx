@@ -2,9 +2,7 @@ import React from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
 import type { TaskActionData, TaskAssigneeOption } from '../../types';
-import { Badge } from '~/ui/primitives/badge';
 import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
-import { formatDateUTC, isTaskOverdue } from '../utils/task-due-date';
 
 type TaskDetailActionsProps = {
   task: Task;
@@ -23,21 +21,40 @@ export function TaskDetailActions({
   const location = useLocation();
   const isSubmitting = fetcher.state === 'submitting';
   const redirectTo = `${location.pathname}${location.search}`;
-  const assigneeLabel = task.assigneeId
-    ? (assignableUsers.find((user) => user.id === task.assigneeId)?.email ?? 'Assigned')
-    : 'Unassigned';
   const isCreator = task.userId === currentUserId;
   const formActionData = fetcher.data;
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [checklist, setChecklist] = React.useState(task.checklist);
   const [newChecklistText, setNewChecklistText] = React.useState('');
-  const overdue = isTaskOverdue(task);
-  const checklistDone = checklist.filter((item) => item.done).length;
+  const [statusDraft, setStatusDraft] = React.useState(task.status);
+  const [priorityDraft, setPriorityDraft] = React.useState(task.priority);
+  const [dueDateDraft, setDueDateDraft] = React.useState(
+    task.dueDate ? task.dueDate.toISOString().slice(0, 10) : '',
+  );
+  const [labelsDraft, setLabelsDraft] = React.useState(task.labels.join(', '));
+  const [assigneeDraft, setAssigneeDraft] = React.useState(task.assigneeId ?? '');
 
   React.useEffect(() => {
     setChecklist(task.checklist);
     setNewChecklistText('');
-  }, [task.id, task.checklist]);
+    setStatusDraft(task.status);
+    setPriorityDraft(task.priority);
+    setDueDateDraft(task.dueDate ? task.dueDate.toISOString().slice(0, 10) : '');
+    setLabelsDraft(task.labels.join(', '));
+    setAssigneeDraft(task.assigneeId ?? '');
+  }, [task]);
+
+  function submitPartialUpdate(values: Record<string, string>) {
+    fetcher.submit(
+      {
+        intent: 'update',
+        id: task.id,
+        redirectTo,
+        ...values,
+      },
+      { method: 'post' },
+    );
+  }
 
   function addChecklistItem() {
     const text = newChecklistText.trim();
@@ -46,59 +63,52 @@ export function TaskDetailActions({
       typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
         ? crypto.randomUUID()
         : `tmp-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    setChecklist((prev) => [...prev, { id, text, done: false }]);
+    const nextChecklist = [...checklist, { id, text, done: false }];
+    setChecklist(nextChecklist);
     setNewChecklistText('');
+    submitPartialUpdate({ checklist: JSON.stringify(nextChecklist) });
   }
 
   function toggleChecklistItem(itemId: string) {
-    setChecklist((prev) =>
-      prev.map((item) => (item.id === itemId ? { ...item, done: !item.done } : item)),
+    const nextChecklist = checklist.map((item) =>
+      item.id === itemId ? { ...item, done: !item.done } : item,
     );
+    setChecklist(nextChecklist);
+    submitPartialUpdate({ checklist: JSON.stringify(nextChecklist) });
   }
 
   function removeChecklistItem(itemId: string) {
-    setChecklist((prev) => prev.filter((item) => item.id !== itemId));
+    const nextChecklist = checklist.filter((item) => item.id !== itemId);
+    setChecklist(nextChecklist);
+    submitPartialUpdate({ checklist: JSON.stringify(nextChecklist) });
   }
 
   return (
     <aside className="flex flex-col justify-between space-y-3 overflow-y-auto rounded border p-3">
       <div className="flex flex-col">
         <h3 className="text-sm font-semibold">Acciones rapidas</h3>
-        <div className="py-3">
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline">{task.status}</Badge>
-            <Badge variant="secondary">{task.priority}</Badge>
-            {task.dueDate ? (
-              <Badge variant={overdue ? 'destructive' : 'outline'}>
-                Due {formatDateUTC(task.dueDate)}
-              </Badge>
-            ) : null}
-            {task.labels.map((label) => (
-              <Badge key={label} variant="outline">
-                #{label}
-              </Badge>
-            ))}
-            {checklist.length > 0 ? (
-              <Badge variant="outline">
-                Checklist {checklistDone}/{checklist.length}
-              </Badge>
-            ) : null}
-            <Badge variant="ghost">{assigneeLabel}</Badge>
-          </div>
-        </div>
-        <fetcher.Form method="post" className="space-y-3 pt-3">
-          <input type="hidden" name="intent" value="update" />
-          <input type="hidden" name="id" value={task.id} />
-          <input type="hidden" name="redirectTo" value={redirectTo} />
-          <input type="hidden" name="checklist" value={JSON.stringify(checklist)} />
-
+        <div className="space-y-3 pt-3">
           <label className="block text-xs font-medium" htmlFor="detail-status">
             Status
           </label>
           <select
             id="detail-status"
-            name="status"
-            defaultValue={task.status}
+            value={statusDraft}
+            onChange={(event) =>
+              setStatusDraft(
+                event.target.value as
+                  | 'todo'
+                  | 'in-progress'
+                  | 'qa'
+                  | 'ready-to-go-live'
+                  | 'done'
+                  | 'discarded',
+              )
+            }
+            onBlur={() => {
+              if (statusDraft === task.status) return;
+              submitPartialUpdate({ status: statusDraft });
+            }}
             className="w-full rounded border px-2 py-1 text-sm"
           >
             <option value="todo">todo</option>
@@ -114,8 +124,16 @@ export function TaskDetailActions({
           </label>
           <select
             id="detail-priority"
-            name="priority"
-            defaultValue={task.priority}
+            value={priorityDraft}
+            onChange={(event) =>
+              setPriorityDraft(
+                event.target.value as 'low' | 'medium' | 'high' | 'critical',
+              )
+            }
+            onBlur={() => {
+              if (priorityDraft === task.priority) return;
+              submitPartialUpdate({ priority: priorityDraft });
+            }}
             className="w-full rounded border px-2 py-1 text-sm"
           >
             <option value="low">low</option>
@@ -130,8 +148,13 @@ export function TaskDetailActions({
           <input
             id="detail-due-date"
             type="date"
-            name="dueDate"
-            defaultValue={task.dueDate ? task.dueDate.toISOString().slice(0, 10) : ''}
+            value={dueDateDraft}
+            onChange={(event) => setDueDateDraft(event.target.value)}
+            onBlur={() => {
+              const taskDueDate = task.dueDate ? task.dueDate.toISOString().slice(0, 10) : '';
+              if (dueDateDraft === taskDueDate) return;
+              submitPartialUpdate({ dueDate: dueDateDraft });
+            }}
             className="w-full rounded border px-2 py-1 text-sm"
           />
 
@@ -141,8 +164,12 @@ export function TaskDetailActions({
           <input
             id="detail-labels"
             type="text"
-            name="labels"
-            defaultValue={task.labels.join(', ')}
+            value={labelsDraft}
+            onChange={(event) => setLabelsDraft(event.target.value)}
+            onBlur={() => {
+              if (labelsDraft.trim() === task.labels.join(', ')) return;
+              submitPartialUpdate({ labels: labelsDraft });
+            }}
             className="w-full rounded border px-2 py-1 text-sm"
             placeholder="frontend, bug, urgente"
           />
@@ -202,8 +229,12 @@ export function TaskDetailActions({
               </label>
               <select
                 id="detail-assignee"
-                name="assigneeId"
-                defaultValue={task.assigneeId ?? ''}
+                value={assigneeDraft}
+                onChange={(event) => setAssigneeDraft(event.target.value)}
+                onBlur={() => {
+                  if (assigneeDraft === (task.assigneeId ?? '')) return;
+                  submitPartialUpdate({ assigneeId: assigneeDraft });
+                }}
                 className="w-full rounded border px-2 py-1 text-sm"
               >
                 <option value="">Unassigned</option>
@@ -215,21 +246,14 @@ export function TaskDetailActions({
               </select>
             </>
           ) : null}
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="mt-2 w-full rounded bg-slate-900 px-2 py-1 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
-          >
-            {isSubmitting ? 'Guardando...' : 'Guardar cambios'}
-          </button>
+          <p className="text-xs opacity-70">{isSubmitting ? 'Guardando cambios...' : 'Autoguardado al salir del campo'}</p>
 
           {formActionData?.success === false ? (
             <div className="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700">
               {formActionData.formError}
             </div>
           ) : null}
-        </fetcher.Form>
+        </div>
       </div>
       {isCreator ? (
         <>
