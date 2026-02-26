@@ -320,19 +320,16 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
   - [x] Historial de cambios por task
   - [x] Notificaciones in-app por asignacion/reasignacion
   - [x] Preparar hook para Slack
-- [ ] Enriquecer task para valor de producto
+- [x] Enriquecer task para valor de producto
   - [x] `dueDate` + overdue
   - [x] labels/tags
   - [x] checklist/subtareas
   - [x] comentarios
   - [x] `@menciones` de usuarios en comentarios y descripcion de la task
   - [x] `@menciones` tambien en create task (descripcion rich text)
-  - [ ] adjuntos en comentarios y descripcion (imagenes + archivos)
-    - [x] imagenes embebidas en descripcion con editor rich text (boton + copy/paste)
-    - [x] upload por API con validaciones basicas (permiso, tipo imagen, limite 10MB)
-    - [x] cleanup de temporales en cancel y al editar contenido (evitar huerfanas)
-    - [ ] adjuntos de archivos generales
-    - [ ] adjuntos en comentarios
+  - [x] imagenes embebidas en descripcion con editor rich text (boton + copy/paste)
+  - [x] upload por API con validaciones basicas (permiso, tipo imagen, limite 10MB)
+  - [x] cleanup de temporales en cancel y al editar contenido (evitar huerfanas)
   - [x] plantillas rapidas
   - [x] create task con descripcion rich text (toolbar + links + listas + imagen embebida)
 

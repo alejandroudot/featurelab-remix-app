@@ -227,17 +227,18 @@ Regla de colaboracion:
   - [x] Historial de cambios por task
   - [x] Notificaciones in-app por asignacion/reasignacion
   - [x] Preparar hook para Slack
-- [ ] Enriquecer task para valor de producto
+- [x] Enriquecer task para valor de producto
   - [x] `dueDate` + overdue
   - [x] labels/tags
   - [x] checklist/subtareas
   - [x] comentarios
   - [x] `@menciones` de usuarios en comentarios y descripcion de la task
-  - [ ] adjuntos en comentarios y descripcion (imagenes + archivos)
-  - [ ] editor rich text para descripcion/comentarios (Tiptap + imagen inline + resize + menciones)
-  - [ ] flujo de imagen embebida: boton + copy/paste + preview estable + upload por API
-  - [ ] politica de archivos de rich text (cleanup, limites de tipo/tamano, permisos)
-  - [ ] plantillas rapidas
+  - [x] `@menciones` tambien en create task (descripcion rich text)
+  - [x] editor rich text para descripcion/comentarios (Lexical + imagen inline + menciones)
+  - [x] flujo de imagen embebida: boton + copy/paste + preview estable + upload por API
+  - [x] politica de archivos de rich text (cleanup, limites de tipo/tamano, permisos)
+  - [x] plantillas rapidas
+  - [x] create task con descripcion rich text (toolbar + links + listas + imagen embebida)
 
 Criterio de cierre:
 
