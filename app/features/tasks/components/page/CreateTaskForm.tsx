@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Form } from 'react-router';
 import type { TaskActionData } from '../../types';
-import { RichTextEditor } from '../detail/RichTextEditor';
+import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
 
 const QUICK_TEMPLATES = [
   {

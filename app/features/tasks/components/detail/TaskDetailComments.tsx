@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { TaskComment } from '~/core/tasks/tasks.types';
 import type { TaskActionData } from '../../types';
-import { RichTextEditor, RichTextViewer } from './RichTextEditor';
+import { RichTextEditor, RichTextViewer } from '~/ui/editors/rich-text/RichTextEditor';
 
 type TaskDetailCommentsProps = {
   taskId: string;

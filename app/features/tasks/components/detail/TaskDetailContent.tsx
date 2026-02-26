@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
 import type { TaskActionData } from '../../types';
-import { RichTextEditor, RichTextViewer } from './RichTextEditor';
+import { RichTextEditor, RichTextViewer } from '~/ui/editors/rich-text/RichTextEditor';
 
 type AttachmentUploadApiResponse = {
   success?: boolean;
@@ -118,7 +118,6 @@ export function TaskDetailContent({
             onChange={setDraftDescription}
             mentionCandidates={mentionCandidates}
             autoFocus
-            placeholder="Describe la task..."
             onPendingUploadsChange={setHasPendingEditorUploads}
             onImageUploadError={setEditorImageError}
             onImageUpload={async (file) => {
