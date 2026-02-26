@@ -3,6 +3,13 @@ import { Form } from 'react-router';
 import type { TaskActionData } from '../../types';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
 
+type TaskAttachmentUploadResponse = {
+  success?: boolean;
+  formError?: string;
+  fieldErrors?: Record<string, string[] | undefined>;
+  data?: { storagePath?: string };
+};
+
 const QUICK_TEMPLATES = [
   {
     id: 'bug',
@@ -36,9 +43,34 @@ export function CreateTaskForm({
   isSubmitting: boolean;
   mentionCandidates: string[];
 }) {
+  const getFieldError = (fieldErrors: Record<string, string[] | undefined> | undefined, key: string) =>
+    fieldErrors?.[key]?.[0];
+  const getFirstFieldError = (fieldErrors: Record<string, string[] | undefined> | undefined) => {
+    if (!fieldErrors) return undefined;
+    for (const key in fieldErrors) {
+      const message = fieldErrors[key]?.[0];
+      if (message) return message;
+    }
+    return undefined;
+  };
+  const parseUploadResponse = (rawBody: string): TaskAttachmentUploadResponse | undefined => {
+    try {
+      const parsed = JSON.parse(rawBody) as unknown;
+      if (parsed && typeof parsed === 'object') {
+        return parsed as TaskAttachmentUploadResponse;
+      }
+      return undefined;
+    } catch {
+      return undefined;
+    }
+  };
+
   const createActionData =
     actionData?.success === false && actionData.intent === 'create' ? actionData : undefined;
-  const globalError = createActionData?.formError ?? createActionData?.fieldErrors?.intent?.[0];
+  const globalError =
+    createActionData?.formError ?? getFieldError(createActionData?.fieldErrors, 'intent');
+  const titleError = getFieldError(createActionData?.fieldErrors, 'title');
+  const descriptionError = getFieldError(createActionData?.fieldErrors, 'description');
   const [title, setTitle] = useState(createActionData?.values?.title ?? '');
   const [description, setDescription] = useState(createActionData?.values?.description ?? '');
   const [editorImageError, setEditorImageError] = useState<string | null>(null);
@@ -120,9 +152,7 @@ export function CreateTaskForm({
             value={title}
             onChange={(event) => setTitle(event.currentTarget.value)}
           />
-          {createActionData?.success === false && createActionData.fieldErrors?.title?.[0] && (
-            <p className="text-sm text-red-600">{createActionData.fieldErrors.title[0]}</p>
-          )}
+          {titleError ? <p className="text-sm text-red-600">{titleError}</p> : null}
         </div>
 
         <div className="flex flex-col gap-1">
@@ -151,26 +181,14 @@ export function CreateTaskForm({
               });
 
               const rawBody = await response.text();
-              let payload: {
-                success?: boolean;
-                formError?: string;
-                fieldErrors?: Record<string, string[] | undefined>;
-                data?: { storagePath?: string };
-              } | null = null;
-              try {
-                payload = JSON.parse(rawBody) as typeof payload;
-              } catch {
-                payload = null;
-              }
+              const payload = parseUploadResponse(rawBody);
               const fallbackStoragePath = rawBody.match(
                 /\/uploads\/tasks\/(?:tmp\/)?[a-zA-Z0-9._-]+/,
               )?.[0];
               const storagePath = payload?.data?.storagePath ?? fallbackStoragePath;
 
               if (!response.ok || !storagePath) {
-                const firstFieldError = payload?.fieldErrors
-                  ? Object.values(payload.fieldErrors).find((messages) => messages?.[0])?.[0]
-                  : undefined;
+                const firstFieldError = getFirstFieldError(payload?.fieldErrors);
                 const message = payload?.formError ?? firstFieldError ?? 'No se pudo subir la imagen.';
                 setEditorImageError(message);
                 throw new Error(message);
@@ -179,6 +197,7 @@ export function CreateTaskForm({
               return storagePath;
             }}
           />
+          {descriptionError ? <p className="text-sm text-red-600">{descriptionError}</p> : null}
           {hasPendingEditorUploads ? (
             <p className="text-xs text-amber-700">
               Espera a que terminen de subir las imagenes antes de crear.

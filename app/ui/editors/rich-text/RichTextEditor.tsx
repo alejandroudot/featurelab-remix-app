@@ -5,7 +5,7 @@ import { LinkNode } from '@lexical/link';
 import type { LexicalEditor } from 'lexical';
 import { ImageNode } from './nodes/ImageNode';
 import { RichTextEditorShell } from './RichTextEditorShell';
-import { RichTextViewer } from './viewer/RichTextViewer';
+import { RichTextViewer } from './RichTextViewer';
 import { useRichTextImageUpload } from './hooks/useRichTextImageUpload';
 
 // Fachada publica del editor rich text.

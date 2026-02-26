@@ -12,7 +12,7 @@ import {
   buildMentionOptions,
   findMentionQuery,
   getActiveMentionRange,
-} from './mentions.utils';
+} from '../utils/mentionsUtils';
 
 // Plugin de menciones:
 // - detecta "@token" cerca del cursor
