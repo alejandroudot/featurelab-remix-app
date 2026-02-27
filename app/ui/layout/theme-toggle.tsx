@@ -1,22 +1,19 @@
 import { Moon, Sun } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { ThemeMode } from '~/infra/theme/theme-cookie';
 import { Switch } from '~/ui/primitives/switch';
 
-type ThemeToggleProps = {
-  theme: ThemeMode;
-};
+function getInitialThemeMode(): ThemeMode {
+  if (typeof document === 'undefined') return 'light';
+  return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+}
 
-export function ThemeToggle({ theme }: ThemeToggleProps) {
-  const [localTheme, setLocalTheme] = useState<ThemeMode>(theme);
-  const isDark = localTheme === 'dark';
-
-  useEffect(() => {
-    setLocalTheme(theme);
-  }, [theme]);
+export function ThemeToggle() {
+  const [themeMode, setThemeMode] = useState<ThemeMode>(getInitialThemeMode);
+  const isDark = themeMode === 'dark';
 
   const updateTheme = (nextTheme: ThemeMode) => {
-    setLocalTheme(nextTheme);
+    setThemeMode(nextTheme);
 
     const root = document.documentElement;
     root.classList.toggle('dark', nextTheme === 'dark');

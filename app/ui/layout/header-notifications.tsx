@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Bell } from 'lucide-react';
+import { useFetcher } from 'react-router';
 import {
   Dialog,
   DialogContent,
@@ -19,11 +20,6 @@ type NotificationsApiResponse = {
   notifications?: HeaderNotification[];
 };
 
-function isNotificationsApiResponse(value: unknown): value is NotificationsApiResponse {
-  if (!value || typeof value !== 'object') return false;
-  return 'notifications' in value;
-}
-
 function getLatestTimestamp(items: HeaderNotification[]) {
   return items.reduce((latest, item) => {
     const next = new Date(item.createdAt).getTime();
@@ -32,45 +28,25 @@ function getLatestTimestamp(items: HeaderNotification[]) {
 }
 
 export function HeaderNotifications() {
+  const fetcher = useFetcher<NotificationsApiResponse>();
   const [open, setOpen] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState('anonymous');
-  const [notifications, setNotifications] = useState<HeaderNotification[]>([]);
   const [lastSeenAt, setLastSeenAt] = useState(0);
+  const currentUserId = fetcher.data?.currentUserId ?? 'anonymous';
+  const notifications = fetcher.data?.notifications ?? [];
 
   const latestNotificationAt = getLatestTimestamp(notifications);
   const hasUnseen = notifications.length > 0 && latestNotificationAt > lastSeenAt;
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function loadNotifications() {
-      try {
-        const response = await fetch('/api/notifications', {
-          method: 'GET',
-          headers: { Accept: 'application/json' },
-        });
-        if (!response.ok) return;
-        const payload = (await response.json()) as unknown;
-        if (!isNotificationsApiResponse(payload)) return;
-
-        if (cancelled) return;
-        setCurrentUserId(payload.currentUserId ?? 'anonymous');
-        setNotifications(payload.notifications ?? []);
-      } catch {
-        // No bloquea UI del header si falla el endpoint.
-      }
-    }
-
-    void loadNotifications();
+    fetcher.load('/api/notifications');
     const intervalId = window.setInterval(() => {
-      void loadNotifications();
+      fetcher.load('/api/notifications');
     }, 15000);
 
     return () => {
-      cancelled = true;
       window.clearInterval(intervalId);
     };
-  }, []);
+  }, [fetcher]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

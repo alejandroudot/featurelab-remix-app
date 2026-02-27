@@ -63,7 +63,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
 
       <body>
-        <AppHeader user={user} theme={theme} />
+        <AppHeader user={user} />
         {children}
         <Toaster position="bottom-right" richColors theme={isDark ? 'dark' : 'light'} />
         <ScrollRestoration />
