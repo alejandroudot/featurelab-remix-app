@@ -11,6 +11,11 @@ Objetivo:
 - mantener una arquitectura ordenada por capas y features;
 - aprender stack moderno con casos reales (no solo demos).
 
+Nota de alcance comercial:
+- billing/planes se implementa con fin didactico para aprender integraciones de pago,
+  roles y limites de producto;
+- no representa una politica comercial real ni pricing productivo.
+
 ## 2. Problema que modela
 
 Simula un equipo de producto que necesita:
@@ -73,6 +78,14 @@ Vistas objetivo:
 - preferencias de interfaz;
 - sincronizacion de tema y defaults de uso;
 - base para plan/billing.
+
+### 4.5 Billing + Team Manager (didactico)
+- upgrade de plan con impacto real en permisos (`free` -> `pro/manager`);
+- creacion y administracion de equipo por manager;
+- invitaciones buscadas por email exacto, con aceptacion/rechazo via notificacion in-app;
+- restricciones de asignacion de tasks por miembros aceptados;
+- notificaciones de invitacion y cambios de membresia.
+- el envio de email se reserva para verificacion de registro (no para invitaciones de equipo).
 
 ## 5. Integraciones objetivo (etapas posteriores)
 

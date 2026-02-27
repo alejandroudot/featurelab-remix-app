@@ -1,9 +1,9 @@
-# ??? Internal Delivery Plan (14 days)
+# ??? Internal Delivery Plan (18 days)
 > ?? Plan operativo diario para ejecutar el roadmap sin desorden.
 
 Plan interno de ejecucion.
 Inicio: lunes 16/02/2026
-Fin: lunes 02/03/2026
+Fin: jueves 05/03/2026
 
 Regla de oro: este plan es una division diaria del `docs/PRODUCT_ROADMAP.md`.
 No se agregan features fuera de roadmap. No se omiten bullets del roadmap.
@@ -357,24 +357,55 @@ Fuente roadmap: [P0 estabilidad/consistencia](./PRODUCT_ROADMAP.md#-p0---estabil
 
 ## ?? Dia 11 - Jueves 26/02/2026
 
-Tecnologias del dia: shadcn/ui (Tabs/Card/Form/Input/Button), Zod forms, Zustand preferencias.
+Tecnologias del dia: React Router actions/loaders + shadcn/ui (Tabs/Card/Form/Input/Button) + Zod forms.
 Fuente roadmap: [P1.4 user panel](./PRODUCT_ROADMAP.md#L204), [P1.4 perfil/seguridad](./PRODUCT_ROADMAP.md#L208), [P1.4 preferencias](./PRODUCT_ROADMAP.md#L212), [P1.4 plan](./PRODUCT_ROADMAP.md#L216).
 
 - [ ] Crear vista dedicada de cuenta (corrida desde Dia 10)
   - [ ] Bloques: Perfil, Seguridad, Preferencias, Plan
   - [ ] Layout con `shadcn/ui` (`Tabs`, `Card`, `Form`, `Input`, `Button`)
   - [ ] Navegacion visible desde header
+- [ ] Patron de interaccion del panel (acuerdo UX)
+  - [ ] `Perfil`, `Preferencias` y `Plan` se abren en modal dedicado
+  - [ ] `Seguridad` queda inline en `/account` (sin modal)
+  - [ ] Vista principal de `/account` queda como resumen + accion `Editar/Abrir`
+  - [ ] Definir orden de implementacion modal por modal (primero `Perfil`)
 - [ ] Perfil y seguridad
   - [ ] Editar nombre visible
   - [ ] Cambio de password
   - [ ] Errores y exito visibles sin silencios
+  - [ ] Modal de `Perfil` estilo ficha (header con avatar + nombre + email)
+  - [ ] `Perfil` v1 persistente: `displayName` + `phone` + `about`
+  - [ ] `Perfil` v1 visual-only: `Work`, `Expertise`, `Location`, `Other` como placeholders claros
+  - [ ] `Seguridad` v1: toggle mostrar/ocultar password por campo
+  - [ ] `Seguridad` v1: validar `newPassword === confirmPassword` en cliente y server
+  - [ ] `Seguridad` v1: policy de password fuerte (unica para todo auth)
+  - [ ] Reusar policy de password en `register` y `change password` (sin duplicar reglas)
+  - [ ] Mensajeria inline clara por campo (`current`, `new`, `confirm`) + error global
+- [ ] Hardening de auth (register/login/account)
+  - [ ] Definir schema compartido de password (min length + upper + lower + number + symbol + sin espacios)
+  - [ ] Evitar duplicacion de regex/policy entre features de auth
+  - [ ] Register: agregar `confirmEmail` y validar `email === confirmEmail` (cliente + server)
+  - [ ] Ampliar `register` para precargar perfil (`displayName` requerido, `phone` opcional, `timezone` opcional)
+  - [ ] Mantener `login` con validacion minima de credenciales (sin sobrecargar UX)
+  - [ ] Revisar output safety: no loggear passwords y mantener validacion/sanitizacion por Zod
+- [ ] Auth verification foundation (email real por link)
+  - [ ] Crear entidad `email_verification_tokens` (`userId`, `tokenHash`, `expiresAt`, `usedAt`)
+  - [ ] Agregar campo `emailVerifiedAt` (nullable) en `users`
+  - [ ] En register: crear usuario no verificado + generar token + enviar email
+  - [ ] Crear endpoint/route de confirmacion por token
+  - [ ] Reglas: token expirado/usado invalido; token valido marca email como verificado
+  - [ ] Infra de email: adapter por puerto (dev SMTP inbox / prod provider)
 - [ ] Preferencias
-  - [ ] Densidad de UI, vista por defecto, preferencias de trabajo
+  - [ ] Definir `density` de UI (`comfortable` | `compact`) y aplicarlo en layouts/listados principales
+  - [ ] Definir `defaultTasksView` (`board` | `list`)
+  - [ ] Definir `defaultTasksScope` (`all` | `assigned` | `created`)
+  - [ ] Aplicar defaults en `/tasks` solo cuando la URL no trae query params
   - [ ] Tema (light/dark/system) con sincronizacion a toggle del Hub
-  - [ ] Persistencia con Zustand + storage
+  - [ ] Persistencia base con cookie/storage (sin sobreingenieria en Dia 11)
 - [ ] Plan/Billing (pre-Stripe)
-  - [ ] Mostrar plan actual y limites
-  - [ ] CTA de upgrade
+  - [ ] Mostrar plan actual (`Free`) y limites visibles de uso
+  - [ ] CTA de upgrade (`coming soon`) sin checkout real en Dia 11
+  - [ ] Dejar estructura lista para conectar Stripe en fase posterior
 
 ## ?? Dia 12 - Viernes 27/02/2026
 
@@ -393,14 +424,54 @@ Fuente roadmap: [P1.5 feedback](./PRODUCT_ROADMAP.md#L229), [P1.5 base visual](.
 
 ## ?? Dia 13 - Sabado 28/02/2026
 
-Tecnologias del dia: TanStack Query + Zustand.
+Tecnologias del dia: TanStack Query + Zustand (persist + estado global de UI).
 Fuente roadmap: [P2.1 TanStack Query + Zustand](./PRODUCT_ROADMAP.md#L249).
 
 - [ ] Query keys y cache estables por usuario/filtros
 - [ ] Refetch en background + invalidacion por mutaciones
 - [ ] Prefetch de vistas clave
 - [ ] Optimistic updates con rollback confiable
+- [ ] Estrategia de adopcion de TanStack Query (claridad de alcance)
+  - [ ] Fase 1 (obligatoria): migrar notificaciones de header a `useQuery` sobre `/api/notifications`
+  - [ ] Fase 1: definir `queryKey` por usuario y `staleTime/refetchInterval/retry`
+  - [ ] Fase 1: remover `fetch` manual en efectos para ese flujo
+  - [ ] Mantener `loader/action` para mutaciones de negocio (auth/tasks/flags)
+  - [ ] No crear API paralela para cada action sin necesidad real
+  - [ ] Regla: migrar por slice completo (no mitad `loader`, mitad `query` para el mismo flujo)
+- [ ] Mapa explicito de uso (Query vs Zustand vs loader/action)
+  - [ ] `Header Notifications`
+    - [ ] Query: fetch/polling de `/api/notifications`
+    - [ ] Zustand: `unreadCount`, `lastSeenAtByUser`, `selectedNotificationId`, `panelOpen`
+    - [ ] Loader/Action: sigue como fuente server para crear eventos de notificacion
+  - [ ] `Task modal desde notificacion`
+    - [ ] Zustand: `selectedTaskId` + `isDetailOpen`
+    - [ ] Query: no requerido para abrir modal (solo para feed/notificaciones)
+    - [ ] Loader/Action: task data y permisos se resuelven en backend actual
+  - [ ] `Preferencias`
+    - [ ] Zustand: `density`, `defaultTasksView`, `defaultTasksScope` + persist
+    - [ ] Query: no requerido (preferencias locales de UX)
+    - [ ] Loader/Action: aplica defaults al entrar a `/tasks` cuando URL no tiene params
+  - [ ] `Team panel` (cuando entre en P3.1)
+    - [ ] Query: lecturas de miembros/invitaciones/busqueda
+    - [ ] Zustand: estado UI local (filtros, modal abierto, seleccion)
+    - [ ] Loader/Action: mutaciones y permisos (invitar, aceptar, rechazar, asignar)
+- [ ] Criterio de expansion de Query
+  - [ ] Fase 2 (opcional): feed de actividad del Hub via `useQuery`
+  - [ ] Fase 2 (opcional): lecturas de tasks solo si hay ganancia clara en UX y mantenibilidad
+  - [ ] Si no hay ganancia clara, se mantiene backbone `loader/action`
 - [ ] Store global de UI/preferencias/seleccion masiva
+- [ ] Store de preferencias reales (`density`, `defaultTasksView`, `defaultTasksScope`)
+- [ ] Estado global de task seleccionada/modal abierto (sin pasa-manos de props)
+- [ ] Estado de notificaciones leidas/no leidas en cliente (Zustand)
+  - [ ] Store `notifications`: `items`, `lastSeenAtByUser`, `unreadCount`, `selectedNotificationId`
+  - [ ] Hidratacion desde `/api/notifications` (fuente de verdad server) y merge seguro en store
+  - [ ] Marcar leidas al abrir panel/click en item (persistencia local por `userId`)
+  - [ ] Badge de header derivado de `unreadCount` del store (sin logica duplicada)
+- [ ] Notificaciones clickeables: abrir modal de la task relacionada desde campana
+  - [ ] Extender payload de notificacion con `taskId` (si aplica)
+  - [ ] En click: setear `selectedTaskId` global + `isDetailOpen=true` en store de UI
+  - [ ] Cerrar panel de notificaciones y abrir `Task Detail Modal` en la task correcta
+  - [ ] Fallback si falta `taskId`: abrir panel de tasks/actividad sin romper flujo
 - [ ] Cola local de acciones pendientes con reintento manual
 - [ ] Sincronia URL <-> store <-> query keys
 
@@ -419,25 +490,68 @@ Fuente roadmap: [P2.2 minimo calidad tecnica](./PRODUCT_ROADMAP.md#L266).
 
 ## ?? Dia 15 - Lunes 02/03/2026
 
-Tecnologias del dia: documentacion operativa, Stripe, Slack API, Gemini API, GitHub Actions.
-Fuente roadmap: [P2.3 documentacion](./PRODUCT_ROADMAP.md#L282), [P3.1 stripe](./PRODUCT_ROADMAP.md#L296), [P3.2 slack](./PRODUCT_ROADMAP.md#L310), [P3.3 gemini](./PRODUCT_ROADMAP.md#L323), [P3.4 github actions](./PRODUCT_ROADMAP.md#L336).
+Tecnologias del dia: documentacion operativa + Stripe base (didactico).
+Fuente roadmap: [P2.3 documentacion](./PRODUCT_ROADMAP.md#L282), [P3.1 stripe](./PRODUCT_ROADMAP.md#L296).
 
 - [ ] README alineado con scripts/rutas reales
 - [ ] `docs/MVP.md` actualizado al estado actual
 - [ ] Guia corta: debug de actions, errores y smoke local
-- [ ] Modelo de planes y limites (`free`/`pro`)
-- [ ] Flujo checkout de upgrade
+- [ ] Modelo de planes y limites (`free`/`pro`) con objetivo didactico (portfolio)
+- [ ] Flujo checkout de upgrade (base)
+- [ ] UI de estado de plan (`Free`/`Pro`) + CTA upgrade
+- [ ] Regla narrativa explicita en docs: billing didactico, no pricing comercial real
+
+## ?? Dia 16 - Martes 03/03/2026
+
+Tecnologias del dia: Stripe webhooks + Drizzle/SQLite + guards de permisos.
+Fuente roadmap: [P3.1 stripe](./PRODUCT_ROADMAP.md#L296).
+
 - [ ] Webhooks (`checkout.session.completed`, `customer.subscription.*`) con idempotencia
 - [ ] Persistencia de suscripcion en DB + guards por plan
-- [ ] UI de estado de plan, fallos de pago, cancelaciones
+- [ ] Capability por plan en server (`canManageTeam` o equivalente)
+- [ ] Validacion de upgrade: plan impacta permisos reales (no solo UI)
+
+## ?? Dia 17 - Miercoles 04/03/2026
+
+Tecnologias del dia: Team domain (DB + server actions + notificaciones in-app).
+Fuente roadmap: [P3.1 stripe/team](./PRODUCT_ROADMAP.md#L296), [P2.1 notificaciones](./PRODUCT_ROADMAP.md#L293).
+
+- [ ] Team Manager (acoplado a plan `pro`)
+  - [ ] Upgrade/pago habilita capacidad `manager`
+  - [ ] Manager puede crear equipo
+  - [ ] Buscar usuario por email exacto e invitar a equipo
+  - [ ] Invitacion por notificacion in-app (sin envio de email de invitacion)
+  - [ ] Invitado acepta/rechaza (con notificacion)
+  - [ ] Solo miembros `accepted` pueden ser asignados por manager
+  - [ ] Panel de equipo: pendientes + aceptados
+  - [ ] Card de miembro clickeable a perfil publico
+- [ ] Interfaces y contratos tecnicos (decision-complete)
+  - [ ] `users`: `plan` (`free|pro`), `canManageTeam` o equivalente
+  - [ ] `teams` y `team_members` con estados `invited|accepted|rejected`
+  - [ ] Restriccion v1: usuario con un solo equipo activo
+  - [ ] Payload de notificacion incluye `taskId` opcional y `teamId` para invitaciones
+- [ ] Notificaciones de team
+  - [ ] Invitacion enviada -> notificacion al invitado
+  - [ ] Invitacion aceptada/rechazada -> notificacion al manager
+  - [ ] Payload con `teamId` y fallback de navegacion seguro
+- [ ] Regla de canales
+  - [ ] Email solo para verificacion de registro
+  - [ ] Invitaciones de team solo por notificacion in-app
+
+## ?? Dia 18 - Jueves 05/03/2026
+
+Tecnologias del dia: Slack API + Gemini API + GitHub Actions.
+Fuente roadmap: [P3.2 slack](./PRODUCT_ROADMAP.md#L310), [P3.3 gemini](./PRODUCT_ROADMAP.md#L323), [P3.4 github actions](./PRODUCT_ROADMAP.md#L336).
+
 - [ ] Canal de notificaciones por severidad
-- [ ] Eventos clave de negocio y errores severos
+- [ ] Eventos clave de negocio y errores severos (sin mezclar reglas de Team dentro de Slack)
 - [ ] Formato estandar de mensaje (actor, recurso, accion, resultado)
 - [ ] Control de ruido (throttling/filtros)
 - [ ] Endpoint server para sugerencias de tasks/subtareas
 - [ ] Accion UI: sugerir subtareas desde descripcion
 - [ ] Validacion estricta de salida con schema
 - [ ] Fallback seguro + logging de errores/latencia
+- [ ] Mantener Gemini separado de reglas de Team/Billing
 - [ ] CI para PR: lint + typecheck + test + e2e smoke
 - [ ] Workflow de release con build y artefactos
 - [ ] Branch protection con checks obligatorios

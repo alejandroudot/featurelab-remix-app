@@ -247,7 +247,7 @@ Criterio de cierre:
 
 ### P1.4 User Panel (`/account` o `/settings`)
 
-Tecnologias a usar: React Router + Zod + Zustand + shadcn/ui + Radix (alert dialog/toast).
+Tecnologias a usar: React Router + Zod + shadcn/ui + Radix (alert dialog/toast).
 
 - [ ] Crear vista dedicada de cuenta
   - [ ] Bloques: Perfil, Seguridad, Preferencias, Plan
@@ -257,13 +257,24 @@ Tecnologias a usar: React Router + Zod + Zustand + shadcn/ui + Radix (alert dial
   - [ ] Editar nombre visible
   - [ ] Cambio de password
   - [ ] Errores y exito visibles sin silencios
+  - [ ] Register con `confirmEmail` + validacion de match en cliente y server
+  - [ ] Policy de password compartida entre register y change-password
+  - [ ] Verificacion real de email por link
+    - [ ] `email_verification_tokens` (`userId`, `tokenHash`, `expiresAt`, `usedAt`)
+    - [ ] `users.emailVerifiedAt` (nullable)
+    - [ ] Register crea token y envia email
+    - [ ] Endpoint de confirmacion por token (valido/expirado/usado)
+    - [ ] Estrategia de email: dev SMTP inbox + adapter a provider para prod
 - [ ] Preferencias
-  - [ ] Densidad de UI, vista por defecto, preferencias de trabajo
+  - [ ] `density` de UI (`comfortable` | `compact`)
+  - [ ] `defaultTasksView` (`board` | `list`) y `defaultTasksScope` (`all` | `assigned` | `created`)
+  - [ ] Aplicar defaults en `/tasks` solo cuando no hay query params
   - [ ] Tema (light/dark/system) con sincronizacion a toggle del Hub
-  - [ ] Persistencia con Zustand + storage
+  - [ ] Persistencia base con cookie/storage
 - [ ] Plan/Billing (pre-Stripe)
-  - [ ] Mostrar plan actual y limites
-  - [ ] CTA de upgrade
+  - [ ] Mostrar plan actual (`Free`) y limites visibles
+  - [ ] CTA de upgrade (`coming soon`)
+  - [ ] Dejar base lista para integrar Stripe en fase siguiente
 
 Criterio de cierre:
 
@@ -298,7 +309,35 @@ Tecnologias a usar: TanStack Query + Zustand.
 - [ ] Refetch en background + invalidacion por mutaciones
 - [ ] Prefetch de vistas clave
 - [ ] Optimistic updates con rollback confiable
+- [ ] Estrategia de adopcion de TanStack Query (CTO-level)
+  - [ ] `Query` para lecturas cliente transversales (primera fase: `/api/notifications` en header)
+  - [ ] Mantener `loader/action` para mutaciones criticas (auth, tasks CUD, flags CUD, permisos y redirects)
+  - [ ] Evitar doble fuente de verdad por flujo (no mezclar para el mismo caso `loader` y `query` sin contrato)
+  - [ ] Expandir `Query` por slices completos (no migracion parcial caotica)
+  - [ ] Documentar query keys por dominio (`notifications`, `tasks`, `flags`) y sus reglas de invalidacion
+- [ ] Mapa de uso por tecnologia (decision-complete)
+  - [ ] Query se usa para lecturas transversales y cache/polling (`notifications`, luego `team feed/lists`)
+  - [ ] Zustand se usa para estado UI global (`preferences`, `selectedTask/modal`, `notifications unread`)
+  - [ ] Loader/Action queda como backbone para mutaciones y permisos (`auth`, `tasks`, `flags`, `team`)
+  - [ ] Regla: no duplicar fuente de verdad del mismo flujo entre Query y loader/action
+- [ ] Fase 1 Query (implementacion concreta)
+  - [ ] `notificationsQuery` con `refetchInterval`, estados de carga/error y cache por usuario
+  - [ ] Header consume `useQuery` (sin `fetch` manual en `useEffect`)
+  - [ ] Definir TTL/staleTime y politica de reintento para notificaciones
+- [ ] Fase 2 Query (opcional, segun valor real)
+  - [ ] Evaluar feed de actividad del Hub con `useQuery`
+  - [ ] Solo migrar lecturas de `tasks` si mejora UX/costo de mantenimiento frente a loader actual
 - [ ] Store global de UI/preferencias/seleccion masiva
+- [ ] Store de preferencias reales (`density`, `defaultTasksView`, `defaultTasksScope`)
+- [ ] Estado global de task seleccionada/modal abierto
+- [ ] Estado de notificaciones leidas/no leidas en cliente (Zustand)
+  - [ ] Store `notifications`: `items`, `lastSeenAtByUser`, `unreadCount`, `selectedNotificationId`
+  - [ ] Hidratacion desde `/api/notifications` y badge de header derivado del store
+  - [ ] Marcar como leida al abrir panel o click en item
+- [ ] Notificaciones clickeables: abrir modal de task desde campana
+  - [ ] Payload de notificacion incluye `taskId` cuando corresponde
+  - [ ] Click en notificacion abre `Task Detail Modal` de esa task y cierra el panel
+  - [ ] Fallback sin `taskId` a vista de actividad/tasks
 - [ ] Cola local de acciones pendientes con reintento manual
 - [ ] Sincronia URL <-> store <-> query keys
 
@@ -337,26 +376,58 @@ Criterio de cierre:
 
 ## 🌐 P3 - Integraciones externas y automatizacion
 
-### P3.1 Stripe (billing y planes)
+### P3.1 Stripe (billing didactico) + Team Manager
 
-Tecnologias a usar: Stripe API + webhooks.
+Tecnologias a usar: Stripe API + webhooks + dominio de equipos (DB + permisos server).
 
-- [ ] Modelo de planes y limites (`free`/`pro`)
+- [ ] Modelo de planes y limites (`free`/`pro`) con enfoque didactico (portfolio)
 - [ ] Flujo checkout de upgrade
 - [ ] Webhooks (`checkout.session.completed`, `customer.subscription.*`) con idempotencia
 - [ ] Persistencia de suscripcion en DB + guards por plan
 - [ ] UI de estado de plan, fallos de pago, cancelaciones
+- [ ] Capacidad de producto ligada al plan
+  - [ ] Upgrade a `pro` habilita capacidad `manager`
+  - [ ] Fuente de verdad de permisos por plan en server
+- [ ] Dominio Team (v1)
+  - [ ] `teams`: `id`, `ownerUserId`, `name`, timestamps
+  - [ ] `team_members`: `teamId`, `userId`, `status` (`invited|accepted|rejected`), `invitedBy`, `respondedAt`
+  - [ ] Restriccion v1: un usuario en un solo equipo activo
+- [ ] Flujo de invitaciones de equipo
+  - [ ] Manager busca por email exacto e invita
+  - [ ] Invitacion se entrega por notificacion in-app (sin email de invitacion)
+  - [ ] Invitado acepta/rechaza
+  - [ ] Solo `accepted` entra en equipo activo
+- [ ] Reglas de asignacion por equipo
+  - [ ] Manager solo asigna tasks a miembros `accepted` de su equipo
+  - [ ] UI de assignee filtra candidatos por miembros aceptados
+- [ ] Panel Team Manager
+  - [ ] Lista de miembros aceptados y pendientes
+  - [ ] Card de miembro clickeable a perfil publico
+- [ ] Notificaciones de equipo
+  - [ ] Invitacion enviada (al invitado)
+  - [ ] Invitacion aceptada/rechazada (al manager)
+  - [ ] Payload con `teamId` y navegacion segura
+- [ ] Regla de canales de comunicacion
+  - [ ] Email solo para verificacion de registro
+  - [ ] Invitaciones de equipo solo por notificaciones in-app
+- [ ] Casos de aceptacion (Team/Billing)
+  - [ ] Upgrade habilita capacidad manager
+  - [ ] Invitacion por email exacto funciona y cambia estado correctamente
+  - [ ] Usuario fuera de equipo no puede ser asignado por manager
+  - [ ] Miembro accepted si puede ser asignado
+  - [ ] Click en notificacion de team/task navega al destino correcto o fallback seguro
 
 Criterio de cierre:
 
 - El ciclo de suscripcion queda sincronizado y usable de punta a punta
+- Plan impacta permisos y colaboracion real (no solo badge visual)
 
 ### P3.2 Slack API (notificaciones operativas)
 
 Tecnologias a usar: Slack API / Incoming Webhooks.
 
 - [ ] Canal de notificaciones por severidad
-- [ ] Eventos clave de negocio y errores severos
+- [ ] Eventos clave de negocio y errores severos (sin logica de Team embebida en Slack)
 - [ ] Formato estandar de mensaje (actor, recurso, accion, resultado)
 - [ ] Control de ruido (throttling/filtros)
 
@@ -372,6 +443,7 @@ Tecnologias a usar: Gemini API + Zod.
 - [ ] Accion UI: sugerir subtareas desde descripcion
 - [ ] Validacion estricta de salida con schema
 - [ ] Fallback seguro + logging de errores/latencia
+- [ ] Sin mezclar reglas de Team/Billing en prompts o contrato de IA
 
 Criterio de cierre:
 

@@ -3,6 +3,10 @@
 Plataforma fullstack para planificar, ejecutar y monitorear trabajo de producto.
 Enfoque principal: `Tasks` colaborativas + `Feature Flags` para lanzar con control.
 
+Nota: el modulo de billing/planes de este proyecto es didactico.
+Se implementa para aprender integracion de pagos, roles y limites de producto,
+no como modelo comercial real.
+
 ## 🏗️ Arquitectura
 
 Se usa un enfoque pragmatico de:
@@ -63,7 +67,7 @@ Patron general del repo:
   - densidad, vista por defecto, tema (`light`/`dark`/`system`)
   - persistencia local con estado global
 - 🟡 Integraciones:
-  - Stripe (billing)
+  - Stripe (billing didactico para habilitar capacidades de producto)
   - Slack (notificaciones)
   - Gemini (asistencia para tasks)
 
