@@ -1,5 +1,6 @@
 import { SectionCard } from './SectionCard';
 import { useFetcher } from 'react-router';
+import { ActionFeedbackText } from '~/ui/forms/action-feedback';
 import type { AccountActionData } from '../types';
 
 type ProfileSectionProps = {
@@ -15,18 +16,6 @@ export function ProfileSection({ user }: ProfileSectionProps) {
   const fetcher = useFetcher<AccountActionData>();
   const isSubmitting = fetcher.state === 'submitting';
   const actionData = fetcher.data;
-  const displayNameFieldError =
-    actionData && !actionData.success && actionData.intent === 'profile'
-      ? actionData.fieldErrors?.displayName?.[0]
-      : undefined;
-  const formError =
-    actionData && !actionData.success && actionData.intent === 'profile'
-      ? actionData.formError
-      : undefined;
-  const successMessage =
-    actionData && actionData.success && actionData.intent === 'profile'
-      ? actionData.message
-      : undefined;
 
   return (
     <SectionCard title="Profile" description="Datos basicos de tu cuenta.">
@@ -51,11 +40,8 @@ export function ProfileSection({ user }: ProfileSectionProps) {
             defaultValue={user.displayName ?? ''}
             className="rounded border px-2 py-1 text-sm"
           />
-          {displayNameFieldError ? (
-            <p className="text-xs text-red-600">{displayNameFieldError}</p>
-          ) : null}
-          {formError ? <p className="text-xs text-red-600">{formError}</p> : null}
-          {successMessage ? <p className="text-xs text-emerald-700">{successMessage}</p> : null}
+          <ActionFeedbackText actionData={actionData} intent="profile" fieldKey="displayName" />
+          <ActionFeedbackText actionData={actionData} intent="profile" showFormError showSuccessMessage />
         </div>
         <button
           type="submit"

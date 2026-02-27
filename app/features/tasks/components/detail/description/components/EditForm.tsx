@@ -14,7 +14,7 @@ type EditFormProps = {
   hasPendingEditorUploads: boolean;
   hasInlineBase64Images: boolean;
   editorImageError: string | null;
-  updateActionData: TaskActionData;
+  updateErrorActionData: TaskActionData;
   onDraftDescriptionChange: (value: string) => void;
   onPendingUploadsChange: (hasPendingUploads: boolean) => void;
   onEditorImageErrorChange: (value: string | null) => void;
@@ -32,7 +32,7 @@ export function EditForm({
   hasPendingEditorUploads,
   hasInlineBase64Images,
   editorImageError,
-  updateActionData,
+  updateErrorActionData,
   onDraftDescriptionChange,
   onPendingUploadsChange,
   onEditorImageErrorChange,
@@ -59,11 +59,10 @@ export function EditForm({
         hasPendingEditorUploads={hasPendingEditorUploads}
         hasInlineBase64Images={hasInlineBase64Images}
         editorImageError={editorImageError}
-        updateActionData={updateActionData}
+        updateErrorActionData={updateErrorActionData}
         isSubmitting={fetcher.state === 'submitting'}
         onCancel={onCancel}
       />
     </fetcher.Form>
   );
 }
-

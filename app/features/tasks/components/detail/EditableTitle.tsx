@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { TaskActionData } from '../../types';
+import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/action-feedback';
 
 type EditableTitleProps = {
   taskId: string;
@@ -15,8 +16,7 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
   const [draft, setDraft] = useState(title);
   const [didSubmit, setDidSubmit] = useState(false);
   const redirectTo = `${location.pathname}${location.search}`;
-  const formError =
-    fetcher.data?.success === false && fetcher.data.intent === 'update' ? fetcher.data : undefined;
+  const updateErrorActionData = getErrorActionDataByIntent(fetcher.data, 'update');
 
   useEffect(() => {
     if (!isEditing) return;
@@ -43,11 +43,11 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
     if (!didSubmit) return;
     if (fetcher.state !== 'idle') return;
 
-    if (!formError) {
+    if (!updateErrorActionData) {
       setIsEditing(false);
     }
     setDidSubmit(false);
-  }, [didSubmit, fetcher.state, formError]);
+  }, [didSubmit, fetcher.state, updateErrorActionData]);
 
   if (!isEditing) {
     return (
@@ -82,9 +82,7 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
         className="w-full rounded border px-2 py-1 text-lg font-semibold"
         autoFocus
       />
-      {formError?.fieldErrors?.title?.[0] ? (
-        <p className="text-xs text-red-600">{formError.fieldErrors.title[0]}</p>
-      ) : null}
+      <ActionFeedbackText actionData={updateErrorActionData} intent="update" fieldKey="title" />
       <div className="flex gap-2">
         <button
           type="submit"
@@ -104,4 +102,3 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
     </fetcher.Form>
   );
 }
-

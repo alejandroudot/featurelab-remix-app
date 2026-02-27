@@ -1,7 +1,7 @@
 import type { useFetcher } from 'react-router';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
+import { ActionFeedbackText } from '~/ui/forms/action-feedback';
 import type { TaskActionData } from '../../../types';
-import { ActionErrors } from '../../common/ActionErrors';
 
 type TaskCommentFetcher = ReturnType<typeof useFetcher<TaskActionData>>;
 
@@ -11,20 +11,20 @@ type CreateFormProps = {
   redirectTo: string;
   createBody: string;
   mentionCandidates: string[];
-  createFormActionData: TaskActionData;
+  createErrorActionData: TaskActionData;
   onCreateBodyChange: (value: string) => void;
   onMarkCreateSubmit: () => void;
 };
 
 type CreateFooterProps = {
-  createFormActionData: TaskActionData;
+  createErrorActionData: TaskActionData;
   isSubmitting: boolean;
 };
 
-function CreateFooter({ createFormActionData, isSubmitting }: CreateFooterProps) {
+function CreateFooter({ createErrorActionData, isSubmitting }: CreateFooterProps) {
   return (
     <>
-      <ActionErrors actionData={createFormActionData} fieldKey="commentBody" />
+      <ActionFeedbackText actionData={createErrorActionData} fieldKey="commentBody" showFormError />
       <button
         type="submit"
         disabled={isSubmitting}
@@ -42,7 +42,7 @@ export function CreateForm({
   redirectTo,
   createBody,
   mentionCandidates,
-  createFormActionData,
+  createErrorActionData,
   onCreateBodyChange,
   onMarkCreateSubmit,
 }: CreateFormProps) {
@@ -60,10 +60,9 @@ export function CreateForm({
         placeholder="Escribe un comentario..."
       />
       <CreateFooter
-        createFormActionData={createFormActionData}
+        createErrorActionData={createErrorActionData}
         isSubmitting={createFetcher.state === 'submitting'}
       />
     </createFetcher.Form>
   );
 }
-

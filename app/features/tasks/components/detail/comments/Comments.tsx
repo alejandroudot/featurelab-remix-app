@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { TaskComment } from '~/core/tasks/tasks.types';
+import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/action-feedback';
 import type { TaskActionData } from '../../../types';
 import { CreateForm } from './CreateForm';
 import { CommentsList } from './List';
@@ -34,45 +35,36 @@ export function Comments({
 
   const redirectTo = `${location.pathname}${location.search}`;
 
-  const createFormActionData =
-    createFetcher.data?.success === false && createFetcher.data.intent === 'comment-create'
-      ? createFetcher.data
-      : undefined;
-  const updateFormActionData =
-    updateFetcher.data?.success === false && updateFetcher.data.intent === 'comment-update'
-      ? updateFetcher.data
-      : undefined;
-  const deleteFormActionData =
-    deleteFetcher.data?.success === false && deleteFetcher.data.intent === 'comment-delete'
-      ? deleteFetcher.data
-      : undefined;
+  const createCommentErrorActionData = getErrorActionDataByIntent(createFetcher.data, 'comment-create');
+  const updateCommentErrorActionData = getErrorActionDataByIntent(updateFetcher.data, 'comment-update');
+  const deleteCommentErrorActionData = getErrorActionDataByIntent(deleteFetcher.data, 'comment-delete');
 
   useEffect(() => {
-    setCreateBody(createFormActionData?.values?.commentBody ?? '');
-  }, [createFormActionData?.values?.commentBody, taskId]);
+    setCreateBody(createCommentErrorActionData?.values?.commentBody ?? '');
+  }, [createCommentErrorActionData?.values?.commentBody, taskId]);
 
   useEffect(() => {
     if (!didSubmitCreate) return;
     if (createFetcher.state !== 'idle') return;
 
-    if (!createFormActionData) {
+    if (!createCommentErrorActionData) {
       setCreateBody('');
       setIsCreateOpen(false);
     }
     setDidSubmitCreate(false);
-  }, [didSubmitCreate, createFetcher.state, createFormActionData]);
+  }, [didSubmitCreate, createFetcher.state, createCommentErrorActionData]);
 
   useEffect(() => {
     if (!didSubmitUpdate) return;
     if (updateFetcher.state !== 'idle') return;
 
     // Si no hay error de action, cerramos modo edicion automaticamente.
-    if (!updateFormActionData) {
+    if (!updateCommentErrorActionData) {
       setEditingCommentId(null);
       setEditingBody('');
     }
     setDidSubmitUpdate(false);
-  }, [didSubmitUpdate, updateFetcher.state, updateFormActionData]);
+  }, [didSubmitUpdate, updateFetcher.state, updateCommentErrorActionData]);
 
   useEffect(() => {
     if (createFetcher.state !== 'idle' || updateFetcher.state !== 'idle') return;
@@ -143,7 +135,7 @@ export function Comments({
           redirectTo={redirectTo}
           createBody={createBody}
           mentionCandidates={mentionCandidates}
-          createFormActionData={createFormActionData}
+          createErrorActionData={createCommentErrorActionData}
           onCreateBodyChange={setCreateBody}
           onMarkCreateSubmit={() => setDidSubmitCreate(true)}
         />
@@ -158,18 +150,16 @@ export function Comments({
         mentionCandidates={mentionCandidates}
         updateFetcher={updateFetcher}
         deleteFetcher={deleteFetcher}
-        updateFormActionData={updateFormActionData}
+        updateErrorActionData={updateCommentErrorActionData}
         onEditingCommentIdChange={setEditingCommentId}
         onEditingBodyChange={setEditingBody}
         onMarkUpdateSubmit={() => setDidSubmitUpdate(true)}
         onSkipUpdateSubmit={() => setDidSubmitUpdate(false)}
       />
 
-      {deleteFormActionData?.formError ? (
-        <p className="mt-2 text-xs text-red-600">{deleteFormActionData.formError}</p>
-      ) : null}
+      <div className="mt-2">
+        <ActionFeedbackText actionData={deleteCommentErrorActionData} intent="comment-delete" showFormError />
+      </div>
     </div>
   );
 }
-
-

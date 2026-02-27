@@ -1,31 +1,35 @@
+import { useMemo, useState } from 'react';
 import { SectionCard } from './SectionCard';
+import { PasswordField } from '~/ui/primitives/password-field';
 import { useFetcher } from 'react-router';
+import { getPasswordChecks, isPasswordPolicySatisfied } from '~/core/auth/password-policy';
+import {
+  ActionFeedbackText,
+} from '~/ui/forms/action-feedback';
+import { PasswordPolicyChecklist } from '~/ui/forms/password-policy-checklist';
+import { useFieldMatchOnBlur } from '~/ui/hooks/use-field-match-on-blur';
 import type { AccountActionData } from '../types';
 
 export function SecuritySection() {
   const fetcher = useFetcher<AccountActionData>();
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const isSubmitting = fetcher.state === 'submitting';
   const actionData = fetcher.data;
-  const currentPasswordError =
-    actionData && !actionData.success && actionData.intent === 'password'
-      ? actionData.fieldErrors?.currentPassword?.[0]
-      : undefined;
-  const newPasswordError =
-    actionData && !actionData.success && actionData.intent === 'password'
-      ? actionData.fieldErrors?.newPassword?.[0]
-      : undefined;
-  const confirmPasswordError =
-    actionData && !actionData.success && actionData.intent === 'password'
-      ? actionData.fieldErrors?.confirmPassword?.[0]
-      : undefined;
-  const formError =
-    actionData && !actionData.success && actionData.intent === 'password'
-      ? actionData.formError
-      : undefined;
-  const successMessage =
-    actionData && actionData.success && actionData.intent === 'password'
-      ? actionData.message
-      : undefined;
+  const passwordChecks = useMemo(() => getPasswordChecks(newPassword), [newPassword]);
+  const passwordMatch = useFieldMatchOnBlur({
+    leftValue: newPassword,
+    rightValue: confirmPassword,
+    message: 'Las passwords no coinciden',
+  });
+  const canSubmitPasswordUpdate =
+    !isSubmitting &&
+    currentPassword.length > 0 &&
+    newPassword.length > 0 &&
+    confirmPassword.length > 0 &&
+    isPasswordPolicySatisfied(newPassword) &&
+    newPassword === confirmPassword;
 
   return (
     <SectionCard title="Security" description="Cambio de password y sesiones activas.">
@@ -36,51 +40,57 @@ export function SecuritySection() {
           <label htmlFor="currentPassword" className="text-sm font-medium">
             Password actual
           </label>
-          <input
+          <PasswordField
             id="currentPassword"
             name="currentPassword"
-            type="password"
-            className="rounded border px-2 py-1 text-sm"
+            value={currentPassword}
+            onChange={(event) => setCurrentPassword(event.currentTarget.value)}
+            className="w-full rounded border px-2 py-1 pr-10 text-sm"
           />
-          {currentPasswordError ? (
-            <p className="text-xs text-red-600">{currentPasswordError}</p>
-          ) : null}
+          <ActionFeedbackText actionData={actionData} intent="password" fieldKey="currentPassword" />
         </div>
 
         <div className="flex flex-col gap-1">
           <label htmlFor="newPassword" className="text-sm font-medium">
             Password nueva
           </label>
-          <input
+          <PasswordField
             id="newPassword"
             name="newPassword"
-            type="password"
-            className="rounded border px-2 py-1 text-sm"
+            value={newPassword}
+            onChange={(event) => setNewPassword(event.currentTarget.value)}
+            className="w-full rounded border px-2 py-1 pr-10 text-sm"
+            onBlur={passwordMatch.markTouched}
           />
-          {newPasswordError ? <p className="text-xs text-red-600">{newPasswordError}</p> : null}
+          <ActionFeedbackText actionData={actionData} intent="password" fieldKey="newPassword" />
+          <PasswordPolicyChecklist checks={passwordChecks} />
         </div>
 
         <div className="flex flex-col gap-1">
           <label htmlFor="confirmPassword" className="text-sm font-medium">
             Confirmar password
           </label>
-          <input
+          <PasswordField
             id="confirmPassword"
             name="confirmPassword"
-            type="password"
-            className="rounded border px-2 py-1 text-sm"
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.currentTarget.value)}
+            className="w-full rounded border px-2 py-1 pr-10 text-sm"
+            onBlur={passwordMatch.markTouched}
           />
-          {confirmPasswordError ? (
-            <p className="text-xs text-red-600">{confirmPasswordError}</p>
-          ) : null}
+          <ActionFeedbackText
+            actionData={actionData}
+            intent="password"
+            fieldKey="confirmPassword"
+            fallbackError={passwordMatch.mismatchError}
+          />
         </div>
 
-        {formError ? <p className="text-xs text-red-600">{formError}</p> : null}
-        {successMessage ? <p className="text-xs text-emerald-700">{successMessage}</p> : null}
+        <ActionFeedbackText actionData={actionData} intent="password" showFormError showSuccessMessage />
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={!canSubmitPasswordUpdate}
           className="rounded bg-slate-900 px-3 py-1 text-sm font-medium text-white disabled:opacity-60"
         >
           {isSubmitting ? 'Guardando...' : 'Actualizar password'}

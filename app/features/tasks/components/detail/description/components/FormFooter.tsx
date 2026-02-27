@@ -1,11 +1,11 @@
 import type { TaskActionData } from '../../../../types';
-import { ActionErrors } from '../../../common/ActionErrors';
+import { ActionFeedbackText } from '~/ui/forms/action-feedback';
 
 type FormFooterProps = {
   hasPendingEditorUploads: boolean;
   hasInlineBase64Images: boolean;
   editorImageError: string | null;
-  updateActionData: TaskActionData;
+  updateErrorActionData: TaskActionData;
   isSubmitting: boolean;
   onCancel: () => void;
 };
@@ -14,7 +14,7 @@ export function FormFooter({
   hasPendingEditorUploads,
   hasInlineBase64Images,
   editorImageError,
-  updateActionData,
+  updateErrorActionData,
   isSubmitting,
   onCancel,
 }: FormFooterProps) {
@@ -31,7 +31,7 @@ export function FormFooter({
         </p>
       ) : null}
       {editorImageError ? <p className="text-xs text-red-600">{editorImageError}</p> : null}
-      <ActionErrors actionData={updateActionData} fieldKey="description" />
+      <ActionFeedbackText actionData={updateErrorActionData} fieldKey="description" showFormError />
       <div className="flex gap-2">
         <button
           type="submit"
@@ -51,5 +51,3 @@ export function FormFooter({
     </>
   );
 }
-
-

@@ -1,8 +1,8 @@
 import type { useFetcher } from 'react-router';
 import type { TaskComment } from '~/core/tasks/tasks.types';
 import { RichTextEditor, RichTextViewer } from '~/ui/editors/rich-text/RichTextEditor';
+import { ActionFeedbackText } from '~/ui/forms/action-feedback';
 import type { TaskActionData } from '../../../types';
-import { ActionErrors } from '../../common/ActionErrors';
 import { getMeaningfulTextFromHtml } from './utils';
 
 type TaskCommentFetcher = ReturnType<typeof useFetcher<TaskActionData>>;
@@ -16,7 +16,7 @@ type CommentsListProps = {
   mentionCandidates: string[];
   updateFetcher: TaskCommentFetcher;
   deleteFetcher: TaskCommentFetcher;
-  updateFormActionData: TaskActionData;
+  updateErrorActionData: TaskActionData;
   onEditingCommentIdChange: (commentId: string | null) => void;
   onEditingBodyChange: (value: string) => void;
   onMarkUpdateSubmit: () => void;
@@ -62,7 +62,7 @@ export function CommentsList({
   mentionCandidates,
   updateFetcher,
   deleteFetcher,
-  updateFormActionData,
+  updateErrorActionData,
   onEditingCommentIdChange,
   onEditingBodyChange,
   onMarkUpdateSubmit,
@@ -123,7 +123,7 @@ export function CommentsList({
                   mentionCandidates={mentionCandidates}
                   enableImageUpload={false}
                 />
-                <ActionErrors actionData={updateFormActionData} fieldKey="commentBody" />
+                <ActionFeedbackText actionData={updateErrorActionData} fieldKey="commentBody" showFormError />
                 <EditActions
                   isSubmitting={updateFetcher.state === 'submitting'}
                   onCancel={handleCancelEdit}
@@ -166,4 +166,3 @@ export function CommentsList({
     </ul>
   );
 }
-

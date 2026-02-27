@@ -1,6 +1,7 @@
 import { Form } from 'react-router';
 import type { TaskActionData } from '../../types';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
+import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/action-feedback';
 import { FormFooter } from './FormFooter';
 import { TitleField } from './Title';
 import { useCreateFormState } from './hooks/useCreateFormState';
@@ -16,12 +17,10 @@ export function CreateTask({
   isSubmitting: boolean;
   mentionCandidates: string[];
 }) {
-  const createActionData =
-    actionData?.success === false && actionData.intent === 'create' ? actionData : undefined;
-  const globalError =
-    createActionData?.formError ?? getFieldError(createActionData?.fieldErrors, 'intent');
-  const titleError = getFieldError(createActionData?.fieldErrors, 'title');
-  const descriptionError = getFieldError(createActionData?.fieldErrors, 'description');
+  const createErrorActionData = getErrorActionDataByIntent(actionData, 'create');
+  const createIntentError = getFieldError(createErrorActionData?.fieldErrors, 'intent');
+  const titleError = getFieldError(createErrorActionData?.fieldErrors, 'title');
+  const descriptionError = getFieldError(createErrorActionData?.fieldErrors, 'description');
   const {
     title,
     description,
@@ -33,7 +32,7 @@ export function CreateTask({
     setEditorImageError,
     setHasPendingEditorUploads,
     handleSubmitGuard,
-  } = useCreateFormState({ createActionData, isSubmitting });
+  } = useCreateFormState({ createErrorActionData, isSubmitting });
 
   async function handleEditorImageUpload(file: File) {
     setEditorImageError(null);
@@ -48,11 +47,13 @@ export function CreateTask({
 
   return (
     <section id="create-task" className="max-w-xl space-y-3 rounded border p-4">
-      {createActionData?.success === false && globalError ? (
-        <div className="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700">
-          {globalError}
-        </div>
-      ) : null}
+      <ActionFeedbackText
+        actionData={createErrorActionData}
+        intent="create"
+        showFormError
+        fallbackError={createIntentError}
+        errorClassName="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700"
+      />
 
       <Form method="post" className="max-w-md space-y-3" onSubmit={handleSubmitGuard}>
         <input type="hidden" name="intent" value="create" />

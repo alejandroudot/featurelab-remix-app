@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Form } from 'react-router';
+import { ActionFeedbackText } from '~/ui/forms/action-feedback';
 import type { FlagActionData } from './types';
 
 export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
@@ -12,14 +13,14 @@ export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
   }, [actionData?.values?.type]);
 
   return (
-    <section className="border rounded p-4 space-y-3 max-w-xl">
+      <section className="border rounded p-4 space-y-3 max-w-xl">
       <h2 className="font-semibold">Crear flag</h2>
 
-      {actionData?.formError ? (
-        <div className="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm">
-          {actionData.formError}
-        </div>
-      ) : null}
+      <ActionFeedbackText
+        actionData={actionData}
+        showFormError
+        errorClassName="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm"
+      />
 
       <Form method="post" className="space-y-3">
         <input type="hidden" name="intent" value="create" />
@@ -36,9 +37,7 @@ export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
             placeholder="dark-theme"
             defaultValue={actionData?.values?.key ?? ''}
           />
-          {actionData?.fieldErrors?.key?.[0] ? (
-            <p className="text-sm text-red-600">{actionData.fieldErrors.key[0]}</p>
-          ) : null}
+          <ActionFeedbackText actionData={actionData} fieldKey="key" errorClassName="text-sm text-red-600" />
         </div>
 
         <div className="flex flex-col gap-1">
@@ -52,9 +51,11 @@ export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
             placeholder="Activa modo oscuro"
             defaultValue={actionData?.values?.description ?? ''}
           />
-          {actionData?.fieldErrors?.description?.[0] ? (
-            <p className="text-sm text-red-600">{actionData.fieldErrors.description[0]}</p>
-          ) : null}
+          <ActionFeedbackText
+            actionData={actionData}
+            fieldKey="description"
+            errorClassName="text-sm text-red-600"
+          />
         </div>
 
         <div className="flex flex-col gap-1">
@@ -71,9 +72,7 @@ export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
             <option value="boolean">boolean (on/off)</option>
             <option value="percentage">percentage rollout</option>
           </select>
-          {actionData?.fieldErrors?.type?.[0] ? (
-            <p className="text-sm text-red-600">{actionData.fieldErrors.type[0]}</p>
-          ) : null}
+          <ActionFeedbackText actionData={actionData} fieldKey="type" errorClassName="text-sm text-red-600" />
         </div>
 
         {currentType === 'percentage' ? (
@@ -91,9 +90,11 @@ export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
               placeholder="ej: 20"
               defaultValue={actionData?.values?.rolloutPercent ?? ''}
             />
-            {actionData?.fieldErrors?.rolloutPercent?.[0] ? (
-              <p className="text-sm text-red-600">{actionData.fieldErrors.rolloutPercent[0]}</p>
-            ) : null}
+            <ActionFeedbackText
+              actionData={actionData}
+              fieldKey="rolloutPercent"
+              errorClassName="text-sm text-red-600"
+            />
           </div>
         ) : null}
 

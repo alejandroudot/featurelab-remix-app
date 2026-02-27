@@ -1,30 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
 import type { TaskActionData } from '../../../types';
 
-type CreateActionData = Exclude<TaskActionData, undefined>;
+type CreateErrorActionData = Exclude<TaskActionData, undefined>;
 
 type UseCreateFormStateInput = {
-  createActionData: CreateActionData | undefined;
+  createErrorActionData: CreateErrorActionData | undefined;
   isSubmitting: boolean;
 };
 
-export function useCreateFormState({ createActionData, isSubmitting }: UseCreateFormStateInput) {
-  const [title, setTitle] = useState(createActionData?.values?.title ?? '');
-  const [description, setDescription] = useState(createActionData?.values?.description ?? '');
+export function useCreateFormState({ createErrorActionData, isSubmitting }: UseCreateFormStateInput) {
+  const [title, setTitle] = useState(createErrorActionData?.values?.title ?? '');
+  const [description, setDescription] = useState(createErrorActionData?.values?.description ?? '');
   const [editorImageError, setEditorImageError] = useState<string | null>(null);
   const [hasPendingEditorUploads, setHasPendingEditorUploads] = useState(false);
   const wasSubmittingRef = useRef(isSubmitting);
   const hasInlineBase64Images = description.includes('data:image/');
 
   useEffect(() => {
-    setTitle(createActionData?.values?.title ?? '');
-    setDescription(createActionData?.values?.description ?? '');
+    setTitle(createErrorActionData?.values?.title ?? '');
+    setDescription(createErrorActionData?.values?.description ?? '');
     setEditorImageError(null);
     setHasPendingEditorUploads(false);
-  }, [createActionData?.values?.title, createActionData?.values?.description]);
+  }, [createErrorActionData?.values?.title, createErrorActionData?.values?.description]);
 
   useEffect(() => {
-    const finishedSuccessfulCreate = wasSubmittingRef.current && !isSubmitting && !createActionData;
+    const finishedSuccessfulCreate = wasSubmittingRef.current && !isSubmitting && !createErrorActionData;
 
     if (finishedSuccessfulCreate) {
       setTitle('');
@@ -34,7 +34,7 @@ export function useCreateFormState({ createActionData, isSubmitting }: UseCreate
     }
 
     wasSubmittingRef.current = isSubmitting;
-  }, [isSubmitting, createActionData]);
+  }, [isSubmitting, createErrorActionData]);
 
   function handleSubmitGuard(event: { preventDefault: () => void }) {
     if (hasPendingEditorUploads) {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
 import type { TaskActionData, TaskAssigneeOption } from '../../../types';
+import { ActionFeedbackText } from '~/ui/forms/action-feedback';
 import { Checklist } from './Checklist';
 import { QuickFields } from './QuickFields';
 import { DeleteSection } from './DeleteSection';
@@ -23,7 +24,7 @@ export function Actions({
   const location = useLocation();
   const redirectTo = `${location.pathname}${location.search}`;
   const isCreator = task.userId === currentUserId;
-  const formActionData = fetcher.data;
+  const latestActionData = fetcher.data;
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
   const [checklist, setChecklist] = useState(task.checklist);
   const [newChecklistText, setNewChecklistText] = useState('');
@@ -122,11 +123,11 @@ export function Actions({
             onRemoveChecklistItem={removeChecklistItem}
           />
 
-          {formActionData?.success === false ? (
-            <div className="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700">
-              {formActionData.formError}
-            </div>
-          ) : null}
+          <ActionFeedbackText
+            actionData={latestActionData}
+            showFormError
+            errorClassName="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700"
+          />
 
           {isCreator ? (
             <DeleteSection taskId={task.id} taskTitle={task.title} onDeleteTask={onDeleteTask} />
@@ -136,5 +137,3 @@ export function Actions({
     </aside>
   );
 }
-
-

@@ -1,5 +1,6 @@
 import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
+import { getErrorActionDataByIntent } from '~/ui/forms/action-feedback';
 import type { TaskActionData } from '../../../types';
 import { EditForm } from './components/EditForm';
 import { Preview } from './components/Preview';
@@ -19,8 +20,7 @@ export function Description({
   const fetcher = useFetcher<TaskActionData>();
   const location = useLocation();
   const redirectTo = `${location.pathname}${location.search}`;
-  const updateActionData =
-    fetcher.data?.success === false && fetcher.data.intent === 'update' ? fetcher.data : undefined;
+  const updateErrorActionData = getErrorActionDataByIntent(fetcher.data, 'update');
 
   function submitDescriptionUpdate(description: string) {
     fetcher.submit(
@@ -67,7 +67,7 @@ export function Description({
           hasPendingEditorUploads={hasPendingEditorUploads}
           hasInlineBase64Images={hasInlineBase64Images}
           editorImageError={editorImageError}
-          updateActionData={updateActionData}
+          updateErrorActionData={updateErrorActionData}
           onDraftDescriptionChange={setDraftDescription}
           onPendingUploadsChange={setHasPendingEditorUploads}
           onEditorImageErrorChange={setEditorImageError}
@@ -84,4 +84,3 @@ export function Description({
     </div>
   );
 }
-
