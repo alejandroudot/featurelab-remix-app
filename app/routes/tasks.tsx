@@ -12,8 +12,8 @@ import {
 import { notificationService } from '~/infra/notifications/notification.service';
 import type { TaskActionData } from '~/features/tasks/types';
 import { requireUser } from '~/infra/auth/require-user';
-import { runTaskAction } from '~/features/tasks/server/task.action';
-import { runTaskLoader } from '~/features/tasks/server/task.loader';
+import { runTaskAction } from '~/features/tasks/server/action';
+import { runTaskLoader } from '~/features/tasks/server/loader';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
@@ -70,3 +70,4 @@ export default function TasksRoute() {
     />
   );
 }
+

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Task, TaskStatus } from '~/core/tasks/tasks.types';
-import type { TasksViewState } from '../../server/task-view-state';
+import type { TasksFiltersState } from '../../types';
 import { Column } from './Column';
 import {
   BOARD_COLUMNS,
@@ -14,7 +14,7 @@ type DraggingState = { taskId: string; fromColumn: BoardColumnId } | null;
 
 type BoardViewProps = {
   tasks: Task[];
-  order: TasksViewState['order'];
+  order: TasksFiltersState['order'];
   assigneeById: Record<string, string>;
   onOpenTask?: (taskId: string) => void;
   onEditTask?: (taskId: string) => void;
@@ -118,4 +118,6 @@ export function BoardView({
     </section>
   );
 }
+
+
 

@@ -1,5 +1,5 @@
 import type { Task, TaskPriority, TaskStatus } from '~/core/tasks/tasks.types';
-import type { TasksViewState } from '../../server/task-view-state';
+import type { TasksFiltersState } from '../../types';
 
 export type BoardColumnId = Extract<TaskStatus, 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live'>;
 export type BoardState = Record<BoardColumnId, Task[]>;
@@ -27,14 +27,14 @@ export function sortByPriority(items: Task[]) {
   return [...items].sort((a, b) => PRIORITY_RANK[b.priority] - PRIORITY_RANK[a.priority]);
 }
 
-function sortByOrder(items: Task[], order: TasksViewState['order']) {
+function sortByOrder(items: Task[], order: TasksFiltersState['order']) {
   if (order === 'manual') {
     return [...items].sort((a, b) => a.orderIndex - b.orderIndex);
   }
   return sortByPriority(items);
 }
 
-export function buildBoardState(tasks: Task[], order: TasksViewState['order']): BoardState {
+export function buildBoardState(tasks: Task[], order: TasksFiltersState['order']): BoardState {
   return {
     todo: sortByOrder(tasks.filter((task) => task.status === 'todo'), order),
     'in-progress': sortByOrder(tasks.filter((task) => task.status === 'in-progress'), order),
@@ -52,7 +52,7 @@ function clamp(value: number, min: number, max: number) {
 
 export function moveTaskInBoard(input: {
   board: BoardState;
-  order: TasksViewState['order'];
+  order: TasksFiltersState['order'];
   taskId: string;
   fromColumn: BoardColumnId;
   toColumn: BoardColumnId;
@@ -95,3 +95,5 @@ export function moveTaskInBoard(input: {
     [toColumn]: targetTasks,
   };
 }
+
+

@@ -7,15 +7,13 @@ import type {
 } from '~/core/tasks/tasks.port';
 import type { NotificationService } from '~/core/notifications/notification.port';
 
-export type TaskStatus =
-	| 'todo'
-	| 'in-progress'
-	| 'qa'
-	| 'ready-to-go-live'
-	| 'done'
-	| 'discarded';
-export type TaskPriority = 'low' | 'medium' | 'high' | 'critical';
 export type TaskAssigneeOption = { id: string; email: string };
+
+export type TasksFiltersState = {
+  view: 'list' | 'board';
+  order: 'manual' | 'priority';
+  scope: 'all' | 'assigned' | 'created';
+};
 
 export type TaskActionData =
 	| {

@@ -7,7 +7,7 @@ import { EmptyState } from './components/EmptyState';
 import { BoardView } from './components/board/View';
 import { Modal } from './components/detail/Modal';
 import type { Task, TaskActivity, TaskComment } from '~/core/tasks/tasks.types';
-import type { TasksViewState } from './server/task-view-state';
+import type { TasksFiltersState } from './types';
 import type { TaskAssigneeOption } from './types';
 import { toast } from 'sonner';
 import { getTaskActionToastError } from './utils/client-errors';
@@ -29,7 +29,7 @@ export function TasksPage({
   taskActivities: TaskActivity[];
   taskComments: TaskComment[];
   assignableUsers: TaskAssigneeOption[];
-  viewState: TasksViewState;
+  viewState: TasksFiltersState;
   actionData: TaskActionData;
   isSubmitting: boolean;
 }) {
@@ -150,3 +150,5 @@ export function TasksPage({
     </main>
   );
 }
+
+

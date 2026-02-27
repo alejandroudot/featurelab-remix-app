@@ -1,8 +1,8 @@
-import type { TasksViewState } from '../server/task-view-state';
+import type { TasksFiltersState } from '../types';
 import { ToggleGroup, ToggleGroupItem } from '~/ui/primitives/toggle-group';
 
 type ViewFiltersProps = {
-  viewState: TasksViewState;
+  viewState: TasksFiltersState;
   onSetView: (view: 'list' | 'board') => void;
   onSetOrder: (order: 'manual' | 'priority') => void;
   onSetScope: (scope: 'all' | 'assigned' | 'created') => void;
@@ -86,3 +86,5 @@ export function Filters({
     </div>
   );
 }
+
+
