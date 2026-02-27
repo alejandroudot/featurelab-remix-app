@@ -13,6 +13,7 @@ export function TaskDetailEditableTitle({ taskId, title, closeSignal = 0 }: Task
   const location = useLocation();
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(title);
+  const [didSubmit, setDidSubmit] = useState(false);
   const redirectTo = `${location.pathname}${location.search}`;
   const formError =
     fetcher.data?.success === false && fetcher.data.intent === 'update' ? fetcher.data : undefined;
@@ -38,6 +39,16 @@ export function TaskDetailEditableTitle({ taskId, title, closeSignal = 0 }: Task
     setIsEditing(false);
   }, [closeSignal]);
 
+  useEffect(() => {
+    if (!didSubmit) return;
+    if (fetcher.state !== 'idle') return;
+
+    if (!formError) {
+      setIsEditing(false);
+    }
+    setDidSubmit(false);
+  }, [didSubmit, fetcher.state, formError]);
+
   if (!isEditing) {
     return (
       <button
@@ -54,7 +65,13 @@ export function TaskDetailEditableTitle({ taskId, title, closeSignal = 0 }: Task
   }
 
   return (
-    <fetcher.Form method="post" className="space-y-2">
+    <fetcher.Form
+      method="post"
+      className="space-y-2"
+      onSubmit={() => {
+        setDidSubmit(true);
+      }}
+    >
       <input type="hidden" name="intent" value="update" />
       <input type="hidden" name="id" value={taskId} />
       <input type="hidden" name="redirectTo" value={redirectTo} />

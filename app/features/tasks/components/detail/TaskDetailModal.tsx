@@ -7,9 +7,9 @@ import {
   DialogDescription,
   DialogHeader,
 } from '~/ui/primitives/dialog';
-import { TaskDetailActions } from './TaskDetailActions';
-import { TaskDetailContent } from './TaskDetailContent';
-import { TaskDetailComments } from './TaskDetailComments';
+import { TaskDetailActions } from './task-detail-actions/TaskDetailActions';
+import { TaskDetailDescription } from './task-detail-description/TaskDetailDescription';
+import { TaskDetailComments } from './task-detail-comments/TaskDetailComments';
 import { TaskDetailHistory } from './TaskDetailHistory';
 import { TaskDetailEditableTitle } from './TaskDetailEditableTitle';
 
@@ -64,7 +64,7 @@ export function TaskDetailModal({
             </DialogHeader>
             <div className="grid h-[calc(80vh-96px)] gap-4 p-4 lg:grid-cols-[2fr_1fr]">
               <section className="space-y-4 overflow-y-auto pr-1">
-                <TaskDetailContent
+                <TaskDetailDescription
                   task={task}
                   mentionCandidates={mentionCandidates}
                   closeSignal={closeSignal}
