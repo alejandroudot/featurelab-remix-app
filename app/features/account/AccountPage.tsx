@@ -7,6 +7,7 @@ type AccountPageProps = {
   user: {
     id: string;
     email: string;
+    displayName: string | null;
     role: 'user' | 'admin';
   };
 };

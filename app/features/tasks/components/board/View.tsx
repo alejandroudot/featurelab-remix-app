@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { Task, TaskStatus } from '~/core/tasks/tasks.types';
 import type { TasksFiltersState } from '../../types';
 import { Column } from './Column';
 import {
   BOARD_COLUMNS,
+  buildBoardSourceKey,
   buildBoardState,
   moveTaskInBoard,
   type BoardColumnId,
@@ -33,16 +34,21 @@ export function BoardView({
   onMoveTaskStatus,
   onReorderColumn,
 }: BoardViewProps) {
+  // Estado base derivado desde datos reales del server.
   const tasksByColumn = useMemo(() => buildBoardState(tasks, order), [tasks, order]);
 
-  // Base derivada desde server: columnas ya ordenadas segun modo actual.
-  const [boardState, setBoardState] = useState<BoardState>(tasksByColumn);
+  // Clave estable de la fuente actual (tasks + modo de orden).
+  // Si cambia, descartamos el estado interactivo anterior.
+  const boardSourceKey = useMemo(() => buildBoardSourceKey(tasks, order), [tasks, order]);
 
-  // Si cambia la fuente real (tasks/order), resincronizamos la copia interactiva.
-  useEffect(() => {
-    setBoardState(tasksByColumn);
-  }, [tasksByColumn]);
-
+  // Estado local solo para interacciones de drag-and-drop.
+  // Se mantiene mientras la fuente no cambie.
+  const [interactiveBoard, setInteractiveBoard] = useState<{
+    sourceKey: string;
+    board: BoardState;
+  } | null>(null);
+  const boardState =
+    interactiveBoard?.sourceKey === boardSourceKey ? interactiveBoard.board : tasksByColumn;
   const [dragging, setDragging] = useState<DraggingState>(null);
 
   function handleDrop(params: { toColumn: BoardColumnId; toIndex?: number }) {
@@ -50,7 +56,8 @@ export function BoardView({
     if (!dragging) return;
 
     const isCrossColumnMove = dragging.fromColumn !== toColumn;
-		//Obtiene el nuevo board con las cards re ordenadas
+
+    // Recalcula el board local luego del drop.
     const nextBoard = moveTaskInBoard({
       board: boardState,
       order,
@@ -60,19 +67,18 @@ export function BoardView({
       toIndex,
     });
 
-    setBoardState(nextBoard);
+    setInteractiveBoard({ sourceKey: boardSourceKey, board: nextBoard });
 
-    // Manual: persiste exactamente el orden que deja el usuario.
+    // Persistencia:
+    // - manual: guardar orden exacto (misma columna) o status + posicion (entre columnas)
+    // - priority: solo guardar cambio de columna; el orden lo decide la prioridad
     if (order === 'manual') {
       if (isCrossColumnMove) {
-        // Cambio de columna: guardar status nuevo + posicion final.
         const movedIndex = nextBoard[toColumn].findIndex((task) => task.id === dragging.taskId);
         onMoveTaskStatus?.(dragging.taskId, toColumn, movedIndex >= 0 ? movedIndex : undefined);
       } else {
-        // Misma columna: guardar solo el reorder de ids.
         onReorderColumn?.(toColumn, nextBoard[toColumn].map((task) => task.id));
       }
-    // Priority: el orden se calcula por prioridad, solo persiste cambio de columna.
     } else if (isCrossColumnMove) {
       onMoveTaskStatus?.(dragging.taskId, toColumn);
     }
@@ -103,10 +109,7 @@ export function BoardView({
                 setDragging({ taskId, fromColumn });
               }}
               onDropAtTask={(_taskId, toColumn, toIndex) => {
-                handleDrop({
-                  toColumn,
-                  toIndex,
-                });
+                handleDrop({ toColumn, toIndex });
               }}
               onOpenTask={onOpenTask}
               onEditTask={onEditTask}
@@ -118,6 +121,3 @@ export function BoardView({
     </section>
   );
 }
-
-
-

@@ -65,6 +65,7 @@ export const taskComments = sqliteTable('task_comments', {
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
+  displayName: text("display_name"),
 	role: text("role", { enum: ["user", "admin"] })
   .notNull()
   .default("user"),

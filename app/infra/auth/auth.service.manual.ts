@@ -13,6 +13,7 @@ function toUser(row: typeof users.$inferSelect): User {
   return {
     id: row.id,
     email: row.email,
+    displayName: row.displayName,
     role: row.role as "user" | "admin",
     createdAt: row.createdAt,
   };
@@ -66,6 +67,29 @@ export function createManualAuthService(): AuthService {
 
       const row = await db.select().from(users).where(eq(users.id, sess.userId)).get();
       return row ? toUser(row) : null;
+    },
+
+    async updateDisplayName({ userId, displayName }) {
+      await db
+        .update(users)
+        .set({ displayName })
+        .where(eq(users.id, userId))
+        .run();
+
+      const row = await db.select().from(users).where(eq(users.id, userId)).get();
+      if (!row) throw new Error("USER_NOT_FOUND");
+      return toUser(row);
+    },
+
+    async changePassword({ userId, currentPassword, newPassword }) {
+      const row = await db.select().from(users).where(eq(users.id, userId)).get();
+      if (!row) throw new Error("USER_NOT_FOUND");
+
+      const ok = await bcrypt.compare(currentPassword, row.passwordHash);
+      if (!ok) throw new Error("INVALID_CREDENTIALS");
+
+      const passwordHash = await bcrypt.hash(newPassword, 10);
+      await db.update(users).set({ passwordHash }).where(eq(users.id, userId)).run();
     },
   };
 }

@@ -16,6 +16,7 @@ export const BOARD_COLUMNS: BoardColumn[] = [
   { id: 'ready-to-go-live', title: 'Ready to Go Live' },
 ];
 
+// Ranking usado cuando el board esta en modo "priority".
 const PRIORITY_RANK: Record<TaskPriority, number> = {
   critical: 4,
   high: 3,
@@ -27,6 +28,7 @@ export function sortByPriority(items: Task[]) {
   return [...items].sort((a, b) => PRIORITY_RANK[b.priority] - PRIORITY_RANK[a.priority]);
 }
 
+// Decide estrategia de orden segun el modo actual del board.
 function sortByOrder(items: Task[], order: TasksFiltersState['order']) {
   if (order === 'manual') {
     return [...items].sort((a, b) => a.orderIndex - b.orderIndex);
@@ -34,6 +36,7 @@ function sortByOrder(items: Task[], order: TasksFiltersState['order']) {
   return sortByPriority(items);
 }
 
+// Construye las 4 columnas del board, ya ordenadas para renderizar.
 export function buildBoardState(tasks: Task[], order: TasksFiltersState['order']): BoardState {
   return {
     todo: sortByOrder(tasks.filter((task) => task.status === 'todo'), order),
@@ -41,6 +44,14 @@ export function buildBoardState(tasks: Task[], order: TasksFiltersState['order']
     qa: sortByOrder(tasks.filter((task) => task.status === 'qa'), order),
     'ready-to-go-live': sortByOrder(tasks.filter((task) => task.status === 'ready-to-go-live'), order),
   };
+}
+
+// "Huella" de la fuente de datos del board.
+// Si esta clave cambia, el estado interactivo local debe resetearse.
+export function buildBoardSourceKey(tasks: Task[], order: TasksFiltersState['order']) {
+  return `${order}:${tasks
+    .map((task) => `${task.id}:${task.status}:${task.orderIndex}:${task.priority}`)
+    .join('|')}`;
 }
 
 // Clamp asegura que un numero quede dentro de un rango [min, max].
@@ -61,22 +72,23 @@ export function moveTaskInBoard(input: {
   const { board, order, taskId, fromColumn, toColumn, toIndex } = input;
   const sourceTasks = [...board[fromColumn]];
   const sourceIndex = sourceTasks.findIndex((task) => task.id === taskId);
-	// Si no existe la task devuelve sin cambios
+  // Si no existe la task, deja el board como esta.
   if (sourceIndex === -1) return board;
 
   const [movedTask] = sourceTasks.splice(sourceIndex, 1);
 
-	// Aca actua si estamos moviendo en la misma columna (orden manual)
+  // Move dentro de la misma columna.
+  // Solo aplica en "manual"; en "priority" no se permite reorden manual interno.
   if (fromColumn === toColumn) {
     if (order === 'priority') return board;
 
-    // Calcula un indice valido y vuelve a insertar la task movida en esa posicion.
+    // Inserta la task en un indice valido dentro de esa misma columna.
     const insertIndex = clamp(toIndex ?? sourceTasks.length, 0, sourceTasks.length);
     sourceTasks.splice(insertIndex, 0, movedTask);
     return { ...board, [fromColumn]: sourceTasks };
   }
 
-	// La columna objetivo
+  // Move entre columnas (cambia status).
   const targetTasks = [...board[toColumn]];
   const insertIndex = clamp(toIndex ?? targetTasks.length, 0, targetTasks.length);
   targetTasks.splice(insertIndex, 0, { ...movedTask, status: toColumn });

@@ -2,10 +2,18 @@ import type { User } from "./auth.types";
 
 export type RegisterInput = { email: string; password: string };
 export type LoginInput = { email: string; password: string };
+export type UpdateDisplayNameInput = { userId: string; displayName: string };
+export type ChangePasswordInput = {
+  userId: string;
+  currentPassword: string;
+  newPassword: string;
+};
 
 export interface AuthService {
   register(input: RegisterInput): Promise<User>;
   login(input: LoginInput): Promise<{ user: User; sessionId: string }>;
   logout(sessionId: string): Promise<void>;
   getUserBySession(sessionId: string): Promise<User | null>;
+  updateDisplayName(input: UpdateDisplayNameInput): Promise<User>;
+  changePassword(input: ChangePasswordInput): Promise<void>;
 }
