@@ -20,7 +20,7 @@ priorizando claridad operativa y velocidad de iteracion para un proyecto de estu
 - 🎯 `Tasks-first`: trabajo diario y colaborativo como eje del producto.
 - 🧭 `Execution Hub`: home operativa con metricas, actividad y quick actions.
 - 🚦 `Feature Flags`: control de release por entorno, toggles admin y rollout.
-- 👤 `User Panel`: perfil, seguridad, preferencias y plan.
+- 👤 `User Panel`: perfil, seguridad, preferencias y plan (en roadmap).
 - 📈 Escalabilidad progresiva: estado cliente avanzado, integraciones y CI/CD.
 
 Patron general del repo:
@@ -47,17 +47,18 @@ Patron general del repo:
   - orden de vista (`manual`/`priority`) y estado persistido en URL (`view`, `order`)
   - acciones destructivas con confirmacion (`AlertDialog`)
   - responsable visible en list y board
+- ✅ Gestion de tasks evolucionada:
+  - drag and drop horizontal (cambio de estado) y vertical (reorden manual)
+  - vistas por alcance de trabajo (`Todas`, `Asignadas`, `Creadas`)
+  - permisos de creador/asignado validados en server
+  - comentarios, checklist, labels y due date/overdue
+  - historial de cambios y notificaciones in-app (header)
+  - editor rich text (Lexical) en descripcion/comentarios/create
+  - menciones `@usuario` + imagen embebida (boton y copy/paste) + cleanup de temporales
 - ✅ Gestion de feature flags:
   - create/toggle/delete/update rollout
   - panel de `Feature Switches` en Execution Hub (admin)
 - ✅ Home (`Execution Hub`) con metricas, actividad y quick actions.
-- 🟡 Gestion de tasks evolucionada:
-  - drag and drop horizontal (cambio de estado) y vertical (reorden manual)
-  - update optimista al mover cards
-  - selector de responsable en create/edit
-  - vistas de trabajo por usuario (`Asignadas a mi`, `Creadas por mi`, `Todas`)
-  - comentarios, checklist, labels, due dates
-  - historial de cambios y notificaciones in-app
 - 🟡 Preferencias de usuario:
   - densidad, vista por defecto, tema (`light`/`dark`/`system`)
   - persistencia local con estado global
@@ -91,13 +92,13 @@ Decisiones clave:
   - React 19 + TypeScript
   - Drizzle ORM + better-sqlite3
   - Zod validation
+  - Lexical (rich text editor)
   - Tailwind CSS v4
   - shadcn/ui (componentes de producto por defecto)
   - Radix UI primitives (comportamiento custom/accesible)
 - 🟡 Planeado / adopcion progresiva:
   - TanStack Query (cache, invalidacion, optimistic updates)
   - Zustand (estado global de UI y preferencias)
-  - Drag and drop para Tasks Board
   - Vitest + Testing Library (unit/integration)
   - Playwright (E2E)
   - Stripe API + webhooks
