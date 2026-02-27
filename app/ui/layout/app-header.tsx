@@ -24,6 +24,11 @@ export function AppHeader({ user, theme }: Props) {
       <Link to="/flags" className="underline-offset-4 hover:underline" onClick={() => setIsMobileMenuOpen(false)}>
         Flags
       </Link>
+      {user ? (
+        <Link to="/account" className="underline-offset-4 hover:underline" onClick={() => setIsMobileMenuOpen(false)}>
+          Account
+        </Link>
+      ) : null}
     </>
   );
 
