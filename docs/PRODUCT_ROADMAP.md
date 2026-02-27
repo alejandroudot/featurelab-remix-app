@@ -80,11 +80,11 @@ Criterio de cierre:
 
 ### P0.4 Refactor y limpieza transversal
 
-- [ ] Eliminar codigo muerto y caminos legacy no usados
-- [ ] Ordenar carpetas y modulos por responsabilidad real
-- [ ] Homogeneizar naming de funciones, handlers, tipos e intents
-- [ ] Reducir componentes grandes en piezas pequenas y mantenibles
-- [ ] Limpiar contratos obsoletos entre `core`, `features` e `infra`
+- [x] Eliminar codigo muerto y caminos legacy no usados
+- [x] Ordenar carpetas y modulos por responsabilidad real
+- [x] Homogeneizar naming de funciones, handlers, tipos e intents
+- [x] Reducir componentes grandes en piezas pequenas y mantenibles
+- [x] Limpiar contratos obsoletos entre `core`, `features` e `infra`
 
 Criterio de cierre:
 

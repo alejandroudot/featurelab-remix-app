@@ -338,13 +338,13 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
 Tecnologias del dia: TypeScript refactor, arquitectura por capas, limpieza de deuda tecnica, naming conventions, Tiptap (`@tiptap/react` + `starter-kit`, `image`, `link`, `placeholder`, `mention`), API route de upload y storage local para rich text.
 Fuente roadmap: [P0 estabilidad/consistencia](./PRODUCT_ROADMAP.md#-p0---estabilidad-y-consistencia), [P1.2/P1.3 hardening tecnico](./PRODUCT_ROADMAP.md#-p12-tasks-ux-board-first-estilo-jiratrello).
 
-- [ ] Refactor general de aplicacion (cleanup day)
-  - [ ] Eliminar codigo muerto y flujos legacy no usados
-  - [ ] Unificar naming de funciones, handlers, tipos e intents
-  - [ ] Reordenar carpetas por responsabilidad real (page/feature/server/core/infra)
-  - [ ] Reducir componentes gigantes en piezas chicas y legibles
-  - [ ] Limpiar imports, exports y contratos obsoletos
-  - [ ] Dejar checklist de deuda tecnica residual (si queda algo)
+- [x] Refactor general de aplicacion (cleanup day)
+  - [x] Eliminar codigo muerto y flujos legacy no usados
+  - [x] Unificar naming de funciones, handlers, tipos e intents
+  - [x] Reordenar carpetas por responsabilidad real (page/feature/server/core/infra)
+  - [x] Reducir componentes gigantes en piezas chicas y legibles
+  - [x] Limpiar imports, exports y contratos obsoletos
+  - [x] Dejar checklist de deuda tecnica residual (si queda algo)
 - [x] Hardening de editor rich text
   - [x] Flujo estable de imagen embebida (boton + copy/paste)
   - [x] Upload de imagen embebida via API (`/api/tasks/attachments`) con validaciones de permiso, tipo y tamano
