@@ -242,3 +242,9 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Evita el icono nativo de mostrar password en Edge para no duplicar con el ojito custom. */
+.password-field__input::-ms-reveal,
+.password-field__input::-ms-clear {
+  display: none;
+}

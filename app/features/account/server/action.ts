@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { AuthService } from '~/core/auth/auth.port';
+import { passwordPolicySchema } from '~/core/auth/password.schema';
 import type { AccountActionData } from '../types';
 
 const profileSchema = z.object({
@@ -13,7 +14,7 @@ const profileSchema = z.object({
 const passwordSchema = z
   .object({
     currentPassword: z.string().min(1, 'Requerido'),
-    newPassword: z.string().min(8, 'Minimo 8 caracteres'),
+    newPassword: passwordPolicySchema,
     confirmPassword: z.string().min(1, 'Requerido'),
   })
   .refine((values) => values.newPassword === values.confirmPassword, {

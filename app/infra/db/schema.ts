@@ -66,6 +66,10 @@ export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
   displayName: text("display_name"),
+  phone: text("phone"),
+  timezone: text("timezone"),
+  about: text("about"),
+  emailVerifiedAt: integer("email_verified_at", { mode: "timestamp_ms" }),
 	role: text("role", { enum: ["user", "admin"] })
   .notNull()
   .default("user"),

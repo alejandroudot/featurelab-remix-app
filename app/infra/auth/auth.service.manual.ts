@@ -14,6 +14,9 @@ function toUser(row: typeof users.$inferSelect): User {
     id: row.id,
     email: row.email,
     displayName: row.displayName,
+    phone: row.phone,
+    timezone: row.timezone,
+    about: row.about,
     role: row.role as "user" | "admin",
     createdAt: row.createdAt,
   };
@@ -21,14 +24,26 @@ function toUser(row: typeof users.$inferSelect): User {
 
 export function createManualAuthService(): AuthService {
   return {
-    async register({ email, password }) {
+    async register({ displayName, email, password, phone, timezone }) {
       const existing = await db.select().from(users).where(eq(users.email, email)).get();
       if (existing) throw new Error("EMAIL_TAKEN");
 
       const id = randomUUID();
       const passwordHash = await bcrypt.hash(password, 10);
 
-      await db.insert(users).values({ id, email, passwordHash }).run();
+      await db
+        .insert(users)
+        .values({
+          id,
+          displayName,
+          email,
+          phone: phone ?? null,
+          timezone: timezone ?? null,
+          about: null,
+          emailVerifiedAt: null,
+          passwordHash,
+        })
+        .run();
 
       const row = await db.select().from(users).where(eq(users.id, id)).get();
       if (!row) throw new Error("USER_CREATE_FAILED");

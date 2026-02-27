@@ -1,7 +1,13 @@
 import type { User } from "./auth.types";
 
-export type RegisterInput = { email: string; password: string };
 export type LoginInput = { email: string; password: string };
+export type RegisterInput = {
+  displayName: string;
+  email: string;
+  password: string;
+  phone?: string;
+  timezone?: string;
+};
 export type UpdateDisplayNameInput = { userId: string; displayName: string };
 export type ChangePasswordInput = {
   userId: string;
