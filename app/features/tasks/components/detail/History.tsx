@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import type { TaskActivity } from '~/core/tasks/tasks.types';
 import {
   Dialog,
@@ -52,7 +52,7 @@ function formatActivity(item: TaskActivity) {
 }
 
 export function History({ activities }: HistoryProps) {
-  const [isHistoryOpen, setIsHistoryOpen] = React.useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const latest = activities[0];
 
   return (

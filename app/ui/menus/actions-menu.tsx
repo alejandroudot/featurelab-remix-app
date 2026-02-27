@@ -1,13 +1,13 @@
 import { DropdownMenu } from "radix-ui";
-import * as React from "react";
+import { useState, type ReactNode } from "react";
 
 export function ActionsMenu({
   children,
 }: {
 	//Funcion para manejar el cierre de modal
-  children: (api: { close: () => void }) => React.ReactNode;
+  children: (api: { close: () => void }) => ReactNode;
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <DropdownMenu.Root open={open} onOpenChange={setOpen}>
@@ -35,7 +35,7 @@ export function MenuItem({
   onSelect,
   destructive,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   onSelect?: (e: Event) => void;
   destructive?: boolean;
 }) {

@@ -49,7 +49,6 @@ export default function TasksRoute() {
     tasks,
     taskActivities,
     taskComments,
-    notifications,
     assignableUsers,
     viewState,
   } =
@@ -64,7 +63,6 @@ export default function TasksRoute() {
       tasks={tasks}
       taskActivities={taskActivities}
       taskComments={taskComments}
-      notifications={notifications}
       assignableUsers={assignableUsers}
       viewState={viewState}
       actionData={actionData}

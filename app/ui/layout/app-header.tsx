@@ -1,6 +1,7 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { Menu } from 'lucide-react';
 import { Form, Link, useLocation } from 'react-router';
+import { HeaderNotifications } from './header-notifications';
 import { ThemeToggle } from './theme-toggle';
 import type { ThemeMode } from '~/infra/theme/theme-cookie';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/ui/primitives/sheet';
@@ -13,7 +14,7 @@ type Props = {
 export function AppHeader({ user, theme }: Props) {
   const loc = useLocation();
   const redirectTo = loc.pathname + loc.search;
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navigationLinks = (
     <>
@@ -30,6 +31,7 @@ export function AppHeader({ user, theme }: Props) {
     <>
       {user.role === 'admin' ? <span className="rounded border px-2 py-0.5 text-xs">ADMIN</span> : null}
       <span className="opacity-80">Hola, {user.email}</span>
+      <HeaderNotifications />
       <ThemeToggle theme={theme} />
       <Form method="post" action="/auth/logout">
         <button type="submit" className="border rounded px-3 py-1 text-sm" onClick={() => setIsMobileMenuOpen(false)}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
 
 type DeleteSectionProps = {
@@ -12,7 +12,7 @@ export function DeleteSection({
   taskTitle,
   onDeleteTask,
 }: DeleteSectionProps) {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   return (
     <>

@@ -1,13 +1,13 @@
-import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Form } from 'react-router';
 import type { FlagActionData } from './types';
 
 export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
-  const [currentType, setCurrentType] = React.useState<string>(
+  const [currentType, setCurrentType] = useState<string>(
     actionData?.values?.type ?? 'boolean',
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrentType(actionData?.values?.type ?? 'boolean');
   }, [actionData?.values?.type]);
 

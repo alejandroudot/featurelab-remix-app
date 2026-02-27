@@ -1,11 +1,11 @@
-import * as React from 'react';
+import { useRef, useState } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 import type { Task } from '~/core/tasks/tasks.types';
 import { Badge } from '~/ui/primitives/badge';
 import { Card, CardContent } from '~/ui/primitives/card';
 import { Avatar, AvatarFallback } from '~/ui/primitives/avatar';
 import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
-import { formatDateUTC, isTaskOverdue } from '../utils/task-due-date';
+import { formatDateUTC, isTaskOverdue } from '../../utils/task-due-date';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,8 +52,8 @@ export function TaskCard({
   onEdit,
   onDelete,
 }: TaskCardProps) {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
-  const blockNextOpenRef = React.useRef(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const blockNextOpenRef = useRef(false);
 
   function handleCardOpen() {
     if (!onOpen) return;

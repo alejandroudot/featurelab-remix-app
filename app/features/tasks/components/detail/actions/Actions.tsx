@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
 import type { TaskActionData, TaskAssigneeOption } from '../../../types';
@@ -24,18 +24,18 @@ export function Actions({
   const redirectTo = `${location.pathname}${location.search}`;
   const isCreator = task.userId === currentUserId;
   const formActionData = fetcher.data;
-  const [isDetailsExpanded, setIsDetailsExpanded] = React.useState(true);
-  const [checklist, setChecklist] = React.useState(task.checklist);
-  const [newChecklistText, setNewChecklistText] = React.useState('');
-  const [statusDraft, setStatusDraft] = React.useState(task.status);
-  const [priorityDraft, setPriorityDraft] = React.useState(task.priority);
-  const [dueDateDraft, setDueDateDraft] = React.useState(
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
+  const [checklist, setChecklist] = useState(task.checklist);
+  const [newChecklistText, setNewChecklistText] = useState('');
+  const [statusDraft, setStatusDraft] = useState(task.status);
+  const [priorityDraft, setPriorityDraft] = useState(task.priority);
+  const [dueDateDraft, setDueDateDraft] = useState(
     task.dueDate ? task.dueDate.toISOString().slice(0, 10) : '',
   );
-  const [labelsDraft, setLabelsDraft] = React.useState(task.labels.join(', '));
-  const [assigneeDraft, setAssigneeDraft] = React.useState(task.assigneeId ?? '');
+  const [labelsDraft, setLabelsDraft] = useState(task.labels.join(', '));
+  const [assigneeDraft, setAssigneeDraft] = useState(task.assigneeId ?? '');
 
-  React.useEffect(() => {
+  useEffect(() => {
     setChecklist(task.checklist);
     setNewChecklistText('');
     setStatusDraft(task.status);

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { Form } from 'react-router';
 import type { Flag } from './types';
 import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
@@ -8,7 +8,7 @@ const ENVIRONMENTS = ['development', 'production'] as const;
 type Env = (typeof ENVIRONMENTS)[number];
 
 export function FlagsList({ flags }: { flags: Flag[] }) {
-  const [deleteTarget, setDeleteTarget] = React.useState<{
+  const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     label: string;
   } | null>(null);

@@ -1,25 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useSearchParams, useSubmit } from 'react-router';
+import { useEffect, useMemo } from 'react';
 import type { TaskActionData } from './types';
-import { CreateForm } from './components/page/CreateForm';
-import { List } from './components/page/List';
-import { Notifications } from './components/page/Notifications';
-import { ViewControls } from './components/page/ViewControls';
-import { EmptyState } from './components/page/EmptyState';
+import { CreateTask } from './components/create/CreateTask';
+import { List } from './components/list/List';
+import { Filters } from './components/Filters';
+import { EmptyState } from './components/EmptyState';
 import { BoardView } from './components/board/View';
 import { Modal } from './components/detail/Modal';
 import type { Task, TaskActivity, TaskComment } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from './server/task-view-state';
 import type { TaskAssigneeOption } from './types';
 import { toast } from 'sonner';
-import { getTaskActionToastError } from './components/utils/client-errors';
+import { getTaskActionToastError } from './utils/client-errors';
+import { useTasksPageController } from './hooks/useTasksPageController';
+import { buildAssigneeById, buildMentionCandidates, getVisibleTasks } from './utils/task-page-utils';
 
 export function TasksPage({
   currentUserId,
   tasks,
   taskActivities,
   taskComments,
-  notifications,
   assignableUsers,
   viewState,
   actionData,
@@ -29,129 +28,39 @@ export function TasksPage({
   tasks: Task[];
   taskActivities: TaskActivity[];
   taskComments: TaskComment[];
-  notifications: Array<{
-    id: string;
-    taskId: string;
-    taskTitle: string;
-    actorEmail: string;
-    message: string;
-    createdAt: Date;
-  }>;
   assignableUsers: TaskAssigneeOption[];
   viewState: TasksViewState;
   actionData: TaskActionData;
   isSubmitting: boolean;
 }) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const location = useLocation();
-  const submit = useSubmit();
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
-
-  // Setters de estado de vista (URL)
-  function setView(view: 'list' | 'board') {
-    const next = new URLSearchParams(searchParams);
-    next.set('view', view);
-    setSearchParams(next);
-  }
-
-  function setOrder(order: 'manual' | 'priority') {
-    const next = new URLSearchParams(searchParams);
-    next.set('order', order);
-    setSearchParams(next);
-  }
-
-  function setScope(scope: 'all' | 'assigned' | 'created') {
-    const next = new URLSearchParams(searchParams);
-    next.set('scope', scope);
-    setSearchParams(next);
-  }
-
-  function resetViewConfig() {
-    const next = new URLSearchParams(searchParams);
-    next.set('view', 'board');
-    next.set('order', 'manual');
-    next.set('scope', 'all');
-    setSearchParams(next);
-  }
-
-  // Handlers de interacción
-  function handleDetailOpenChange(open: boolean) {
-    setIsDetailOpen(open);
-  }
-
-  function handleOpenTask(taskId: string) {
-    setSelectedTaskId(taskId);
-    setIsDetailOpen(true);
-  }
-
-  function handleEditTask(taskId: string) {
-    handleOpenTask(taskId);
-  }
-
-  function handleDeleteTask(taskId: string) {
-    submit(
-      {
-        intent: 'delete',
-        id: taskId,
-        redirectTo: `${location.pathname}${location.search}`,
-      },
-      {
-        method: 'post',
-      },
-    );
-  }
-
-  function handleMoveTaskStatus(
-    taskId: string,
-    toStatus: 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live' | 'done' | 'discarded',
-    orderIndex?: number,
-  ) {
-    submit(
-      {
-        intent: 'update',
-        id: taskId,
-        status: toStatus,
-        ...(orderIndex !== undefined ? { orderIndex: String(orderIndex) } : {}),
-        redirectTo: `${location.pathname}${location.search}`,
-      },
-      {
-        method: 'post',
-        action: '/tasks',
-      },
-    );
-  }
-
-  function handleReorderColumn(
-    status: 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live',
-    orderedTaskIds: string[],
-  ) {
-    submit(
-      {
-        intent: 'reorder-column',
-        status,
-        orderedTaskIds: JSON.stringify(orderedTaskIds),
-        redirectTo: `${location.pathname}${location.search}`,
-      },
-      {
-        method: 'post',
-        action: '/tasks',
-      },
-    );
-  }
+  const {
+    setView,
+    setOrder,
+    setScope,
+    resetViewConfig,
+    handleDetailOpenChange,
+    handleOpenTask,
+    handleEditTask,
+    handleDeleteTask,
+    handleMoveTaskStatus,
+    handleReorderColumn,
+    selectedTaskId,
+    isDetailOpen,
+  } = useTasksPageController();
 
   const hasNonDefaultViewState =
     viewState.view !== 'board' || viewState.order !== 'manual' || viewState.scope !== 'all';
 
-  const visibleTasks = useMemo(() => {
-    if (viewState.scope === 'assigned') {
-      return tasks.filter((task) => task.assigneeId === currentUserId);
-    }
-    if (viewState.scope === 'created') {
-      return tasks.filter((task) => task.userId === currentUserId);
-    }
-    return tasks;
-  }, [tasks, currentUserId, viewState.scope]);
+  const visibleTasks = useMemo(
+    () =>
+      getVisibleTasks({
+        tasks,
+        currentUserId,
+        scope: viewState.scope,
+        order: viewState.order,
+      }),
+    [tasks, currentUserId, viewState.scope, viewState.order],
+  );
 
   const selectedTask = useMemo(
     () => tasks.find((task) => task.id === selectedTaskId) ?? null,
@@ -168,15 +77,8 @@ export function TasksPage({
     () => (selectedTaskId ? taskComments.filter((comment) => comment.taskId === selectedTaskId) : []),
     [taskComments, selectedTaskId],
   );
-  const assigneeById = useMemo(
-    () =>
-      Object.fromEntries(assignableUsers.map((user) => [user.id, user.email])) as Record<string, string>,
-    [assignableUsers],
-  );
-  const mentionCandidates = useMemo(
-    () => [...new Set(assignableUsers.map((user) => user.email.toLowerCase()))],
-    [assignableUsers],
-  );
+  const assigneeById = useMemo(() => buildAssigneeById(assignableUsers), [assignableUsers]);
+  const mentionCandidates = useMemo(() => buildMentionCandidates(assignableUsers), [assignableUsers]);
 
   useEffect(() => {
     const message = getTaskActionToastError(actionData);
@@ -194,7 +96,7 @@ export function TasksPage({
           <span className="font-medium">{viewState.scope}</span>
         </p>
 
-        <ViewControls
+        <Filters
           viewState={viewState}
           onSetView={setView}
           onSetOrder={setOrder}
@@ -202,13 +104,11 @@ export function TasksPage({
         />
       </header>
 
-      <CreateForm
+      <CreateTask
         actionData={actionData}
         isSubmitting={isSubmitting}
         mentionCandidates={mentionCandidates}
       />
-
-      <Notifications items={notifications} />
 
       {visibleTasks.length === 0 ? (
         <EmptyState
@@ -216,7 +116,12 @@ export function TasksPage({
           onResetViewConfig={resetViewConfig}
         />
       ) : viewState.view === 'list' ? (
-        <List tasks={visibleTasks} assigneeById={assigneeById} />
+        <List
+          tasks={visibleTasks}
+          assigneeById={assigneeById}
+          onOpenTask={handleOpenTask}
+          onDeleteTask={handleDeleteTask}
+        />
       ) : (
         <BoardView
           tasks={visibleTasks}
@@ -233,16 +138,15 @@ export function TasksPage({
       {selectedTask ? (
         <Modal
           task={selectedTask}
-					currentUserId={currentUserId}
+          currentUserId={currentUserId}
           activities={selectedTaskActivities}
           comments={selectedTaskComments}
           assignableUsers={assignableUsers}
           open={isDetailOpen}
-					onDeleteTask={handleDeleteTask}
+          onDeleteTask={handleDeleteTask}
           onOpenChange={handleDetailOpenChange}
         />
       ) : null}
     </main>
   );
 }
-

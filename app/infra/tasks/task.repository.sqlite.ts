@@ -153,19 +153,34 @@ export const sqliteTaskActivityQueryService: TaskActivityQueryService = {
       })
       .from(taskActivities)
       .leftJoin(users, eq(taskActivities.actorUserId, users.id))
-      .where(inArray(taskActivities.taskId, visibleTaskIds))
       .orderBy(desc(taskActivities.createdAt))
       .all();
 
-    return rows.map((row) => ({
-      id: row.id,
-      taskId: row.taskId,
-      actorUserId: row.actorUserId,
-      actorEmail: row.actorEmail ?? null,
-      action: row.action as TaskActivity['action'],
-      metadata: row.metadata ? (JSON.parse(row.metadata) as TaskActivity['metadata']) : null,
-      createdAt: row.createdAt,
-    }));
+    const visibleTaskIdSet = new Set(visibleTaskIds);
+
+    return rows
+      .map((row) => ({
+        id: row.id,
+        taskId: row.taskId,
+        actorUserId: row.actorUserId,
+        actorEmail: row.actorEmail ?? null,
+        action: row.action as TaskActivity['action'],
+        metadata: row.metadata ? (JSON.parse(row.metadata) as TaskActivity['metadata']) : null,
+        createdAt: row.createdAt,
+      }))
+      .filter((activity) => {
+        if (visibleTaskIdSet.has(activity.taskId)) return true;
+
+        if (activity.action === 'updated' && activity.metadata?.kind === 'mention') {
+          return activity.metadata?.targetUserId === userId;
+        }
+
+        if (activity.action === 'assignee-changed') {
+          return activity.metadata?.to === userId;
+        }
+
+        return false;
+      });
   },
 };
 
