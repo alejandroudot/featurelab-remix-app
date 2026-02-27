@@ -1,6 +1,6 @@
 import type { Task } from '~/core/tasks/tasks.types';
 
-type TaskDetailChecklistProps = {
+type ChecklistProps = {
   checklist: Task['checklist'];
   newChecklistText: string;
   onNewChecklistTextChange: (value: string) => void;
@@ -9,14 +9,14 @@ type TaskDetailChecklistProps = {
   onRemoveChecklistItem: (itemId: string) => void;
 };
 
-export function TaskDetailChecklist({
+export function Checklist({
   checklist,
   newChecklistText,
   onNewChecklistTextChange,
   onAddChecklistItem,
   onToggleChecklistItem,
   onRemoveChecklistItem,
-}: TaskDetailChecklistProps) {
+}: ChecklistProps) {
   return (
     <div className="space-y-2">
       <label className="block text-xs font-medium">Checklist / subtareas</label>
@@ -60,4 +60,5 @@ export function TaskDetailChecklist({
     </div>
   );
 }
+
 

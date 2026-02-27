@@ -1,14 +1,14 @@
 import { RichTextViewer } from '~/ui/editors/rich-text/RichTextEditor';
 
-type TaskDetailDescriptionPreviewButtonProps = {
+type PreviewProps = {
   description: string | null | undefined;
   onStartEdit: () => void;
 };
 
-export function TaskDetailDescriptionPreviewButton({
+export function Preview({
   description,
   onStartEdit,
-}: TaskDetailDescriptionPreviewButtonProps) {
+}: PreviewProps) {
   return (
     <button type="button" onClick={onStartEdit} className="w-full text-left hover:bg-accent/40">
       {description ? (
@@ -21,3 +21,4 @@ export function TaskDetailDescriptionPreviewButton({
     </button>
   );
 }
+

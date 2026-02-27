@@ -7,19 +7,19 @@ import {
   shouldCleanupTempImages,
 } from '../utils';
 
-type UseTaskDetailDescriptionEditorInput = {
+type UseDescriptionEditorInput = {
   task: Task;
   closeSignal: number;
   redirectTo: string;
   onSubmitDescriptionUpdate: (description: string) => void;
 };
 
-export function useTaskDetailDescriptionEditor({
+export function useDescriptionEditor({
   task,
   closeSignal,
   redirectTo,
   onSubmitDescriptionUpdate,
-}: UseTaskDetailDescriptionEditorInput) {
+}: UseDescriptionEditorInput) {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [draftDescription, setDraftDescription] = useState(task.description ?? '');
   const [editorImageError, setEditorImageError] = useState<string | null>(null);
@@ -145,3 +145,4 @@ export function useTaskDetailDescriptionEditor({
     startEditingDescription,
   };
 }
+

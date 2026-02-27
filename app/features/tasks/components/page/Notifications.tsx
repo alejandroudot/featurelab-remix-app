@@ -7,11 +7,11 @@ type TaskNotification = {
   createdAt: Date;
 };
 
-type TasksNotificationsProps = {
+type NotificationsProps = {
   items: TaskNotification[];
 };
 
-export function TasksNotifications({ items }: TasksNotificationsProps) {
+export function Notifications({ items }: NotificationsProps) {
   if (items.length === 0) return null;
 
   return (
@@ -30,3 +30,4 @@ export function TasksNotifications({ items }: TasksNotificationsProps) {
     </section>
   );
 }
+

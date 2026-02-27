@@ -1,16 +1,16 @@
 import type { TaskActionData } from '../../types';
 
-type TaskActionErrorsProps = {
+type ActionErrorsProps = {
   actionData: TaskActionData;
   fieldKey?: string;
   className?: string;
 };
 
-export function TaskActionErrors({
+export function ActionErrors({
   actionData,
   fieldKey,
   className = 'text-xs text-red-600',
-}: TaskActionErrorsProps) {
+}: ActionErrorsProps) {
   const fieldError = fieldKey ? actionData?.fieldErrors?.[fieldKey]?.[0] : undefined;
   const formError = actionData?.formError;
 
@@ -23,4 +23,5 @@ export function TaskActionErrors({
     </>
   );
 }
+
 

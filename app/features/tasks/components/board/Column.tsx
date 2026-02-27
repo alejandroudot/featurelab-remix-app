@@ -1,8 +1,8 @@
 import type { Task } from '~/core/tasks/tasks.types';
 import type { BoardColumn, BoardColumnId } from './utils';
-import { TasksBoardCardItem } from './TasksBoardCardItem';
+import { CardItem } from './CardItem';
 
-type TasksBoardColumnProps = {
+type ColumnProps = {
   column: BoardColumn;
   tasks: Task[];
   assigneeById: Record<string, string>;
@@ -14,7 +14,7 @@ type TasksBoardColumnProps = {
   onDeleteTask?: (taskId: string) => void;
 };
 
-export function TasksBoardColumn({
+export function Column({
   column,
   tasks,
   assigneeById,
@@ -24,7 +24,7 @@ export function TasksBoardColumn({
   onOpenTask,
   onEditTask,
   onDeleteTask,
-}: TasksBoardColumnProps) {
+}: ColumnProps) {
   return (
     <article
       className="space-y-2 rounded border p-3"
@@ -42,7 +42,7 @@ export function TasksBoardColumn({
       ) : (
         <ul className="space-y-2">
           {tasks.map((task, index) => (
-            <TasksBoardCardItem
+            <CardItem
               key={task.id}
               task={task}
               columnId={column.id}
@@ -61,3 +61,4 @@ export function TasksBoardColumn({
     </article>
   );
 }
+

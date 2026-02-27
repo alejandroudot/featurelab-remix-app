@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Task, TaskStatus } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from '../../server/task-view-state';
-import { TasksBoardColumn } from './TasksBoardColumn';
+import { Column } from './Column';
 import {
   BOARD_COLUMNS,
   buildBoardState,
@@ -12,7 +12,7 @@ import {
 
 type DraggingState = { taskId: string; fromColumn: BoardColumnId } | null;
 
-type TasksBoardViewProps = {
+type BoardViewProps = {
   tasks: Task[];
   order: TasksViewState['order'];
   assigneeById: Record<string, string>;
@@ -23,7 +23,7 @@ type TasksBoardViewProps = {
   onReorderColumn?: (status: BoardColumnId, orderedTaskIds: string[]) => void;
 };
 
-export function TasksBoardView({
+export function BoardView({
   tasks,
   order,
   assigneeById,
@@ -32,7 +32,7 @@ export function TasksBoardView({
   onDeleteTask,
   onMoveTaskStatus,
   onReorderColumn,
-}: TasksBoardViewProps) {
+}: BoardViewProps) {
   const tasksByColumn = useMemo(() => buildBoardState(tasks, order), [tasks, order]);
 
   // Base derivada desde server: columnas ya ordenadas segun modo actual.
@@ -91,7 +91,7 @@ export function TasksBoardView({
           const columnTasks = boardState[column.id];
 
           return (
-            <TasksBoardColumn
+            <Column
               key={column.id}
               column={column}
               tasks={columnTasks}
@@ -118,3 +118,4 @@ export function TasksBoardView({
     </section>
   );
 }
+

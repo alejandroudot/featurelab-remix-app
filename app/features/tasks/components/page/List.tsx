@@ -2,7 +2,7 @@ import { Form } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
 import { formatDateUTC, isTaskOverdue } from '../utils/task-due-date';
 
-export function TasksList({ tasks, assigneeById }: { tasks: Task[]; assigneeById: Record<string, string> }) {
+export function List({ tasks, assigneeById }: { tasks: Task[]; assigneeById: Record<string, string> }) {
   return (
     <section className="space-y-2">
       <h2 className="text-lg font-semibold">Listado</h2>
@@ -87,3 +87,4 @@ export function TasksList({ tasks, assigneeById }: { tasks: Task[]; assigneeById
     </section>
   );
 }
+

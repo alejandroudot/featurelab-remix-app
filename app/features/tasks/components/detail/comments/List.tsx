@@ -2,12 +2,12 @@ import type { useFetcher } from 'react-router';
 import type { TaskComment } from '~/core/tasks/tasks.types';
 import { RichTextEditor, RichTextViewer } from '~/ui/editors/rich-text/RichTextEditor';
 import type { TaskActionData } from '../../../types';
-import { TaskActionErrors } from '../../common/TaskActionErrors';
+import { ActionErrors } from '../../common/ActionErrors';
 import { getMeaningfulTextFromHtml } from './utils';
 
 type TaskCommentFetcher = ReturnType<typeof useFetcher<TaskActionData>>;
 
-type TaskDetailCommentsListProps = {
+type CommentsListProps = {
   comments: TaskComment[];
   currentUserId: string;
   editingCommentId: string | null;
@@ -32,7 +32,7 @@ type UpdateSubmitEvent = {
   preventDefault: () => void;
 };
 
-function TaskDetailCommentEditActions({ isSubmitting, onCancel }: EditActionsProps) {
+function EditActions({ isSubmitting, onCancel }: EditActionsProps) {
   return (
     <div className="flex flex-wrap gap-2">
       <button
@@ -53,7 +53,7 @@ function TaskDetailCommentEditActions({ isSubmitting, onCancel }: EditActionsPro
   );
 }
 
-export function TaskDetailCommentsList({
+export function CommentsList({
   comments,
   currentUserId,
   editingCommentId,
@@ -67,7 +67,7 @@ export function TaskDetailCommentsList({
   onEditingBodyChange,
   onMarkUpdateSubmit,
   onSkipUpdateSubmit,
-}: TaskDetailCommentsListProps) {
+}: CommentsListProps) {
   function handleCancelEdit() {
     onEditingCommentIdChange(null);
     onEditingBodyChange('');
@@ -123,8 +123,8 @@ export function TaskDetailCommentsList({
                   mentionCandidates={mentionCandidates}
                   enableImageUpload={false}
                 />
-                <TaskActionErrors actionData={updateFormActionData} fieldKey="commentBody" />
-                <TaskDetailCommentEditActions
+                <ActionErrors actionData={updateFormActionData} fieldKey="commentBody" />
+                <EditActions
                   isSubmitting={updateFetcher.state === 'submitting'}
                   onCancel={handleCancelEdit}
                 />
@@ -166,3 +166,4 @@ export function TaskDetailCommentsList({
     </ul>
   );
 }
+

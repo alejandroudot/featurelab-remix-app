@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from '~/ui/primitives/dialog';
 
-type TaskDetailHistoryProps = {
+type HistoryProps = {
   activities: TaskActivity[];
 };
 
@@ -51,7 +51,7 @@ function formatActivity(item: TaskActivity) {
   return formatActivityAction(item.action);
 }
 
-export function TaskDetailHistory({ activities }: TaskDetailHistoryProps) {
+export function History({ activities }: HistoryProps) {
   const [isHistoryOpen, setIsHistoryOpen] = React.useState(false);
   const latest = activities[0];
 
@@ -76,25 +76,27 @@ export function TaskDetailHistory({ activities }: TaskDetailHistoryProps) {
           </button>
 
           <Dialog open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
-            <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-2xl">
-              <DialogHeader>
+            <DialogContent className="w-[min(500px,calc(100vw-2rem))] overflow-hidden p-0">
+              <DialogHeader className="border-b px-6 py-4">
                 <DialogTitle>Historial de actualizaciones</DialogTitle>
                 <DialogDescription>
                   Eventos recientes de la task, ordenados del mas nuevo al mas viejo.
                 </DialogDescription>
               </DialogHeader>
-              <ul className="space-y-2">
-                {activities.map((item) => (
-                  <li key={item.id} className="rounded border p-2 text-sm">
-                    <div className="font-medium">
-                      {item.actorEmail ?? 'Usuario'}: {formatActivity(item)}
-                    </div>
-                    <div className="text-xs opacity-70">
-                      {new Date(item.createdAt).toISOString().replace('T', ' ').slice(0, 16)}
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <div className="max-h-[62vh] overflow-y-auto px-6 py-4 [scrollbar-gutter:stable]">
+                <ul className="space-y-2">
+                  {activities.map((item) => (
+                    <li key={item.id} className="rounded border p-2 text-sm">
+                      <div className="font-medium">
+                        {item.actorEmail ?? 'Usuario'}: {formatActivity(item)}
+                      </div>
+                      <div className="text-xs opacity-70">
+                        {new Date(item.createdAt).toISOString().replace('T', ' ').slice(0, 16)}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </DialogContent>
           </Dialog>
         </>
@@ -102,3 +104,4 @@ export function TaskDetailHistory({ activities }: TaskDetailHistoryProps) {
     </div>
   );
 }
+

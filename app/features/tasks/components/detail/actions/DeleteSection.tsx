@@ -1,17 +1,17 @@
 import React from 'react';
 import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
 
-type TaskDetailDeleteSectionProps = {
+type DeleteSectionProps = {
   taskId: string;
   taskTitle: string;
   onDeleteTask?: (taskId: string) => void;
 };
 
-export function TaskDetailDeleteSection({
+export function DeleteSection({
   taskId,
   taskTitle,
   onDeleteTask,
-}: TaskDetailDeleteSectionProps) {
+}: DeleteSectionProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
   return (
@@ -39,4 +39,5 @@ export function TaskDetailDeleteSection({
     </>
   );
 }
+
 

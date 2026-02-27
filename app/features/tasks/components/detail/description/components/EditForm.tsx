@@ -1,11 +1,11 @@
 import type { useFetcher } from 'react-router';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
-import type { TaskActionData } from '../../../types';
-import { TaskActionErrors } from '../../common/TaskActionErrors';
+import type { TaskActionData } from '../../../../types';
+import { FormFooter } from './FormFooter';
 
 type TaskContentFetcher = ReturnType<typeof useFetcher<TaskActionData>>;
 
-type TaskDetailDescriptionEditorFormProps = {
+type EditFormProps = {
   fetcher: TaskContentFetcher;
   taskId: string;
   redirectTo: string;
@@ -23,7 +23,7 @@ type TaskDetailDescriptionEditorFormProps = {
   onCancel: () => void;
 };
 
-export function TaskDetailDescriptionEditorForm({
+export function EditForm({
   fetcher,
   taskId,
   redirectTo,
@@ -39,7 +39,7 @@ export function TaskDetailDescriptionEditorForm({
   onImageUpload,
   onSubmit,
   onCancel,
-}: TaskDetailDescriptionEditorFormProps) {
+}: EditFormProps) {
   return (
     <fetcher.Form method="post" className="space-y-2" onSubmit={onSubmit}>
       <input type="hidden" name="intent" value="update" />
@@ -55,34 +55,15 @@ export function TaskDetailDescriptionEditorForm({
         onImageUploadError={onEditorImageErrorChange}
         onImageUpload={onImageUpload}
       />
-      {hasPendingEditorUploads ? (
-        <p className="text-xs text-amber-700">
-          Espera a que terminen de subir las imagenes antes de guardar.
-        </p>
-      ) : null}
-      {!hasPendingEditorUploads && hasInlineBase64Images ? (
-        <p className="text-xs text-amber-700">
-          Hay imagenes sin subir. Vuelve a cargarlas antes de guardar.
-        </p>
-      ) : null}
-      {editorImageError ? <p className="text-xs text-red-600">{editorImageError}</p> : null}
-      <TaskActionErrors actionData={updateActionData} fieldKey="description" />
-      <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={fetcher.state === 'submitting' || hasPendingEditorUploads || hasInlineBase64Images}
-          className="rounded bg-slate-900 px-2 py-1 text-xs font-medium text-white disabled:opacity-60"
-        >
-          {hasPendingEditorUploads ? 'Subiendo imagen...' : 'Guardar'}
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded border px-2 py-1 text-xs font-medium"
-        >
-          Cancelar
-        </button>
-      </div>
+      <FormFooter
+        hasPendingEditorUploads={hasPendingEditorUploads}
+        hasInlineBase64Images={hasInlineBase64Images}
+        editorImageError={editorImageError}
+        updateActionData={updateActionData}
+        isSubmitting={fetcher.state === 'submitting'}
+        onCancel={onCancel}
+      />
     </fetcher.Form>
   );
 }
+

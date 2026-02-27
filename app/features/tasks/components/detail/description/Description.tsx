@@ -1,21 +1,21 @@
 import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
 import type { TaskActionData } from '../../../types';
-import { TaskDetailDescriptionEditorForm } from './TaskDetailDescriptionEditorForm';
-import { TaskDetailDescriptionPreviewButton } from './TaskDetailDescriptionPreviewButton';
-import { useTaskDetailDescriptionEditor } from './hooks/useTaskDetailDescriptionEditor';
+import { EditForm } from './components/EditForm';
+import { Preview } from './components/Preview';
+import { useDescriptionEditor } from './hooks/useDescriptionEditor';
 
-type TaskDetailDescriptionProps = {
+type DescriptionProps = {
   task: Task;
   mentionCandidates: string[];
   closeSignal?: number;
 };
 
-export function TaskDetailDescription({
+export function Description({
   task,
   mentionCandidates,
   closeSignal = 0,
-}: TaskDetailDescriptionProps) {
+}: DescriptionProps) {
   const fetcher = useFetcher<TaskActionData>();
   const location = useLocation();
   const redirectTo = `${location.pathname}${location.search}`;
@@ -47,7 +47,7 @@ export function TaskDetailDescription({
     handleCancelEdit,
     handleImageUpload,
     startEditingDescription,
-  } = useTaskDetailDescriptionEditor({
+  } = useDescriptionEditor({
     task,
     closeSignal,
     redirectTo,
@@ -58,7 +58,7 @@ export function TaskDetailDescription({
     <div className="rounded border p-3">
       <h3 className="mb-2 text-sm font-semibold">Descripcion</h3>
       {isEditingDescription ? (
-        <TaskDetailDescriptionEditorForm
+        <EditForm
           fetcher={fetcher}
           taskId={task.id}
           redirectTo={redirectTo}
@@ -76,7 +76,7 @@ export function TaskDetailDescription({
           onCancel={handleCancelEdit}
         />
       ) : (
-        <TaskDetailDescriptionPreviewButton
+        <Preview
           description={task.description}
           onStartEdit={startEditingDescription}
         />
@@ -84,3 +84,4 @@ export function TaskDetailDescription({
     </div>
   );
 }
+

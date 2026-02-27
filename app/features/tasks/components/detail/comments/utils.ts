@@ -9,3 +9,4 @@ export function getMeaningfulTextFromHtml(html: string): string {
     // 4) Elimina espacios al inicio y al final.
     .trim();
 }
+

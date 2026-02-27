@@ -1,9 +1,9 @@
-type TasksEmptyStateProps = {
+type EmptyStateProps = {
   hasNonDefaultViewState: boolean;
   onResetViewConfig: () => void;
 };
 
-export function TasksEmptyState({ hasNonDefaultViewState, onResetViewConfig }: TasksEmptyStateProps) {
+export function EmptyState({ hasNonDefaultViewState, onResetViewConfig }: EmptyStateProps) {
   return (
     <section className="space-y-2 rounded border border-dashed p-4">
       <h2 className="text-lg font-semibold">Aun no hay tareas</h2>
@@ -25,3 +25,4 @@ export function TasksEmptyState({ hasNonDefaultViewState, onResetViewConfig }: T
     </section>
   );
 }
+

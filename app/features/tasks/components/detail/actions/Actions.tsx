@@ -2,28 +2,29 @@ import React from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/tasks/tasks.types';
 import type { TaskActionData, TaskAssigneeOption } from '../../../types';
-import { TaskDetailChecklist } from './TaskDetailChecklist';
-import { TaskDetailQuickFields } from './TaskDetailQuickFields';
-import { TaskDetailDeleteSection } from './TaskDetailDeleteSection';
+import { Checklist } from './Checklist';
+import { QuickFields } from './QuickFields';
+import { DeleteSection } from './DeleteSection';
 
-type TaskDetailActionsProps = {
+type ActionsProps = {
   task: Task;
   currentUserId: string;
   assignableUsers: TaskAssigneeOption[];
   onDeleteTask?: (taskId: string) => void;
 };
 
-export function TaskDetailActions({
+export function Actions({
   task,
   currentUserId,
   assignableUsers,
   onDeleteTask,
-}: TaskDetailActionsProps) {
+}: ActionsProps) {
 	const fetcher = useFetcher<TaskActionData>();
   const location = useLocation();
   const redirectTo = `${location.pathname}${location.search}`;
   const isCreator = task.userId === currentUserId;
   const formActionData = fetcher.data;
+  const [isDetailsExpanded, setIsDetailsExpanded] = React.useState(true);
   const [checklist, setChecklist] = React.useState(task.checklist);
   const [newChecklistText, setNewChecklistText] = React.useState('');
   const [statusDraft, setStatusDraft] = React.useState(task.status);
@@ -84,11 +85,18 @@ export function TaskDetailActions({
   }
 
   return (
-    <aside className="flex flex-col justify-between space-y-3 overflow-y-auto rounded border p-3">
-      <div className="flex flex-col">
-        <h3 className="text-sm font-semibold">Acciones rapidas</h3>
-        <div className="space-y-3 pt-3">
-          <TaskDetailQuickFields
+    <aside className="self-start space-y-3 rounded border p-3">
+      <button
+        type="button"
+        onClick={() => setIsDetailsExpanded((prev) => !prev)}
+        className="flex w-full items-center justify-between rounded border px-2 py-1 text-left text-sm font-semibold hover:bg-accent/40"
+      >
+        <span>Details</span>
+        <span aria-hidden>{isDetailsExpanded ? '▾' : '▸'}</span>
+      </button>
+      {isDetailsExpanded ? (
+        <div className="space-y-3">
+          <QuickFields
             task={task}
             isCreator={isCreator}
             assignableUsers={assignableUsers}
@@ -105,7 +113,7 @@ export function TaskDetailActions({
             onSubmitPartialUpdate={submitPartialUpdate}
           />
 
-          <TaskDetailChecklist
+          <Checklist
             checklist={checklist}
             newChecklistText={newChecklistText}
             onNewChecklistTextChange={setNewChecklistText}
@@ -119,13 +127,14 @@ export function TaskDetailActions({
               {formActionData.formError}
             </div>
           ) : null}
-        </div>
-      </div>
 
-      {isCreator ? (
-        <TaskDetailDeleteSection taskId={task.id} taskTitle={task.title} onDeleteTask={onDeleteTask} />
+          {isCreator ? (
+            <DeleteSection taskId={task.id} taskTitle={task.title} onDeleteTask={onDeleteTask} />
+          ) : null}
+        </div>
       ) : null}
     </aside>
   );
 }
+
 

@@ -1,11 +1,11 @@
 import type { useFetcher } from 'react-router';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
 import type { TaskActionData } from '../../../types';
-import { TaskActionErrors } from '../../common/TaskActionErrors';
+import { ActionErrors } from '../../common/ActionErrors';
 
 type TaskCommentFetcher = ReturnType<typeof useFetcher<TaskActionData>>;
 
-type TaskDetailCommentsCreateFormProps = {
+type CreateFormProps = {
   createFetcher: TaskCommentFetcher;
   taskId: string;
   redirectTo: string;
@@ -21,10 +21,10 @@ type CreateFooterProps = {
   isSubmitting: boolean;
 };
 
-function TaskDetailCommentCreateFooter({ createFormActionData, isSubmitting }: CreateFooterProps) {
+function CreateFooter({ createFormActionData, isSubmitting }: CreateFooterProps) {
   return (
     <>
-      <TaskActionErrors actionData={createFormActionData} fieldKey="commentBody" />
+      <ActionErrors actionData={createFormActionData} fieldKey="commentBody" />
       <button
         type="submit"
         disabled={isSubmitting}
@@ -36,7 +36,7 @@ function TaskDetailCommentCreateFooter({ createFormActionData, isSubmitting }: C
   );
 }
 
-export function TaskDetailCommentsCreateForm({
+export function CreateForm({
   createFetcher,
   taskId,
   redirectTo,
@@ -45,7 +45,7 @@ export function TaskDetailCommentsCreateForm({
   createFormActionData,
   onCreateBodyChange,
   onMarkCreateSubmit,
-}: TaskDetailCommentsCreateFormProps) {
+}: CreateFormProps) {
   return (
     <createFetcher.Form method="post" className="mb-3 space-y-2" onSubmit={onMarkCreateSubmit}>
       <input type="hidden" name="intent" value="comment-create" />
@@ -59,10 +59,11 @@ export function TaskDetailCommentsCreateForm({
         enableImageUpload={false}
         placeholder="Escribe un comentario..."
       />
-      <TaskDetailCommentCreateFooter
+      <CreateFooter
         createFormActionData={createFormActionData}
         isSubmitting={createFetcher.state === 'submitting'}
       />
     </createFetcher.Form>
   );
 }
+

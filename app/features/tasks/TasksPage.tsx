@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useSearchParams, useSubmit } from 'react-router';
 import type { TaskActionData } from './types';
-import { CreateTaskForm } from './components/page/CreateTaskForm';
-import { TasksList } from './components/page/TasksList';
-import { TasksNotifications } from './components/page/TasksNotifications';
-import { TasksViewControls } from './components/page/TasksViewControls';
-import { TasksEmptyState } from './components/page/TasksEmptyState';
-import { TasksBoardView } from './components/board/TasksBoardView';
-import { TaskDetailModal } from './components/detail/TaskDetailModal';
+import { CreateForm } from './components/page/CreateForm';
+import { List } from './components/page/List';
+import { Notifications } from './components/page/Notifications';
+import { ViewControls } from './components/page/ViewControls';
+import { EmptyState } from './components/page/EmptyState';
+import { BoardView } from './components/board/View';
+import { Modal } from './components/detail/Modal';
 import type { Task, TaskActivity, TaskComment } from '~/core/tasks/tasks.types';
 import type { TasksViewState } from './server/task-view-state';
 import type { TaskAssigneeOption } from './types';
@@ -194,7 +194,7 @@ export function TasksPage({
           <span className="font-medium">{viewState.scope}</span>
         </p>
 
-        <TasksViewControls
+        <ViewControls
           viewState={viewState}
           onSetView={setView}
           onSetOrder={setOrder}
@@ -202,23 +202,23 @@ export function TasksPage({
         />
       </header>
 
-      <CreateTaskForm
+      <CreateForm
         actionData={actionData}
         isSubmitting={isSubmitting}
         mentionCandidates={mentionCandidates}
       />
 
-      <TasksNotifications items={notifications} />
+      <Notifications items={notifications} />
 
       {visibleTasks.length === 0 ? (
-        <TasksEmptyState
+        <EmptyState
           hasNonDefaultViewState={hasNonDefaultViewState}
           onResetViewConfig={resetViewConfig}
         />
       ) : viewState.view === 'list' ? (
-        <TasksList tasks={visibleTasks} assigneeById={assigneeById} />
+        <List tasks={visibleTasks} assigneeById={assigneeById} />
       ) : (
-        <TasksBoardView
+        <BoardView
           tasks={visibleTasks}
           order={viewState.order}
           assigneeById={assigneeById}
@@ -231,7 +231,7 @@ export function TasksPage({
       )}
 
       {selectedTask ? (
-        <TaskDetailModal
+        <Modal
           task={selectedTask}
 					currentUserId={currentUserId}
           activities={selectedTaskActivities}
@@ -245,3 +245,4 @@ export function TasksPage({
     </main>
   );
 }
+

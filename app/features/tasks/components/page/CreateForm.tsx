@@ -34,7 +34,7 @@ const QUICK_TEMPLATES = [
   },
 ] as const;
 
-export function CreateTaskForm({
+export function CreateForm({
   actionData,
   isSubmitting,
   mentionCandidates,
@@ -222,3 +222,4 @@ export function CreateTaskForm({
     </section>
   );
 }
+

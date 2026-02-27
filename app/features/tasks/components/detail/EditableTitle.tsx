@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { TaskActionData } from '../../types';
 
-type TaskDetailEditableTitleProps = {
+type EditableTitleProps = {
   taskId: string;
   title: string;
   closeSignal?: number;
 };
 
-export function TaskDetailEditableTitle({ taskId, title, closeSignal = 0 }: TaskDetailEditableTitleProps) {
+export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleProps) {
   const fetcher = useFetcher<TaskActionData>();
   const location = useLocation();
   const [isEditing, setIsEditing] = useState(false);
@@ -104,3 +104,4 @@ export function TaskDetailEditableTitle({ taskId, title, closeSignal = 0 }: Task
     </fetcher.Form>
   );
 }
+

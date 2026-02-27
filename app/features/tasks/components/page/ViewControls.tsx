@@ -1,19 +1,19 @@
 import type { TasksViewState } from '../../server/task-view-state';
 import { ToggleGroup, ToggleGroupItem } from '~/ui/primitives/toggle-group';
 
-type TasksViewControlsProps = {
+type ViewControlsProps = {
   viewState: TasksViewState;
   onSetView: (view: 'list' | 'board') => void;
   onSetOrder: (order: 'manual' | 'priority') => void;
   onSetScope: (scope: 'all' | 'assigned' | 'created') => void;
 };
 
-export function TasksViewControls({
+export function ViewControls({
   viewState,
   onSetView,
   onSetOrder,
   onSetScope,
-}: TasksViewControlsProps) {
+}: ViewControlsProps) {
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-2">
@@ -86,3 +86,4 @@ export function TasksViewControls({
     </div>
   );
 }
+

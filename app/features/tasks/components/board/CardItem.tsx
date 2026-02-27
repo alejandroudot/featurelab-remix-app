@@ -2,7 +2,7 @@ import type { Task } from '~/core/tasks/tasks.types';
 import type { BoardColumnId } from './utils';
 import { TaskCard } from '../card/TaskCard';
 
-type TasksBoardCardItemProps = {
+type CardItemProps = {
   task: Task;
   columnId: BoardColumnId;
   assigneeLabel?: string | null;
@@ -13,7 +13,7 @@ type TasksBoardCardItemProps = {
   onDeleteTask?: (taskId: string) => void;
 };
 
-export function TasksBoardCardItem({
+export function CardItem({
   task,
   columnId,
   assigneeLabel,
@@ -22,7 +22,7 @@ export function TasksBoardCardItem({
   onOpenTask,
   onEditTask,
   onDeleteTask,
-}: TasksBoardCardItemProps) {
+}: CardItemProps) {
   return (
     <li
       draggable
@@ -53,3 +53,4 @@ export function TasksBoardCardItem({
     </li>
   );
 }
+

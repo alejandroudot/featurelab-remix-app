@@ -7,13 +7,13 @@ import {
   DialogDescription,
   DialogHeader,
 } from '~/ui/primitives/dialog';
-import { TaskDetailActions } from './task-detail-actions/TaskDetailActions';
-import { TaskDetailDescription } from './task-detail-description/TaskDetailDescription';
-import { TaskDetailComments } from './task-detail-comments/TaskDetailComments';
-import { TaskDetailHistory } from './TaskDetailHistory';
-import { TaskDetailEditableTitle } from './TaskDetailEditableTitle';
+import { Actions } from './actions/Actions';
+import { Description } from './description/Description';
+import { Comments } from './comments/Comments';
+import { History } from './History';
+import { EditableTitle } from './EditableTitle';
 
-type TaskDetailModalProps = {
+type ModalProps = {
   task: Task | null;
   currentUserId: string;
   activities: TaskActivity[];
@@ -24,7 +24,7 @@ type TaskDetailModalProps = {
   onOpenChange: (open: boolean) => void;
 };
 
-export function TaskDetailModal({
+export function Modal({
   task,
   currentUserId,
   activities,
@@ -33,7 +33,7 @@ export function TaskDetailModal({
   open,
   onDeleteTask,
   onOpenChange,
-}: TaskDetailModalProps) {
+}: ModalProps) {
   const [closeSignal, setCloseSignal] = useState(0);
   const mentionCandidates = useMemo(
     () => [...new Set(assignableUsers.map((user) => user.email.toLowerCase()))],
@@ -53,38 +53,40 @@ export function TaskDetailModal({
 
   return (
     <Dialog open={open} onOpenChange={handleModalOpenChange}>
-      <DialogContent className="h-[80vh] w-full max-w-5xl p-0 sm:max-w-5xl">
+      <DialogContent className="h-[80vh] w-full max-w-5xl overflow-hidden p-0 sm:max-w-5xl">
         {task ? (
           <>
             <DialogHeader className="border-b p-4">
-              <TaskDetailEditableTitle taskId={task.id} title={task.title} closeSignal={closeSignal} />
+              <EditableTitle taskId={task.id} title={task.title} closeSignal={closeSignal} />
               <DialogDescription>
                 Detalle de task estilo Jira: contenido principal + panel lateral.
               </DialogDescription>
             </DialogHeader>
             <div className="grid h-[calc(80vh-96px)] gap-4 p-4 lg:grid-cols-[2fr_1fr]">
-              <section className="space-y-4 overflow-y-auto pr-1">
-                <TaskDetailDescription
+              <section className="min-h-0 space-y-4 overflow-y-auto pr-2 [scrollbar-gutter:stable]">
+                <Description
                   task={task}
                   mentionCandidates={mentionCandidates}
                   closeSignal={closeSignal}
                 />
-                <TaskDetailComments
+                <Comments
                   taskId={task.id}
                   comments={comments}
                   currentUserId={currentUserId}
                   mentionCandidates={mentionCandidates}
                   closeSignal={closeSignal}
                 />
-                <TaskDetailHistory activities={activities} />
+                <History activities={activities} />
               </section>
 
-              <TaskDetailActions
-                task={task}
-                currentUserId={currentUserId}
-                assignableUsers={assignableUsers}
-                onDeleteTask={onDeleteTask}
-              />
+              <div className="min-h-0 overflow-y-auto pr-2 [scrollbar-gutter:stable]">
+                <Actions
+                  task={task}
+                  currentUserId={currentUserId}
+                  assignableUsers={assignableUsers}
+                  onDeleteTask={onDeleteTask}
+                />
+              </div>
             </div>
           </>
         ) : null}
@@ -92,3 +94,4 @@ export function TaskDetailModal({
     </Dialog>
   );
 }
+

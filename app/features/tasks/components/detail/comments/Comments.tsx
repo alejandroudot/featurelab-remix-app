@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { TaskComment } from '~/core/tasks/tasks.types';
 import type { TaskActionData } from '../../../types';
-import { TaskDetailCommentsCreateForm } from './TaskDetailCommentsCreateForm';
-import { TaskDetailCommentsList } from './TaskDetailCommentsList';
+import { CreateForm } from './CreateForm';
+import { CommentsList } from './List';
 import { getMeaningfulTextFromHtml } from './utils';
 
-type TaskDetailCommentsProps = {
+type CommentsProps = {
   taskId: string;
   comments: TaskComment[];
   currentUserId: string;
@@ -14,13 +14,13 @@ type TaskDetailCommentsProps = {
   closeSignal?: number;
 };
 
-export function TaskDetailComments({
+export function Comments({
   taskId,
   comments,
   currentUserId,
   mentionCandidates,
   closeSignal = 0,
-}: TaskDetailCommentsProps) {
+}: CommentsProps) {
   const createFetcher = useFetcher<TaskActionData>();
   const updateFetcher = useFetcher<TaskActionData>();
   const deleteFetcher = useFetcher<TaskActionData>();
@@ -137,7 +137,7 @@ export function TaskDetailComments({
       </div>
 
       {isCreateOpen ? (
-        <TaskDetailCommentsCreateForm
+        <CreateForm
           createFetcher={createFetcher}
           taskId={taskId}
           redirectTo={redirectTo}
@@ -149,7 +149,7 @@ export function TaskDetailComments({
         />
       ) : null}
 
-      <TaskDetailCommentsList
+      <CommentsList
         comments={comments}
         currentUserId={currentUserId}
         editingCommentId={editingCommentId}
@@ -171,4 +171,5 @@ export function TaskDetailComments({
     </div>
   );
 }
+
 
