@@ -3,7 +3,7 @@
 
 Plan interno de ejecucion.
 Inicio: lunes 16/02/2026
-Fin: jueves 05/03/2026
+Fin: domingo 08/03/2026
 
 Regla de oro: este plan es una division diaria del `docs/PRODUCT_ROADMAP.md`.
 No se agregan features fuera de roadmap. No se omiten bullets del roadmap.
@@ -152,6 +152,7 @@ Tecnologias del dia: React Router loaders/actions, TypeScript typing, services.
 
 Tecnologias del dia: React Router, TypeScript, Tailwind, flags service.
 Fuente roadmap: [P1.1 inicio (Crear Home)](./PRODUCT_ROADMAP.md#L86), [P1.1 panel actividad](./PRODUCT_ROADMAP.md#L91), [P1.1 quick actions](./PRODUCT_ROADMAP.md#L94).
+Fortalece hoy: lectura de arquitectura en runtime, composicion UI base, traduccion de producto a pantalla.
 
 - [x] Crear Home (`/`) como `Execution Hub`
   - [x] Definir layout de dashboard (resumen, actividad, quick actions)
@@ -171,6 +172,7 @@ Fuente roadmap: [P1.1 inicio (Crear Home)](./PRODUCT_ROADMAP.md#L86), [P1.1 pane
 
 Tecnologias del dia: shadcn/ui (Card, Badge, Button, Separator, Switch, Tooltip), Radix Toast.
 Fuente roadmap: [P1.1 kit visual Hub](./PRODUCT_ROADMAP.md#L98), [P1.1 dark mode](./PRODUCT_ROADMAP.md#L100), [P1.1 feature switches](./PRODUCT_ROADMAP.md#L105).
+Fortalece hoy: sistema visual consistente, feedback UX inmediato, estado global ligero (tema).
 
 - [x] Aplicar kit visual del Hub con `shadcn/ui`
   - [x] `Card`, `Badge`, `Button`, `Separator`
@@ -194,6 +196,7 @@ Fuente roadmap: [P1.1 kit visual Hub](./PRODUCT_ROADMAP.md#L98), [P1.1 dark mode
 
 Tecnologias del dia: flags repository/service, SQLite/Drizzle, environment config.
 Fuente roadmap: [P1.1 bootstrap flags](./PRODUCT_ROADMAP.md#L111), [P1.1 behavior por environment](./PRODUCT_ROADMAP.md#L120).
+Fortalece hoy: modelado de configuracion por entorno, defaults seguros, criterio de rollout.
 
 - [x] Bootstrap de flags iniciales para darle sentido al modulo de flags
   - [x] `execution-hub-enabled`
@@ -214,6 +217,7 @@ Fuente roadmap: [P1.1 bootstrap flags](./PRODUCT_ROADMAP.md#L111), [P1.1 behavio
 
 Tecnologias del dia: UX definition, board behavior rules, Zod (query params minimos), React Router loaders.
 Fuente roadmap: [P1.2 direccion UX](./PRODUCT_ROADMAP.md#L134), [P1.2 comportamiento de orden](./PRODUCT_ROADMAP.md#L138), [P1.2 URL soporte de vista](./PRODUCT_ROADMAP.md#L142).
+Fortalece hoy: decisiones de UX con tradeoffs, contratos de URL/state, validacion defensiva.
 
 - [x] Definir direccion UX para `/tasks`
   - [x] Estilo visual elegido y consistente
@@ -235,6 +239,7 @@ Fuente roadmap: [P1.2 direccion UX](./PRODUCT_ROADMAP.md#L134), [P1.2 comportami
 
 Tecnologias del dia: DnD, shadcn/ui (Tabs/ToggleGroup/Card/Avatar/DropdownMenu), Radix AlertDialog.
 Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
+Fortalece hoy: interacciones complejas en frontend, consistencia visual, flujo de edicion centrado en contexto.
 
 - [x] Vista Board tipo Jira en `/tasks`
   - [x] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
@@ -264,6 +269,7 @@ Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
 
 Tecnologias del dia: DnD + React Router actions/revalidation (sin Query en esta fase).
 Fuente roadmap: [P1.2 board base (DnD/optimistic)](./PRODUCT_ROADMAP.md#L147).
+Fortalece hoy: sincronizacion UI-servidor, persistencia con rollback, criterio de fuente de verdad.
 
 - [x] Vista Board tipo Jira en `/tasks`
   - [x] Drag and drop entre columnas
@@ -275,6 +281,7 @@ Fuente roadmap: [P1.2 board base (DnD/optimistic)](./PRODUCT_ROADMAP.md#L147).
 
 Tecnologias del dia: Drizzle/SQLite, Zod, React forms.
 Fuente roadmap: [P1.3 modelo asignacion](./PRODUCT_ROADMAP.md#L168), [P1.3 flujo asignacion](./PRODUCT_ROADMAP.md#L172).
+Fortalece hoy: modelado de dominio colaborativo, cambios de esquema, formularios con reglas de negocio.
 
 - [x] Modelo de asignacion
   - [x] Agregar `assigneeId` (nullable)
@@ -291,6 +298,7 @@ Fuente roadmap: [P1.3 modelo asignacion](./PRODUCT_ROADMAP.md#L168), [P1.3 flujo
 
 Tecnologias del dia: auth/roles, server actions, filtros por usuario.
 Fuente roadmap: [P1.3 vistas por usuario](./PRODUCT_ROADMAP.md#L176), [P1.3 permisos/reglas](./PRODUCT_ROADMAP.md#L180).
+Fortalece hoy: autorizacion server-first, visibilidad por actor, reglas de permisos reales.
 
 Regla de colaboracion acordada para este bloque:
 - Las tasks son compartidas entre `creador` y `asignado`.
@@ -315,6 +323,7 @@ Regla de colaboracion acordada para este bloque:
 
 Tecnologias del dia: timeline UI, notifications UI, modelado de eventos.
 Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [P1.3 enriquecer task](./PRODUCT_ROADMAP.md#L188).
+Fortalece hoy: trazabilidad funcional, eventos de dominio, UX colaborativa avanzada (comentarios/menciones/rich text).
 
 - [x] Trazabilidad y notificaciones
   - [x] Historial de cambios por task
@@ -337,6 +346,7 @@ Fuente roadmap: [P1.3 trazabilidad/notificaciones](./PRODUCT_ROADMAP.md#L184), [
 
 Tecnologias del dia: TypeScript refactor, arquitectura por capas, limpieza de deuda tecnica, naming conventions, Tiptap (`@tiptap/react` + `starter-kit`, `image`, `link`, `placeholder`, `mention`), API route de upload y storage local para rich text.
 Fuente roadmap: [P0 estabilidad/consistencia](./PRODUCT_ROADMAP.md#-p0---estabilidad-y-consistencia), [P1.2/P1.3 hardening tecnico](./PRODUCT_ROADMAP.md#-p12-tasks-ux-board-first-estilo-jiratrello).
+Fortalece hoy: refactor estructural, mantenibilidad, disciplina de naming y reduccion de deuda tecnica.
 
 - [x] Refactor general de aplicacion (cleanup day)
   - [x] Eliminar codigo muerto y flujos legacy no usados
@@ -355,10 +365,11 @@ Fuente roadmap: [P0 estabilidad/consistencia](./PRODUCT_ROADMAP.md#-p0---estabil
   - [x] UX consistente en preview/guardado/cancelacion
   - [x] Mensionador estable: replace correcto del token, navegacion con teclado y cierre por click afuera
 
-## ?? Dia 11 - Jueves 26/02/2026
+## ?? Dia 11 - Domingo 01/03/2026
 
 Tecnologias del dia: React Router actions/loaders + shadcn/ui (Tabs/Card/Form/Input/Button) + Zod forms.
 Fuente roadmap: [P1.4 user panel](./PRODUCT_ROADMAP.md#L204), [P1.4 perfil/seguridad](./PRODUCT_ROADMAP.md#L208), [P1.4 preferencias](./PRODUCT_ROADMAP.md#L212), [P1.4 plan](./PRODUCT_ROADMAP.md#L216).
+Fortalece hoy: auth hardening, seguridad de credenciales, diseno de panel de usuario orientado a producto.
 
 - [ ] Crear vista dedicada de cuenta (corrida desde Dia 10)
   - [ ] Bloques: Perfil, Seguridad, Preferencias, Plan
@@ -407,10 +418,11 @@ Fuente roadmap: [P1.4 user panel](./PRODUCT_ROADMAP.md#L204), [P1.4 perfil/segur
   - [ ] CTA de upgrade (`coming soon`) sin checkout real en Dia 11
   - [ ] Dejar estructura lista para conectar Stripe en fase posterior
 
-## ?? Dia 12 - Viernes 27/02/2026
+## ?? Dia 12 - Lunes 02/03/2026
 
 Tecnologias del dia: Radix Toast + shadcn/ui + design tokens.
 Fuente roadmap: [P1.5 feedback](./PRODUCT_ROADMAP.md#L229), [P1.5 base visual](./PRODUCT_ROADMAP.md#L233).
+Fortalece hoy: consistencia de feedback, UX de error/estado, base visual escalable.
 
 - [ ] Sistema consistente de feedback
   - [ ] Toasts success/error/warn (`Radix Toast` + estilo `shadcn`)
@@ -422,10 +434,11 @@ Fuente roadmap: [P1.5 feedback](./PRODUCT_ROADMAP.md#L229), [P1.5 base visual](.
   - [ ] Jerarquia clara de bloques y acciones
   - [ ] Microinteracciones y estados de carga prolijos
 
-## ?? Dia 13 - Sabado 28/02/2026
+## ?? Dia 13 - Martes 03/03/2026
 
 Tecnologias del dia: TanStack Query + Zustand (persist + estado global de UI).
 Fuente roadmap: [P2.1 TanStack Query + Zustand](./PRODUCT_ROADMAP.md#L249).
+Fortalece hoy: estrategia de estado (server state vs UI state), cache, invalidacion e interacciones clickeables.
 
 - [ ] Query keys y cache estables por usuario/filtros
 - [ ] Refetch en background + invalidacion por mutaciones
@@ -475,10 +488,11 @@ Fuente roadmap: [P2.1 TanStack Query + Zustand](./PRODUCT_ROADMAP.md#L249).
 - [ ] Cola local de acciones pendientes con reintento manual
 - [ ] Sincronia URL <-> store <-> query keys
 
-## ?? Dia 14 - Domingo 01/03/2026
+## ?? Dia 14 - Miercoles 04/03/2026
 
 Tecnologias del dia: Vitest, Testing Library, Playwright.
 Fuente roadmap: [P2.2 minimo calidad tecnica](./PRODUCT_ROADMAP.md#L266).
+Fortalece hoy: testing por riesgo, prevencion de regresiones, calidad de release.
 
 - [ ] Lint y typecheck en limpio
 - [ ] Smoke script auth + tasks + flags
@@ -488,10 +502,11 @@ Fuente roadmap: [P2.2 minimo calidad tecnica](./PRODUCT_ROADMAP.md#L266).
   - [ ] `login -> create task -> assign -> mover board -> cerrar`
   - [ ] `create flag -> toggle`
 
-## ?? Dia 15 - Lunes 02/03/2026
+## ?? Dia 15 - Jueves 05/03/2026
 
 Tecnologias del dia: documentacion operativa + Stripe base (didactico).
 Fuente roadmap: [P2.3 documentacion](./PRODUCT_ROADMAP.md#L282), [P3.1 stripe](./PRODUCT_ROADMAP.md#L296).
+Fortalece hoy: documentacion profesional, narrativa de producto, base de billing con impacto funcional.
 
 - [ ] README alineado con scripts/rutas reales
 - [ ] `docs/MVP.md` actualizado al estado actual
@@ -501,20 +516,22 @@ Fuente roadmap: [P2.3 documentacion](./PRODUCT_ROADMAP.md#L282), [P3.1 stripe](.
 - [ ] UI de estado de plan (`Free`/`Pro`) + CTA upgrade
 - [ ] Regla narrativa explicita en docs: billing didactico, no pricing comercial real
 
-## ?? Dia 16 - Martes 03/03/2026
+## ?? Dia 16 - Viernes 06/03/2026
 
 Tecnologias del dia: Stripe webhooks + Drizzle/SQLite + guards de permisos.
 Fuente roadmap: [P3.1 stripe](./PRODUCT_ROADMAP.md#L296).
+Fortalece hoy: integraciones externas confiables, idempotencia, permisos por capacidad de plan.
 
 - [ ] Webhooks (`checkout.session.completed`, `customer.subscription.*`) con idempotencia
 - [ ] Persistencia de suscripcion en DB + guards por plan
 - [ ] Capability por plan en server (`canManageTeam` o equivalente)
 - [ ] Validacion de upgrade: plan impacta permisos reales (no solo UI)
 
-## ?? Dia 17 - Miercoles 04/03/2026
+## ?? Dia 17 - Sabado 07/03/2026
 
 Tecnologias del dia: Team domain (DB + server actions + notificaciones in-app).
 Fuente roadmap: [P3.1 stripe/team](./PRODUCT_ROADMAP.md#L296), [P2.1 notificaciones](./PRODUCT_ROADMAP.md#L293).
+Fortalece hoy: modelado relacional avanzado, colaboracion real por equipos, reglas de asignacion.
 
 - [ ] Team Manager (acoplado a plan `pro`)
   - [ ] Upgrade/pago habilita capacidad `manager`
@@ -538,10 +555,11 @@ Fuente roadmap: [P3.1 stripe/team](./PRODUCT_ROADMAP.md#L296), [P2.1 notificacio
   - [ ] Email solo para verificacion de registro
   - [ ] Invitaciones de team solo por notificacion in-app
 
-## ?? Dia 18 - Jueves 05/03/2026
+## ?? Dia 18 - Domingo 08/03/2026
 
 Tecnologias del dia: Slack API + Gemini API + GitHub Actions.
 Fuente roadmap: [P3.2 slack](./PRODUCT_ROADMAP.md#L310), [P3.3 gemini](./PRODUCT_ROADMAP.md#L323), [P3.4 github actions](./PRODUCT_ROADMAP.md#L336).
+Fortalece hoy: operacion real (CI/CD), observabilidad, integraciones productivas y controles de calidad de salida.
 
 - [ ] Canal de notificaciones por severidad
 - [ ] Eventos clave de negocio y errores severos (sin mezclar reglas de Team dentro de Slack)
