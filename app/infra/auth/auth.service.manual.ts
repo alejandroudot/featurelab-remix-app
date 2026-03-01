@@ -96,6 +96,18 @@ export function createManualAuthService(): AuthService {
       return toUser(row);
     },
 
+    async updateProfile({ userId, displayName, phone, about }) {
+      await db
+        .update(users)
+        .set({ displayName, phone, about })
+        .where(eq(users.id, userId))
+        .run();
+
+      const row = await db.select().from(users).where(eq(users.id, userId)).get();
+      if (!row) throw new Error("USER_NOT_FOUND");
+      return toUser(row);
+    },
+
     async changePassword({ userId, currentPassword, newPassword }) {
       const row = await db.select().from(users).where(eq(users.id, userId)).get();
       if (!row) throw new Error("USER_NOT_FOUND");

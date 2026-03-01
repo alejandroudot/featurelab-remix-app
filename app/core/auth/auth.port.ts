@@ -1,6 +1,7 @@
 import type { User } from "./auth.types";
 
 export type LoginInput = { email: string; password: string };
+
 export type RegisterInput = {
   displayName: string;
   email: string;
@@ -8,7 +9,16 @@ export type RegisterInput = {
   phone?: string;
   timezone?: string;
 };
+
 export type UpdateDisplayNameInput = { userId: string; displayName: string };
+
+export type UpdateProfileInput = {
+  userId: string;
+  displayName: string;
+  phone: string | null;
+  about: string | null;
+};
+
 export type ChangePasswordInput = {
   userId: string;
   currentPassword: string;
@@ -21,5 +31,6 @@ export interface AuthService {
   logout(sessionId: string): Promise<void>;
   getUserBySession(sessionId: string): Promise<User | null>;
   updateDisplayName(input: UpdateDisplayNameInput): Promise<User>;
+  updateProfile(input: UpdateProfileInput): Promise<User>;
   changePassword(input: ChangePasswordInput): Promise<void>;
 }

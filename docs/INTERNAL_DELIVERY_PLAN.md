@@ -372,33 +372,33 @@ Fuente roadmap: [P1.4 user panel](./PRODUCT_ROADMAP.md#L204), [P1.4 perfil/segur
 Fortalece hoy: auth hardening, seguridad de credenciales, diseno de panel de usuario orientado a producto.
 
 - [ ] Crear vista dedicada de cuenta (corrida desde Dia 10)
-  - [ ] Bloques: Perfil, Seguridad, Preferencias, Plan
+  - [x] Bloques: Perfil, Seguridad, Preferencias, Plan
   - [ ] Layout con `shadcn/ui` (`Tabs`, `Card`, `Form`, `Input`, `Button`)
-  - [ ] Navegacion visible desde header
+  - [x] Navegacion visible desde header
 - [ ] Patron de interaccion del panel (acuerdo UX)
-  - [ ] `Perfil`, `Preferencias` y `Plan` se abren en modal dedicado
-  - [ ] `Seguridad` queda inline en `/account` (sin modal)
-  - [ ] Vista principal de `/account` queda como resumen + accion `Editar/Abrir`
-  - [ ] Definir orden de implementacion modal por modal (primero `Perfil`)
+  - [x] `Perfil`, `Preferencias` y `Plan` se abren en modal dedicado
+  - [x] `Seguridad` tambien se abre en modal dedicado (ajuste UX)
+  - [x] Vista principal de `/account` queda como resumen + accion `Editar/Abrir`
+  - [x] Definir orden de implementacion modal por modal (primero `Perfil`)
 - [ ] Perfil y seguridad
-  - [ ] Editar nombre visible
-  - [ ] Cambio de password
-  - [ ] Errores y exito visibles sin silencios
+  - [x] Editar nombre visible
+  - [x] Cambio de password
+  - [x] Errores y exito visibles sin silencios
   - [ ] Modal de `Perfil` estilo ficha (header con avatar + nombre + email)
-  - [ ] `Perfil` v1 persistente: `displayName` + `phone` + `about`
-  - [ ] `Perfil` v1 visual-only: `Work`, `Expertise`, `Location`, `Other` como placeholders claros
-  - [ ] `Seguridad` v1: toggle mostrar/ocultar password por campo
-  - [ ] `Seguridad` v1: validar `newPassword === confirmPassword` en cliente y server
-  - [ ] `Seguridad` v1: policy de password fuerte (unica para todo auth)
-  - [ ] Reusar policy de password en `register` y `change password` (sin duplicar reglas)
-  - [ ] Mensajeria inline clara por campo (`current`, `new`, `confirm`) + error global
-- [ ] Hardening de auth (register/login/account)
-  - [ ] Definir schema compartido de password (min length + upper + lower + number + symbol + sin espacios)
-  - [ ] Evitar duplicacion de regex/policy entre features de auth
-  - [ ] Register: agregar `confirmEmail` y validar `email === confirmEmail` (cliente + server)
-  - [ ] Ampliar `register` para precargar perfil (`displayName` requerido, `phone` opcional, `timezone` opcional)
-  - [ ] Mantener `login` con validacion minima de credenciales (sin sobrecargar UX)
-  - [ ] Revisar output safety: no loggear passwords y mantener validacion/sanitizacion por Zod
+  - [x] `Perfil` v1 persistente: `displayName` + `phone` + `about`
+  - [x] `Perfil` v1 visual-only: `Work`, `Expertise`, `Location`, `Other` como placeholders claros
+  - [x] `Seguridad` v1: toggle mostrar/ocultar password por campo
+  - [x] `Seguridad` v1: validar `newPassword === confirmPassword` en cliente y server
+  - [x] `Seguridad` v1: policy de password fuerte (unica para todo auth)
+  - [x] Reusar policy de password en `register` y `change password` (sin duplicar reglas)
+  - [x] Mensajeria inline clara por campo (`current`, `new`, `confirm`) + error global
+- [x] Hardening de auth (register/login/account)
+  - [x] Definir schema compartido de password (min length + upper + lower + number + symbol + sin espacios)
+  - [x] Evitar duplicacion de regex/policy entre features de auth
+  - [x] Register: agregar `confirmEmail` y validar `email === confirmEmail` (cliente + server)
+  - [x] Ampliar `register` para precargar perfil (`displayName` requerido, `phone` opcional, `timezone` opcional)
+  - [x] Mantener `login` con validacion minima de credenciales (sin sobrecargar UX)
+  - [x] Revisar output safety: no loggear passwords y mantener validacion/sanitizacion por Zod
 - [ ] Auth verification foundation (email real por link)
   - [ ] Crear entidad `email_verification_tokens` (`userId`, `tokenHash`, `expiresAt`, `usedAt`)
   - [ ] Agregar campo `emailVerifiedAt` (nullable) en `users`

@@ -11,3 +11,6 @@ featurelab.db
 
 # Runtime uploads (rich text images)
 /public/uploads/
+
+# Local study notes (personal learning workspace)
+/studies/

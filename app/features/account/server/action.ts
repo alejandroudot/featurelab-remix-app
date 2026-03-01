@@ -9,6 +9,23 @@ const profileSchema = z.object({
     .trim()
     .min(2, 'Minimo 2 caracteres')
     .max(60, 'Maximo 60 caracteres'),
+  phone: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => (value === '' ? undefined : value))
+    .pipe(
+      z
+        .string()
+        .regex(/^\+?[0-9 ()-]{8,20}$/, 'Telefono invalido')
+        .optional(),
+    ),
+  about: z
+    .string()
+    .trim()
+    .max(500, 'Maximo 500 caracteres')
+    .optional()
+    .transform((value) => (value === '' ? undefined : value)),
 });
 
 const passwordSchema = z
@@ -38,6 +55,8 @@ export async function runAccountAction({
   if (intent === 'profile-update') {
     const parsed = profileSchema.safeParse({
       displayName: formData.get('displayName'),
+      phone: formData.get('phone'),
+      about: formData.get('about'),
     });
 
     if (!parsed.success) {
@@ -46,15 +65,21 @@ export async function runAccountAction({
           success: false,
           intent: 'profile',
           fieldErrors: z.flattenError(parsed.error).fieldErrors,
-          values: { displayName: String(formData.get('displayName') ?? '') },
+          values: {
+            displayName: String(formData.get('displayName') ?? ''),
+            phone: String(formData.get('phone') ?? ''),
+            about: String(formData.get('about') ?? ''),
+          },
         } satisfies AccountActionData,
         { status: 400 },
       );
     }
 
-    await authService.updateDisplayName({
+    await authService.updateProfile({
       userId,
       displayName: parsed.data.displayName,
+      phone: parsed.data.phone ?? null,
+      about: parsed.data.about ?? null,
     });
 
     return Response.json(

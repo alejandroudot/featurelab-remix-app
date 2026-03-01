@@ -1,0 +1,154 @@
+import { SectionCard } from '../../shared/SectionCard';
+import { useFetcher } from 'react-router';
+import { ActionFeedbackText } from '~/ui/forms/action-feedback';
+import type { AccountActionData } from '../../types';
+
+type ProfileSectionProps = {
+  user: {
+    id: string;
+    email: string;
+    displayName: string | null;
+    phone: string | null;
+    about: string | null;
+    role: 'user' | 'admin';
+  };
+  asCard?: boolean;
+};
+
+export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
+  const fetcher = useFetcher<AccountActionData>();
+  const isSubmitting = fetcher.state === 'submitting';
+  const actionData = fetcher.data;
+
+  const content = (
+    <>
+      <div className="mb-3 space-y-2 text-sm">
+        <p>
+          <span className="font-medium">Email:</span> {user.email}
+        </p>
+        <p>
+          <span className="font-medium">Role:</span> {user.role}
+        </p>
+      </div>
+
+      <fetcher.Form method="post" className="space-y-2">
+        <input type="hidden" name="intent" value="profile-update" />
+        <div className="flex flex-col gap-1">
+          <label htmlFor="displayName" className="text-sm font-medium">
+            Nombre visible
+          </label>
+          <input
+            id="displayName"
+            name="displayName"
+            defaultValue={(actionData && !actionData.success && actionData.intent === 'profile'
+              ? actionData.values?.displayName
+              : undefined) ?? user.displayName ?? ''}
+            className="rounded border px-2 py-1 text-sm"
+          />
+          <ActionFeedbackText actionData={actionData} intent="profile" fieldKey="displayName" />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="phone" className="text-sm font-medium">
+            Telefono
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            defaultValue={(actionData && !actionData.success && actionData.intent === 'profile'
+              ? actionData.values?.phone
+              : undefined) ?? user.phone ?? ''}
+            className="rounded border px-2 py-1 text-sm"
+          />
+          <ActionFeedbackText actionData={actionData} intent="profile" fieldKey="phone" />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="about" className="text-sm font-medium">
+            About
+          </label>
+          <textarea
+            id="about"
+            name="about"
+            defaultValue={(actionData && !actionData.success && actionData.intent === 'profile'
+              ? actionData.values?.about
+              : undefined) ?? user.about ?? ''}
+            className="min-h-24 rounded border px-2 py-1 text-sm"
+          />
+          <ActionFeedbackText actionData={actionData} intent="profile" fieldKey="about" />
+        </div>
+
+        <ActionFeedbackText actionData={actionData} intent="profile" showFormError showSuccessMessage />
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="rounded bg-slate-900 px-3 py-1 text-sm font-medium text-white disabled:opacity-60"
+        >
+          {isSubmitting ? 'Guardando...' : 'Guardar perfil'}
+        </button>
+      </fetcher.Form>
+
+      {!asCard ? (
+        <div className="mt-5 grid gap-3 md:grid-cols-2">
+          <section className="rounded border p-3">
+            <h3 className="text-sm font-semibold">Work</h3>
+            <div className="mt-2 space-y-2">
+              <PlaceholderField label="Organization" />
+              <PlaceholderField label="Department" />
+              <PlaceholderField label="Started working on" />
+              <PlaceholderField label="Manager" />
+              <PlaceholderField label="Work phone" />
+            </div>
+          </section>
+          <section className="rounded border p-3">
+            <h3 className="text-sm font-semibold">Expertise</h3>
+            <div className="mt-2 space-y-2">
+              <PlaceholderField label="Applications" />
+              <PlaceholderField label="Languages" />
+              <PlaceholderField label="Programming languages" />
+              <PlaceholderField label="Skills" />
+              <PlaceholderField label="Certifications" />
+            </div>
+          </section>
+          <section className="rounded border p-3">
+            <h3 className="text-sm font-semibold">Location</h3>
+            <div className="mt-2 space-y-2">
+              <PlaceholderField label="Country" />
+              <PlaceholderField label="City" />
+              <PlaceholderField label="Address" />
+            </div>
+          </section>
+          <section className="rounded border p-3">
+            <h3 className="text-sm font-semibold">Other</h3>
+            <div className="mt-2 space-y-2">
+              <PlaceholderField label="Driver license" />
+              <PlaceholderField label="Additional details" />
+            </div>
+          </section>
+        </div>
+      ) : null}
+    </>
+  );
+
+  if (!asCard) return content;
+
+  return (
+    <SectionCard title="Profile" description="Datos basicos de tu cuenta.">
+      {content}
+    </SectionCard>
+  );
+}
+
+type PlaceholderFieldProps = {
+  label: string;
+};
+
+function PlaceholderField({ label }: PlaceholderFieldProps) {
+  return (
+    <div>
+      <p className="text-xs font-medium opacity-80">{label}</p>
+      <p className="text-xs opacity-60">Proximamente</p>
+    </div>
+  );
+}

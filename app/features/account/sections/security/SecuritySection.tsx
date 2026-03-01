@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { SectionCard } from './SectionCard';
+import { SectionCard } from '../../shared/SectionCard';
 import { PasswordField } from '~/ui/primitives/password-field';
 import { useFetcher } from 'react-router';
 import { getPasswordChecks, isPasswordPolicySatisfied } from '~/core/auth/password-policy';
@@ -8,9 +8,13 @@ import {
 } from '~/ui/forms/action-feedback';
 import { PasswordPolicyChecklist } from '~/ui/forms/password-policy-checklist';
 import { useFieldMatchOnBlur } from '~/ui/hooks/use-field-match-on-blur';
-import type { AccountActionData } from '../types';
+import type { AccountActionData } from '../../types';
 
-export function SecuritySection() {
+type SecuritySectionProps = {
+  asCard?: boolean;
+};
+
+export function SecuritySection({ asCard = true }: SecuritySectionProps) {
   const fetcher = useFetcher<AccountActionData>();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -31,8 +35,8 @@ export function SecuritySection() {
     isPasswordPolicySatisfied(newPassword) &&
     newPassword === confirmPassword;
 
-  return (
-    <SectionCard title="Security" description="Cambio de password y sesiones activas.">
+  const content = (
+    <>
       <fetcher.Form method="post" className="space-y-2">
         <input type="hidden" name="intent" value="password-update" />
 
@@ -96,6 +100,14 @@ export function SecuritySection() {
           {isSubmitting ? 'Guardando...' : 'Actualizar password'}
         </button>
       </fetcher.Form>
+    </>
+  );
+
+  if (!asCard) return content;
+
+  return (
+    <SectionCard title="Security" description="Cambio de password y sesiones activas.">
+      {content}
     </SectionCard>
   );
 }
