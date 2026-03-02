@@ -1,6 +1,6 @@
 import { useLoaderData, useActionData } from 'react-router';
 import type { Route } from './+types/flags';
-import { flagCommandService, flagQueryService } from '../infra/flags/flags.services';
+import { flagRepository } from '~/infra/flags/flag.repository.provider';
 import { FlagsPage } from '../features/flags/FlagsPage';
 import type { FlagActionData } from '../features/flags/types';
 import { requireAdmin } from '~/infra/auth/require-admin';
@@ -9,7 +9,7 @@ import { runFlagLoader } from '~/features/flags/server/loader';
 
 export async function loader({ request }: Route.LoaderArgs) {
   await requireAdmin(request);
-  return runFlagLoader({ flagQueryService, flagCommandService });
+  return runFlagLoader({ flagRepository });
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -19,7 +19,7 @@ export async function action({ request }: Route.ActionArgs) {
   // La route solo orquesta; la logica de intents vive en un helper dedicado.
   return runFlagAction({
     formData,
-    flagCommandService,
+    flagRepository,
   });
 }
 
@@ -29,4 +29,5 @@ export default function FlagsRoute() {
 
   return <FlagsPage flags={flags} actionData={actionData} />;
 }
+
 

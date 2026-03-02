@@ -16,7 +16,7 @@ type FlagIntentHandler = (input: RunFlagActionInput) => Promise<FlagActionResult
 
 // Handler de creacion: valida datos de alta y crea la flag en ambos entornos.
 const handleCreate: FlagIntentHandler = async (input) => {
-  const { formData, flagCommandService } = input;
+  const { formData, flagRepository } = input;
   const parsedCreate = flagCreateSchema.safeParse({
     key: formData.get('key'),
     description: formData.get('description'),
@@ -27,7 +27,7 @@ const handleCreate: FlagIntentHandler = async (input) => {
   if (!parsedCreate.success) return zodErrorToActionData(parsedCreate.error, formData);
 
   try {
-    await flagCommandService.create({
+    await flagRepository.create({
       key: parsedCreate.data.key,
       description: parsedCreate.data.description,
       type: parsedCreate.data.type,
@@ -66,7 +66,7 @@ const handleCreate: FlagIntentHandler = async (input) => {
 
 // Handler de toggle: prende/apaga la flag en un entorno puntual.
 const handleToggle: FlagIntentHandler = async (input) => {
-  const { formData, flagCommandService } = input;
+  const { formData, flagRepository } = input;
   const parsedToggle = flagToggleSchema.safeParse({
     id: formData.get('id'),
     environment: formData.get('environment'),
@@ -75,7 +75,7 @@ const handleToggle: FlagIntentHandler = async (input) => {
   if (!parsedToggle.success) return zodErrorToActionData(parsedToggle.error, formData);
 
   try {
-    await flagCommandService.toggle({
+    await flagRepository.toggle({
       id: parsedToggle.data.id,
       environment: parsedToggle.data.environment,
     });
@@ -93,7 +93,7 @@ const handleToggle: FlagIntentHandler = async (input) => {
 
 // Handler de update-state: actualiza rolloutPercent por entorno.
 const handleUpdateState: FlagIntentHandler = async (input) => {
-  const { formData, flagCommandService } = input;
+  const { formData, flagRepository } = input;
   const parsedState = flagUpdateStateSchema.safeParse({
     id: formData.get('id'),
     environment: formData.get('environment'),
@@ -103,7 +103,7 @@ const handleUpdateState: FlagIntentHandler = async (input) => {
   if (!parsedState.success) return zodErrorToActionData(parsedState.error, formData);
 
   try {
-    await flagCommandService.update({
+    await flagRepository.update({
       id: parsedState.data.id,
       stateByEnvironment: {
         [parsedState.data.environment]: {
@@ -125,7 +125,7 @@ const handleUpdateState: FlagIntentHandler = async (input) => {
 
 // Handler de delete: valida id y elimina la flag.
 const handleDelete: FlagIntentHandler = async (input) => {
-  const { formData, flagCommandService } = input;
+  const { formData, flagRepository } = input;
   const parsedDelete = flagDeleteSchema.safeParse({
     id: formData.get('id'),
   });
@@ -133,7 +133,7 @@ const handleDelete: FlagIntentHandler = async (input) => {
   if (!parsedDelete.success) return zodErrorToActionData(parsedDelete.error, formData);
 
   try {
-    await flagCommandService.remove(parsedDelete.data.id);
+    await flagRepository.remove(parsedDelete.data.id);
     return redirect('/flags');
   } catch (err) {
     return jsonFlagsError(
@@ -165,3 +165,4 @@ export async function runFlagAction(input: RunFlagActionInput): Promise<FlagActi
   const handler = intentHandlers[intentResult as Intent];
   return handler(input);
 }
+

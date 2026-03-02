@@ -1,5 +1,5 @@
 import type { Environment, FeatureFlag } from '../contracts/flags.types';
-import type { FlagResolution } from './flags.service';
+import type { FlagResolution } from './flag-decision.service';
 import { hashStringToInt } from './flags.hash';
 
 function resolveBooleanFlag(enabled: boolean): FlagResolution {
@@ -83,3 +83,4 @@ export function resolveFlagDecision(input: {
     state,
   });
 }
+

@@ -1,4 +1,4 @@
-import type { FlagCommandService } from '~/core/flags/service/flags.service';
+import type { FeatureFlagRepository } from '~/core/flags/contracts/flags.port';
 import type { FeatureFlag } from '~/core/flags/contracts/flags.types';
 
 // View model para la UI, derivado del dominio.
@@ -20,7 +20,8 @@ export type FlagActionData =
 
 	export type FlagActionResult = Response | FlagActionData;
 
-	export type RunFlagActionInput = {
-		formData: FormData;
-		flagCommandService: FlagCommandService;
-	};
+export type RunFlagActionInput = {
+  formData: FormData;
+  flagRepository: Pick<FeatureFlagRepository, 'create' | 'toggle' | 'update' | 'remove'>;
+};
+

@@ -1,8 +1,9 @@
 // doc : prepara datos del servidor para esa vista home en homepage.tsx (shape listo para render).
 // lógica server-side del loader de React Router 
 
-import type { FlagCommandService, FlagQueryService } from '~/core/flags/service/flags.service';
+import type { FeatureFlagRepository } from '~/core/flags/contracts/flags.port';
 import { ensureProductFlagsSeeded } from '~/core/flags/service/flag-seed';
+import type { FlagDecisionService } from '~/core/flags/service/flag-decision.service';
 import type { UserRole } from '~/core/auth/auth.types';
 import type { TaskQueryPort } from '~/core/tasks/task.repository.port';
 import type { HomePageProps } from '../types';
@@ -14,16 +15,13 @@ type RunHomeLoaderInput = {
     role: UserRole;
   };
   taskQueryPort: TaskQueryPort;
-  flagQueryService: FlagQueryService;
-  flagCommandService: FlagCommandService;
+  flagRepository: Pick<FeatureFlagRepository, 'listAll' | 'create'>;
+  flagDecisionService: Pick<FlagDecisionService, 'resolveFlagDecision'>;
 };
 
 export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePageProps> {
-  const { user, taskQueryPort, flagQueryService, flagCommandService } = input;
-  await ensureProductFlagsSeeded({
-    listAll: () => flagQueryService.listAll(),
-    create: (createInput) => flagCommandService.create(createInput),
-  });
+  const { user, taskQueryPort, flagRepository, flagDecisionService } = input;
+  await ensureProductFlagsSeeded(flagRepository);
 
   const environment: 'development' | 'production' =
     process.env.NODE_ENV === 'production' ? 'production' : 'development';
@@ -52,12 +50,20 @@ export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePage
 
   const flagsSummary =
     user.role === 'admin'
-      ? await flagQueryService.listAll().then((flags) => {
+      ? await flagRepository.listAll().then((flags) => {
           const envFlags = flags;
-          return {
+          const resolvedForUser = envFlags.map((flag) =>
+            flagDecisionService.resolveFlagDecision({
+              key: flag.key,
+              environment,
+              userId: user.id,
+            }),
+          );
+
+          return Promise.all(resolvedForUser).then((resolutions) => ({
             environment,
             total: envFlags.length,
-            enabled: envFlags.filter((flag) => flag.stateByEnvironment[environment].enabled).length,
+            enabled: resolutions.filter((result) => result.enabled).length,
             switches: envFlags.slice(0, 8).map((flag) => ({
               id: flag.id,
               key: flag.key,
@@ -65,7 +71,7 @@ export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePage
               type: flag.type,
               rolloutPercent: flag.stateByEnvironment[environment].rolloutPercent ?? null,
             })),
-          };
+          }));
         })
       : undefined;
 
@@ -108,3 +114,5 @@ export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePage
     },
   };
 }
+
+

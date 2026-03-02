@@ -4,7 +4,7 @@ import { DuplicateFeatureFlagError } from '~/core/flags/contracts/errors';
 import type { FeatureFlag, Environment } from '../../core/flags/contracts/flags.types';
 import { db } from '../db/client.sqlite';
 import { featureFlags } from '../db/schema';
-import { mapFlagRow } from './flags-mapper';
+import { mapFlagRow } from './flag.repository.mapper';
 import { isSqliteUniqueConstraintError } from '../db/sqlite-error';
 
 export const sqliteFlagRepository: FeatureFlagRepository = {

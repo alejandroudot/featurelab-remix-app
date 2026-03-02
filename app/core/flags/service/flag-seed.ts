@@ -1,8 +1,8 @@
 import { DuplicateFeatureFlagError } from '../contracts/errors';
 import { PRODUCT_FLAG_CATALOG } from '../catalog/flag-catalog';
-import type { FlagCommandService, FlagQueryService } from './flags.service';
+import type { FeatureFlagRepository } from '../contracts/flags.port';
 
-type FlagSeedService = Pick<FlagQueryService, 'listAll'> & Pick<FlagCommandService, 'create'>;
+type FlagSeedService = Pick<FeatureFlagRepository, 'listAll' | 'create'>;
 
 export async function ensureProductFlagsSeeded(flagService: FlagSeedService) {
   const existing = await flagService.listAll();
@@ -35,3 +35,4 @@ export async function ensureProductFlagsSeeded(flagService: FlagSeedService) {
     }
   }
 }
+

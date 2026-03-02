@@ -1,17 +1,15 @@
-import type { FlagCommandService, FlagQueryService } from '~/core/flags/service/flags.service';
+import type { FeatureFlagRepository } from '~/core/flags/contracts/flags.port';
 import { ensureProductFlagsSeeded } from '~/core/flags/service/flag-seed';
 
 type RunFlagLoaderInput = {
-  flagQueryService: FlagQueryService;
-  flagCommandService: FlagCommandService;
+  flagRepository: Pick<FeatureFlagRepository, 'listAll' | 'create'>;
 };
 
-export async function runFlagLoader({ flagQueryService, flagCommandService }: RunFlagLoaderInput) {
-  await ensureProductFlagsSeeded({
-    listAll: () => flagQueryService.listAll(),
-    create: (input) => flagCommandService.create(input),
-  });
+export async function runFlagLoader({ flagRepository }: RunFlagLoaderInput) {
+  await ensureProductFlagsSeeded(flagRepository);
 
-  const flags = await flagQueryService.listAll();
+  const flags = await flagRepository.listAll();
   return { flags };
 }
+
+

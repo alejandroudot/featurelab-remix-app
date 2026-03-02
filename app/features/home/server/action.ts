@@ -1,14 +1,14 @@
-import type { FlagCommandService } from '~/core/flags/service/flags.service';
+import type { FeatureFlagRepository } from '~/core/flags/contracts/flags.port';
 import type { UserRole } from '~/core/auth/auth.types';
 
 type RunHomeActionInput = {
   formData: FormData;
   userRole: UserRole;
-  flagCommandService: FlagCommandService;
+  flagRepository: Pick<FeatureFlagRepository, 'toggle'>;
 };
 
 export async function runHomeAction(input: RunHomeActionInput) {
-  const { formData, userRole, flagCommandService } = input;
+  const { formData, userRole, flagRepository } = input;
 
   if (userRole !== 'admin') {
     return Response.json({ success: false, message: 'No autorizado' }, { status: 403 });
@@ -29,9 +29,10 @@ export async function runHomeAction(input: RunHomeActionInput) {
   }
 
   try {
-    await flagCommandService.toggle({ id, environment: environmentRaw });
+    await flagRepository.toggle({ id, environment: environmentRaw });
     return Response.json({ success: true });
   } catch {
     return Response.json({ success: false, message: 'No se pudo actualizar la flag' }, { status: 500 });
   }
 }
+

@@ -1,4 +1,4 @@
-import type { Environment, FeatureFlag } from '../contracts/flags.types';
+import type { Environment } from '../contracts/flags.types';
 import type { FeatureFlagRepository } from '../contracts/flags.port';
 import { resolveFlagDecision } from './flags.resolution';
 
@@ -28,47 +28,19 @@ export type FlagResolution = {
   rolloutPercent?: number | null;
 };
 
-export interface FlagQueryService {
-  listAll(): Promise<FeatureFlag[]>;
+type FlagDecisionRepository = Pick<FeatureFlagRepository, 'findByKey'>;
+
+export interface FlagDecisionService {
   isEnabled(input: FlagResolutionInput): Promise<boolean>;
-  resolve(input: FlagResolutionInput): Promise<FlagResolution>;
+  resolveFlagDecision(input: FlagResolutionInput): Promise<FlagResolution>;
 }
 
-export interface FlagCommandService {
-  create: FeatureFlagRepository['create'];
-  toggle: FeatureFlagRepository['toggle'];
-  remove: FeatureFlagRepository['remove'];
-  update: FeatureFlagRepository['update'];
-}
-
-export type FlagService = FlagQueryService & FlagCommandService;
-
-export function createFlagService(repository: FeatureFlagRepository): FlagService {
+export function createFlagDecisionService(repository: FlagDecisionRepository): FlagDecisionService {
   return {
-    listAll() {
-      return repository.listAll();
-    },
-
-    create(input) {
-      return repository.create(input);
-    },
-
-    toggle(input) {
-      return repository.toggle(input);
-    },
-
-    remove(id) {
-      return repository.remove(id);
-    },
-
-    update(input) {
-      return repository.update(input);
-    },
-
     // Funcion clave del modulo: concentra la decision final de una flag en runtime.
-		// Los consumer (loaders/actions/UI gates) deberian depender de este resultado
+    // Los consumer (loaders/actions/UI gates) deberian depender de este resultado
     // en lugar de leer estado crudo de DB para mantener un criterio unico.
-    async resolve({ key, environment, userId, debugOverride }: FlagResolutionInput) {
+    async resolveFlagDecision({ key, environment, userId, debugOverride }: FlagResolutionInput) {
       // Prioridad 1: override explicito para debugging local/manual.
       if (typeof debugOverride === 'boolean') {
         return { enabled: debugOverride, reason: 'debug-override' };
@@ -81,8 +53,9 @@ export function createFlagService(repository: FeatureFlagRepository): FlagServic
     },
 
     async isEnabled(input: FlagResolutionInput) {
-      const result = await this.resolve(input);
+      const result = await this.resolveFlagDecision(input);
       return result.enabled;
     },
   };
 }
+
