@@ -422,9 +422,38 @@ Fortalece hoy: auth hardening, seguridad de credenciales, diseno de panel de usu
 
 ## ?? Dia 12 - Lunes 02/03/2026
 
-Tecnologias del dia: Radix Toast + shadcn/ui + design tokens.
-Fuente roadmap: [P1.5 feedback](./PRODUCT_ROADMAP.md#L229), [P1.5 base visual](./PRODUCT_ROADMAP.md#L233).
-Fortalece hoy: consistencia de feedback, UX de error/estado, base visual escalable.
+Tecnologias del dia: shadcn/ui + Radix + React Router loaders/actions + DnD vertical.
+Fuente roadmap: [P1.2.1 tasks layout refresh + projects](./PRODUCT_ROADMAP.md#L200), [P1.5 feedback](./PRODUCT_ROADMAP.md#L330).
+Fortalece hoy: arquitectura de app shell, navegacion por rol, UX de productividad en tasks y orden manual de proyectos.
+
+- [ ] Ajuste visual de Tasks + Projects v1 (prioridad de producto)
+  - [ ] Rebaseline de navegacion global (app shell)
+    - [ ] Header minimal: solo account/session + notificaciones
+    - [ ] Mover accesos de producto (`Tasks`, `Flags`, vistas relacionadas) a sidebar izquierdo persistente
+    - [ ] Mantener area de contenido cambiante a la derecha del sidebar
+  - [ ] Quitar create task inline de `/tasks`
+  - [ ] Boton `Crear tarea` que abre modal/sheet
+  - [ ] Dejar board como foco principal de la pantalla
+  - [ ] Agregar search bar para filtrar tasks por keywords (titulo/descripcion)
+  - [ ] Agregar bloque de acciones superior derecha:
+    - [ ] `Crear tarea`
+    - [ ] `View settings` (dropdown)
+    - [ ] `Scope` (dropdown) para alternar alcance rapido
+  - [ ] Agregar sidebar izquierdo de proyectos
+    - [ ] Crear proyecto
+    - [ ] Estado vacio con CTA `Crea tu primer proyecto`
+    - [ ] Header `Projects` con icono y accion rapida
+    - [ ] Soporte de icono/imagen por proyecto
+    - [ ] Mostrar icono en lista lateral y en vista de proyecto
+    - [ ] Seleccionar proyecto y filtrar tasks por proyecto activo
+  - [ ] Sidebar con secciones desplegables
+    - [ ] `Projects` desplegable con `Pinned`
+    - [ ] Orden manual por drag and drop vertical en lista de proyectos
+    - [ ] `Teams` desplegable (solo visible para manager/admin; UI base)
+    - [ ] `Flags` desplegable (solo visible para admin)
+  - [ ] Header de Tasks por proyecto activo
+    - [ ] Titulo editable (nombre del proyecto)
+    - [ ] Descripcion editable (inline click)
 
 - [ ] Sistema consistente de feedback
   - [ ] Toasts success/error/warn (`Radix Toast` + estilo `shadcn`)
@@ -459,17 +488,25 @@ Fortalece hoy: estrategia de estado (server state vs UI state), cache, invalidac
     - [ ] Zustand: `unreadCount`, `lastSeenAtByUser`, `selectedNotificationId`, `panelOpen`
     - [ ] Loader/Action: sigue como fuente server para crear eventos de notificacion
   - [ ] `Task modal desde notificacion`
-    - [ ] Zustand: `selectedTaskId` + `isDetailOpen`
+    - [ ] Zustand: `selectedTaskId` + `isDetailOpen` (store global de modal)
     - [ ] Query: no requerido para abrir modal (solo para feed/notificaciones)
     - [ ] Loader/Action: task data y permisos se resuelven en backend actual
+  - [ ] `Task modal desde card/sidebar`
+    - [ ] Zustand: mismo store global (`selectedTaskId`, `isDetailOpen`)
+    - [ ] Reemplazar flujo actual por props para abrir/cerrar modal desde cualquier entrypoint
+    - [ ] Evitar prop drilling entre board/list/sidebar y modal
   - [ ] `Preferencias`
     - [ ] Zustand: `density`, `defaultTasksView`, `defaultTasksScope` + persist
     - [ ] Query: no requerido (preferencias locales de UX)
     - [ ] Loader/Action: aplica defaults al entrar a `/tasks` cuando URL no tiene params
   - [ ] `Team panel` (cuando entre en P3.1)
-    - [ ] Query: lecturas de miembros/invitaciones/busqueda
-    - [ ] Zustand: estado UI local (filtros, modal abierto, seleccion)
+    - [ ] Query: lecturas remotas por equipo (`myTeams`, `teamMembers`, `teamInvitations`, `teamProjects`)
+    - [ ] Zustand: estado UI local (`activeTeamId`, `activeTab`, filtros, modal abierto, seleccion)
     - [ ] Loader/Action: mutaciones y permisos (invitar, aceptar, rechazar, asignar)
+- [ ] Caso guiado de Query para `Teams panel` (preparacion tecnica)
+  - [ ] Definir query keys por `teamId`
+  - [ ] Definir invalidaciones por evento (`invite`, `accept`, `reject`, `project-create`)
+  - [ ] Evitar recarga completa de la vista al cambiar una lista remota
 - [ ] Criterio de expansion de Query
   - [ ] Fase 2 (opcional): feed de actividad del Hub via `useQuery`
   - [ ] Fase 2 (opcional): lecturas de tasks solo si hay ganancia clara en UX y mantenibilidad
@@ -542,16 +579,41 @@ Fortalece hoy: modelado relacional avanzado, colaboracion real por equipos, regl
 - [ ] Team Manager (acoplado a plan `pro`)
   - [ ] Upgrade/pago habilita capacidad `manager`
   - [ ] Manager puede crear equipo
+  - [ ] Manager puede administrar multiples equipos
+  - [ ] Entrada principal de gestion en dropdown/panel `Teams` (tasks sidebar)
   - [ ] Buscar usuario por email exacto e invitar a equipo
   - [ ] Invitacion por notificacion in-app (sin envio de email de invitacion)
   - [ ] Invitado acepta/rechaza (con notificacion)
   - [ ] Solo miembros `accepted` pueden ser asignados por manager
   - [ ] Panel de equipo: pendientes + aceptados
+  - [ ] Vista por equipo en `Teams`: listar `pending` y `accepted`
   - [ ] Card de miembro clickeable a perfil publico
+  - [ ] Panel de equipos con listas remotas por bloque (usando Query)
+    - [ ] Mis equipos
+    - [ ] Miembros del equipo activo
+    - [ ] Invitaciones del equipo activo
+    - [ ] Proyectos del equipo activo
+    - [ ] Refresco selectivo por bloque via invalidacion (sin reload completo)
+- [ ] Contexto de workspace en Tasks (personal/equipo)
+  - [ ] Usuario free mantiene workspace personal (sin crear equipo)
+  - [ ] Usuario free puede ser invitado y participar en equipos
+  - [ ] Al aceptar invitacion, ve miembros y proyectos del equipo
+  - [ ] Usuario puede mantener proyectos personales y de equipo al mismo tiempo
+  - [ ] Permisos pueden variar por proyecto (aunque sea el mismo usuario)
+- [ ] Permisos por proyecto (ACL v1)
+  - [ ] Roles: `viewer | member | full`
+  - [ ] `viewer`: solo lectura
+  - [ ] `member`: crea/edita/mueve/comenta solo sus tasks
+  - [ ] `full`: puede operar tareas propias y de companeros dentro del proyecto
+  - [ ] Permisos validados en server por `projectId + userId`
+- [ ] Filtro de tareas por alcance de equipo
+  - [ ] `Todas del equipo`
+  - [ ] `Mias`
+  - [ ] `Por miembro` (compañero puntual)
 - [ ] Interfaces y contratos tecnicos (decision-complete)
   - [ ] `users`: `plan` (`free|pro`), `canManageTeam` o equivalente
   - [ ] `teams` y `team_members` con estados `invited|accepted|rejected`
-  - [ ] Restriccion v1: usuario con un solo equipo activo
+  - [ ] `project_members` con rol por proyecto (`viewer|member|full`)
   - [ ] Payload de notificacion incluye `taskId` opcional y `teamId` para invitaciones
 - [ ] Notificaciones de team
   - [ ] Invitacion enviada -> notificacion al invitado
@@ -563,9 +625,9 @@ Fortalece hoy: modelado relacional avanzado, colaboracion real por equipos, regl
 
 ## ?? Dia 18 - Domingo 08/03/2026
 
-Tecnologias del dia: Slack API + Gemini API + GitHub Actions.
-Fuente roadmap: [P3.2 slack](./PRODUCT_ROADMAP.md#L310), [P3.3 gemini](./PRODUCT_ROADMAP.md#L323), [P3.4 github actions](./PRODUCT_ROADMAP.md#L336).
-Fortalece hoy: operacion real (CI/CD), observabilidad, integraciones productivas y controles de calidad de salida.
+Tecnologias del dia: Slack API + Gemini API + GitHub Actions + Feature Flags (rollout/guards).
+Fuente roadmap: [P3.2 slack](./PRODUCT_ROADMAP.md#L310), [P3.3 gemini](./PRODUCT_ROADMAP.md#L323), [P3.4 github actions](./PRODUCT_ROADMAP.md#L336), [P3.5 feature flags rollout](./PRODUCT_ROADMAP.md#L548).
+Fortalece hoy: operacion real (CI/CD), observabilidad, integraciones productivas y control de rollout por feature.
 
 - [ ] Canal de notificaciones por severidad
 - [ ] Eventos clave de negocio y errores severos (sin mezclar reglas de Team dentro de Slack)
@@ -580,6 +642,25 @@ Fortalece hoy: operacion real (CI/CD), observabilidad, integraciones productivas
 - [ ] Workflow de release con build y artefactos
 - [ ] Branch protection con checks obligatorios
 - [ ] Documentacion de CI/CD en README
+- [ ] Cierre de rollout con Feature Flags (uso real)
+  - [ ] Cerrar acuerdo de catalogo de flags
+    - [ ] Convencion de nombres: `dominio.area.feature.enabled`
+    - [ ] Catalogo oficial en `app/core/flags/catalog/flag-catalog.ts`
+    - [ ] Resolucion runtime en `app/core/flags/service/flags.resolution.ts`
+    - [ ] Persistencia/adapter en `app/infra/flags/*`
+    - [ ] Metadata minima por flag: objetivo, fallback `off`, owner, fecha de revision
+  - [ ] Definir y crear flags para features opcionales de Tasks
+    - [ ] `tasks.search.enabled`
+    - [ ] `tasks.scope-filter.enabled`
+    - [ ] `tasks.sidebar.projects.pinned.enabled`
+    - [ ] `tasks.sidebar.projects.manual-order.enabled`
+    - [ ] `tasks.sidebar.projects.icons.enabled`
+    - [ ] `tasks.sidebar.teams.enabled`
+    - [ ] `tasks.sidebar.flags.enabled`
+  - [ ] Aplicar guards UI con fallback funcional cuando flag esta `off`
+  - [ ] Aplicar guard server en acciones que dependan de feature opcional
+  - [ ] Definir defaults por entorno (`dev` permisivo / `prod` conservador)
+  - [ ] QA de on/off por flag para validar que no rompe flujo base
 
 ## ?? Template de nota diaria (copiar/pegar)
 

@@ -19,6 +19,11 @@ Este documento es la lista activa de ejecucion.
   - `Flags`
   - `User Panel` (`/account` o `/settings`)
   - `Billing/Plan` (inicialmente dentro de User Panel)
+- Navegacion global (decision de UX):
+  - `Header` minimal: solo account/session + notificaciones globales.
+  - Navegacion funcional de producto en panel lateral izquierdo persistente.
+  - `Tasks` y `Flags` salen del header y pasan al sidebar.
+  - El contenido principal cambia a la derecha del sidebar (layout tipo app shell).
 
 ## 🎨 Criterio UI (shadcn/ui + Radix)
 
@@ -192,6 +197,48 @@ Criterio de cierre:
 - Tasks funciona bien en modo lista y tablero
 - La UX se siente de producto real, no de CRUD basico
 
+### P1.2.1 Tasks layout refresh + Projects v1
+
+Tecnologias a usar: React Router loaders/actions + shadcn/ui (`Dialog`, `DropdownMenu`, `Input`, `Button`) + Zod.
+
+- [ ] Limpiar layout de `/tasks` para dejar foco en board
+  - [ ] Sacar formulario inline de create task del medio de la vista
+  - [ ] Crear boton `Crear tarea` que abre modal/sheet de alta (patron similar a Hub)
+  - [ ] Mantener board como contenido principal visible arriba
+- [ ] Header de acciones de Tasks (lado derecho superior)
+  - [ ] Boton `Crear tarea` (abre modal)
+  - [ ] Boton `View settings` con dropdown de configuraciones de vista
+  - [ ] Dropdown `Scope` para cambiar alcance rapido (`Todo`, `Mis tareas`, `Asignadas a mi`, `Creadas por mi`, `Equipo activo`)
+- [ ] Search bar en Tasks
+  - [ ] Buscar por palabras clave en titulo/descripcion
+  - [ ] Filtrado reactivo sobre lista/board visible
+- [ ] Proyectos v1 (nuevo scope funcional)
+  - [ ] Panel lateral izquierdo con lista de proyectos
+  - [ ] Crear proyecto desde el panel lateral
+  - [ ] Estado vacio de proyectos: CTA `Crea tu primer proyecto` con iconografia clara
+  - [ ] Header del bloque `Projects` con icono visual (estilo marcador/cohete) y accion rapida
+  - [ ] Cada proyecto puede tener icono/imagen personalizada
+  - [ ] Render del icono del proyecto en sidebar y en encabezado de vista del proyecto
+  - [ ] Al seleccionar proyecto, Tasks muestra solo tasks de ese proyecto
+  - [ ] Contexto visual por proyecto en el header de Tasks
+- [ ] Panel lateral con secciones desplegables (v1)
+  - [ ] Seccion `Projects` desplegable con `Pinned`
+  - [ ] Orden manual de proyectos por drag and drop vertical (solo arriba/abajo)
+  - [ ] Seccion `Teams` desplegable (visible solo para manager)
+  - [ ] `Teams` funciona como entrypoint de gestion para manager (crear equipo y navegar equipos creados)
+  - [ ] Seccion `Flags` desplegable (visible solo admin) como acceso de navegacion lateral
+- [ ] Header editable por proyecto en vista Tasks
+  - [ ] Titulo de vista = nombre del proyecto activo
+  - [ ] Descripcion del proyecto editable
+  - [ ] Edicion inline por click en titulo y descripcion
+
+Criterio de cierre:
+
+- `/tasks` queda visualmente limpio y centrado en board
+- Alta de task se hace por modal y no rompe el layout
+- Existe contexto de proyecto visible + filtro por proyecto + busqueda por keyword
+- Sidebar persistente con navegacion por rol (`Projects`, `Teams`, `Flags`) y orden manual de proyectos
+
 ### P1.3 Colaboracion y asignaciones (foco principal)
 
 Tecnologias a usar: Drizzle/SQLite + React Router + Zod + Zustand + TanStack Query.
@@ -318,8 +365,11 @@ Tecnologias a usar: TanStack Query + Zustand.
   - [ ] Expandir `Query` por slices completos (no migracion parcial caotica)
   - [ ] Documentar query keys por dominio (`notifications`, `tasks`, `flags`) y sus reglas de invalidacion
 - [ ] Mapa de uso por tecnologia (decision-complete)
-  - [ ] Query se usa para lecturas transversales y cache/polling (`notifications`, luego `team feed/lists`)
-  - [ ] Zustand se usa para estado UI global (`preferences`, `selectedTask/modal`, `notifications unread`)
+  - [ ] Query se usa para lecturas transversales y cache/polling (`notifications`, `projects/teams/flags sidebar`, luego `team feed/lists`)
+  - [ ] Zustand se usa para estado UI global (sin prop drilling)
+    - [ ] `taskDetailModalStore`: `selectedTaskId`, `isTaskModalOpen`
+    - [ ] `teamsPanelStore`: `activeTeamId`, `activeTab` (`members|invites|projects`), filtros UI locales
+    - [ ] `notificationsPanelStore`: `unreadCount`, `panelOpen`, `selectedNotificationId`
   - [ ] Loader/Action queda como backbone para mutaciones y permisos (`auth`, `tasks`, `flags`, `team`)
   - [ ] Regla: no duplicar fuente de verdad del mismo flujo entre Query y loader/action
 - [ ] Fase 1 Query (implementacion concreta)
@@ -329,9 +379,19 @@ Tecnologias a usar: TanStack Query + Zustand.
 - [ ] Fase 2 Query (opcional, segun valor real)
   - [ ] Evaluar feed de actividad del Hub con `useQuery`
   - [ ] Solo migrar lecturas de `tasks` si mejora UX/costo de mantenimiento frente a loader actual
+  - [ ] Implementar `Teams panel` con multiples listas remotas (caso de uso prioritario para Query)
+    - [ ] `myTeamsQuery`
+    - [ ] `teamMembersQuery(teamId)` con separados `pending` y `accepted`
+    - [ ] `teamInvitationsQuery(teamId)`
+    - [ ] `teamProjectsQuery(teamId)`
+    - [ ] (opcional) `teamActivityQuery(teamId)`
+    - [ ] Invalidacion selectiva por evento (`invite`, `accept`, `reject`, `project-create`) sin recargar toda la pantalla
+    - [ ] Estados por bloque (`loading/error/success`) independientes por lista
 - [ ] Store global de UI/preferencias/seleccion masiva
 - [ ] Store de preferencias reales (`density`, `defaultTasksView`, `defaultTasksScope`)
 - [ ] Estado global de task seleccionada/modal abierto
+  - [ ] Migrar apertura de modal de task (hoy por props) a store global
+  - [ ] Permitir abrir el mismo modal desde card, notificacion y sidebar sin acople entre componentes
 - [ ] Estado de notificaciones leidas/no leidas en cliente (Zustand)
   - [ ] Store `notifications`: `items`, `lastSeenAtByUser`, `unreadCount`, `selectedNotificationId`
   - [ ] Hidratacion desde `/api/notifications` y badge de header derivado del store
@@ -398,17 +458,38 @@ Tecnologias a usar: Stripe API + webhooks + dominio de equipos (DB + permisos se
   - [ ] `teams`: `id`, `ownerUserId`, `name`, timestamps
   - [ ] `team_members`: `teamId`, `userId`, `status` (`invited|accepted|rejected`), `invitedBy`, `respondedAt`
   - [ ] Restriccion v1: un usuario en un solo equipo activo
+  - [ ] Soportar multi-equipo por manager (manager puede administrar mas de un equipo)
 - [ ] Flujo de invitaciones de equipo
   - [ ] Manager busca por email exacto e invita
   - [ ] Invitacion se entrega por notificacion in-app (sin email de invitacion)
   - [ ] Invitado acepta/rechaza
   - [ ] Solo `accepted` entra en equipo activo
+- [ ] Contexto de trabajo en Tasks: personal vs equipo
+  - [ ] Usuario free puede operar en workspace personal sin crear equipo
+  - [ ] Usuario free puede ser invitado a equipos (sin capacidad de administrar)
+  - [ ] Al aceptar invitacion, habilitar vista de miembros/proyectos del equipo
+  - [ ] Un usuario puede tener proyectos personales y proyectos de equipo en paralelo
+  - [ ] El mismo usuario puede tener permisos distintos segun proyecto/contexto
 - [ ] Reglas de asignacion por equipo
   - [ ] Manager solo asigna tasks a miembros `accepted` de su equipo
   - [ ] UI de assignee filtra candidatos por miembros aceptados
+- [ ] Permisos por proyecto dentro del equipo (ACL v1)
+  - [ ] Definir `project_members` con rol por proyecto: `viewer | member | full`
+  - [ ] `viewer`: solo lectura (sin crear/editar/mover/asignar/comentar)
+  - [ ] `member`: crea y opera solo sobre sus propias tasks
+  - [ ] `full`: opera sobre cualquier task del proyecto (mover, editar, asignar, comentar)
+  - [ ] Un mismo usuario puede tener rol distinto por proyecto
+  - [ ] Validacion de permisos en server para cada action (`projectId + userId + role`)
+- [ ] Filtros de tareas por equipo/miembro
+  - [ ] `Todas del equipo`
+  - [ ] `Mias`
+  - [ ] `Por miembro` (usuario especifico del equipo)
 - [ ] Panel Team Manager
   - [ ] Lista de miembros aceptados y pendientes
   - [ ] Card de miembro clickeable a perfil publico
+  - [ ] Vista por equipo dentro de `Teams`: miembros `pending` y `accepted`
+  - [ ] Crear equipo desde dropdown/panel `Teams`
+  - [ ] Invitar miembros por email exacto desde cada equipo
 - [ ] Notificaciones de equipo
   - [ ] Invitacion enviada (al invitado)
   - [ ] Invitacion aceptada/rechazada (al manager)
@@ -468,13 +549,46 @@ Criterio de cierre:
 
 - Cada PR/release queda validado automaticamente
 
+### P3.5 Feature Flags como control de rollout (cierre)
+
+Tecnologias a usar: Flags module actual + guards UI/server + rollout por entorno/rol.
+
+- [ ] Definir politica de flag-gating para features no criticas (opt-in y rollback rapido)
+- [ ] Acordar catalogo y convencion de flags (decision de equipo)
+  - [ ] Naming final: `dominio.area.feature.enabled` (ej: `tasks.sidebar.projects.pinned.enabled`)
+  - [ ] Ubicacion unica del catalogo en `app/core/flags/catalog/flag-catalog.ts`
+  - [ ] Wire de resolucion/runtime en `app/core/flags/service/flags.resolution.ts`
+  - [ ] Providers de persistencia en `app/infra/flags/*` (sin hardcodear flags en features)
+  - [ ] Cada flag documenta: objetivo, fallback cuando esta `off`, owner y fecha de revision
+- [ ] Agregar flags a funcionalidades opcionales de Tasks (sin romper base funcional)
+  - [ ] `tasks.search.enabled`
+  - [ ] `tasks.scope-filter.enabled`
+  - [ ] `tasks.sidebar.projects.pinned.enabled`
+  - [ ] `tasks.sidebar.projects.manual-order.enabled`
+  - [ ] `tasks.sidebar.projects.icons.enabled`
+  - [ ] `tasks.sidebar.teams.enabled`
+  - [ ] `tasks.sidebar.flags.enabled`
+- [ ] Regla de implementacion
+  - [ ] Si flag `off`, la pantalla sigue operativa con fallback simple
+  - [ ] Sin ramas de codigo duplicadas por feature (encapsular en componentes/guards)
+  - [ ] Validar tambien en server cuando la accion dependa de feature opcional
+- [ ] Administracion y observabilidad de flags
+  - [ ] Exponer toggles de estas flags para admin
+  - [ ] Definir defaults por entorno (`dev` permisivo, `prod` conservador)
+  - [ ] Registrar cambios relevantes de flags en historial/notificaciones operativas
+
+Criterio de cierre:
+
+- Flags dejan de ser accesorio y pasan a ser herramienta real de rollout
+- Se puede encender/apagar features opcionales sin romper UX base
+
 ## ??? Orden sugerido de ejecucion
 
 1. Cerrar `P0.1` pendiente (QA manual de tasks).
 2. Ejecutar `P1.1` a `P1.5` (producto tasks-first).
 3. Ejecutar `P2.1` (TanStack Query + Zustand real).
 4. Ejecutar `P2.2` y `P2.3` (calidad + docs).
-5. Ejecutar `P3.1` a `P3.4` (integraciones + automatizacion).
+5. Ejecutar `P3.1` a `P3.5` (integraciones + automatizacion + rollout controlado).
 
 Nota de replanificacion:
 - El corrimiento diario del calendario operativo se gestiona en `docs/INTERNAL_DELIVERY_PLAN.md`.
