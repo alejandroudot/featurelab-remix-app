@@ -1,7 +1,6 @@
 import type { AuthRepository } from '~/core/auth/auth.port';
 import type { AccountActionData } from '../types';
 import { handlePasswordUpdate } from './action/handlers/password';
-import { handlePreferencesUpdate } from './action/handlers/preferences';
 import { handleProfileUpdate } from './action/handlers/profile';
 
 type RunAccountActionInput = {
@@ -20,10 +19,6 @@ export async function runAccountAction({ formData, userId, authRepository }: Run
 
   if (intent === 'password-update') {
     return handlePasswordUpdate(context);
-  }
-
-  if (intent === 'preferences-update') {
-    return handlePreferencesUpdate(context);
   }
 
   return Response.json(

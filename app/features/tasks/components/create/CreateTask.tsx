@@ -12,10 +12,12 @@ export function CreateTask({
   actionData,
   isSubmitting,
   mentionCandidates,
+  className,
 }: {
   actionData: TaskActionData;
   isSubmitting: boolean;
   mentionCandidates: string[];
+  className?: string;
 }) {
   const createErrorActionData = getErrorActionDataByIntent(actionData, 'create');
   const createIntentError = getFieldError(createErrorActionData?.fieldErrors, 'intent');
@@ -46,7 +48,7 @@ export function CreateTask({
   }
 
   return (
-    <section id="create-task" className="max-w-xl space-y-3 rounded border p-4">
+    <section id="create-task" className={className ?? 'max-w-xl space-y-3 rounded border p-4'}>
       <ActionFeedbackText
         actionData={createErrorActionData}
         intent="create"
@@ -55,7 +57,7 @@ export function CreateTask({
         errorClassName="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700"
       />
 
-      <Form method="post" className="max-w-md space-y-3" onSubmit={handleSubmitGuard}>
+      <Form method="post" className="space-y-3" onSubmit={handleSubmitGuard}>
         <input type="hidden" name="intent" value="create" />
 
         <TitleField value={title} error={titleError} onChange={setTitle} />
@@ -67,7 +69,6 @@ export function CreateTask({
             value={description}
             onChange={setDescription}
             mentionCandidates={mentionCandidates}
-            placeholder="Describe la task..."
             onPendingUploadsChange={setHasPendingEditorUploads}
             onImageUploadError={setEditorImageError}
             onImageUpload={handleEditorImageUpload}

@@ -2,13 +2,22 @@ import { Link } from 'react-router';
 import type { UserRole } from '~/core/auth/auth.types';
 import { AppHeader } from './app-header';
 import { AppSidebar } from './app-sidebar';
+import type { ThemeMode } from '~/infra/theme/theme-cookie';
 
 type AppShellUser = {
   email: string;
   role: UserRole;
 };
 
-export function AppShell({ user, children }: { user: AppShellUser; children: React.ReactNode }) {
+export function AppShell({
+  user,
+  theme,
+  children,
+}: {
+  user: AppShellUser;
+  theme: ThemeMode;
+  children: React.ReactNode;
+}) {
   return (
     <div className="min-h-screen md:grid md:grid-cols-[260px_1fr] md:grid-rows-[65px_1fr]">
       <div className="hidden items-center justify-start border-b border-r px-6 md:flex">
@@ -18,7 +27,7 @@ export function AppShell({ user, children }: { user: AppShellUser; children: Rea
       </div>
 
       <div className="border-b md:col-start-2 md:row-start-1">
-        <AppHeader user={user} hideBrand noBorder />
+        <AppHeader user={user} theme={theme} hideBrand noBorder />
       </div>
 
       <div className="md:col-start-1 md:row-start-2">

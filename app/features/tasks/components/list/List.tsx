@@ -10,8 +10,7 @@ type ListProps = {
 
 export function List({ tasks, assigneeById, onOpenTask, onDeleteTask }: ListProps) {
   return (
-    <section className="space-y-2">
-      <h2 className="text-lg font-semibold">Listado</h2>
+    <section>
       <ul className="space-y-2">
         {tasks.map((task) => (
           <Item

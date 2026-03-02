@@ -1,13 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { SummaryCard } from './shared/SummaryCard';
 import { ProfileSection } from './sections/profile/ProfileSection';
-import { PreferencesSection } from './sections/preferences/PreferencesSection';
 import { SecuritySection } from './sections/security/SecuritySection';
 import { PlanSection } from './sections/plan/PlanSection';
 import { ContentDialog } from '~/ui/dialogs/ContentDialog';
 import type { UserRole } from '~/core/auth/auth.types';
-import type { ThemeMode } from '~/infra/theme/theme-cookie';
-import type { UserPreferences } from '~/infra/preferences/preferences-cookie';
 
 type AccountPageProps = {
   user: {
@@ -18,41 +15,30 @@ type AccountPageProps = {
     about: string | null;
     role: UserRole;
   };
-  theme: ThemeMode;
-  preferences: UserPreferences;
 };
 
-type AccountSectionKey = 'profile' | 'preferences' | 'security' | 'plan';
+type AccountSectionKey = 'profile' | 'security' | 'plan';
 
 const DIALOG_META: Record<AccountSectionKey, { title: string; description: string }> = {
   profile: { title: 'Perfil', description: 'Actualiza tu informacion basica.' },
-  preferences: { title: 'Preferencias', description: 'Tema, densidad y comportamiento por defecto.' },
   security: { title: 'Seguridad', description: 'Cambio de password y control de credenciales.' },
   plan: { title: 'Plan', description: 'Plan actual y opciones de upgrade.' },
 };
 
 function renderSectionContent(section: AccountSectionKey, user: AccountPageProps['user']) {
   if (section === 'profile') return <ProfileSection user={user} asCard={false} />;
-  if (section === 'preferences') return null;
   if (section === 'security') return <SecuritySection asCard={false} />;
   return <PlanSection asCard={false} />;
 }
 
-export function AccountPage({ user, theme, preferences }: AccountPageProps) {
+export function AccountPage({ user }: AccountPageProps) {
   const [openSection, setOpenSection] = useState<AccountSectionKey | null>(null);
-  const initialPreferenceValues = useMemo(
-    () => ({
-      ...preferences,
-      theme,
-    }),
-    [preferences, theme],
-  );
 
   return (
     <main className="container mx-auto p-4">
       <div className="mb-4">
         <h1 className="text-2xl font-semibold">Account</h1>
-        <p className="text-sm opacity-75">Administra tu perfil, seguridad y preferencias.</p>
+        <p className="text-sm opacity-75">Administra tu perfil, seguridad y plan.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -68,26 +54,6 @@ export function AccountPage({ user, theme, preferences }: AccountPageProps) {
               </p>
               <p>
                 <span className="font-medium">Email:</span> {user.email}
-              </p>
-            </div>
-          }
-        />
-
-        <SummaryCard
-          title="Preferencias"
-          description="Tema, densidad y defaults de trabajo."
-          onOpen={() => setOpenSection('preferences')}
-          ctaLabel="Actualizar"
-          preview={
-            <div className="space-y-1 text-xs opacity-80">
-              <p>
-                <span className="font-medium">Tema:</span> {theme}
-              </p>
-              <p>
-                <span className="font-medium">Vista default:</span> {preferences.defaultTasksView}
-              </p>
-              <p>
-                <span className="font-medium">Densidad:</span> {preferences.density}
               </p>
             </div>
           }
@@ -127,11 +93,7 @@ export function AccountPage({ user, theme, preferences }: AccountPageProps) {
           title={DIALOG_META[openSection].title}
           description={DIALOG_META[openSection].description}
         >
-          {openSection === 'preferences' ? (
-            <PreferencesSection asCard={false} initialValues={initialPreferenceValues} />
-          ) : (
-            renderSectionContent(openSection, user)
-          )}
+          {renderSectionContent(openSection, user)}
         </ContentDialog>
       ) : null}
     </main>

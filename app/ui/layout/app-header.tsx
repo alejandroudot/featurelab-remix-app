@@ -4,14 +4,17 @@ import { Form, Link, useLocation } from 'react-router';
 import type { UserRole } from '~/core/auth/auth.types';
 import { HeaderNotifications } from './header-notifications';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/ui/primitives/sheet';
+import type { ThemeMode } from '~/infra/theme/theme-cookie';
+import { ThemeToggle } from './theme-toggle';
 
 type Props = {
   user: { email: string; role: UserRole } | null;
+  theme?: ThemeMode;
   hideBrand?: boolean;
   noBorder?: boolean;
 };
 
-export function AppHeader({ user, hideBrand = false, noBorder = false }: Props) {
+export function AppHeader({ user, theme = 'system', hideBrand = false, noBorder = false }: Props) {
   const loc = useLocation();
   const redirectTo = loc.pathname + loc.search;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -41,6 +44,7 @@ export function AppHeader({ user, hideBrand = false, noBorder = false }: Props) 
     <>
       {user.role === 'admin' ? <span className="rounded border px-2 py-0.5 text-xs">ADMIN</span> : null}
       {user.role === 'manager' ? <span className="rounded border px-2 py-0.5 text-xs">MANAGER</span> : null}
+      <ThemeToggle theme={theme} />
       <Link
         to="/account"
         className={`inline-flex items-center gap-2 rounded border px-3 py-1 text-sm font-medium transition ${

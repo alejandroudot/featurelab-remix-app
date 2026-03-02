@@ -71,10 +71,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       <body data-density={density}>
         {shouldRenderAppShell && user ? (
-          <AppShell user={user}>{children}</AppShell>
+          <AppShell user={user} theme={theme}>
+            {children}
+          </AppShell>
         ) : (
           <>
-            <AppHeader user={user} />
+            <AppHeader user={user} theme={theme} />
             {children}
           </>
         )}

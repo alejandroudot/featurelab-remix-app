@@ -87,11 +87,7 @@ export function BoardView({
   }
 
   return (
-    <section className="space-y-3">
-      <h2 className="text-lg font-semibold">Board</h2>
-      <p className="text-xs opacity-70">
-        Nuevas tasks entran en <span className="font-medium">To Do</span> por defecto.
-      </p>
+    <section>
       <div className="grid gap-3 xl:grid-cols-4">
         {BOARD_COLUMNS.map((column) => {
           const columnTasks = boardState[column.id];
