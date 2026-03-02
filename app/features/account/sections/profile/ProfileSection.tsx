@@ -2,6 +2,8 @@ import { SectionCard } from '../../shared/SectionCard';
 import { useFetcher } from 'react-router';
 import { ActionFeedbackText } from '~/ui/forms/action-feedback';
 import type { AccountActionData } from '../../types';
+import type { UserRole } from '~/core/auth/auth.types';
+import { Avatar, AvatarFallback } from '~/ui/primitives/avatar';
 
 type ProfileSectionProps = {
   user: {
@@ -10,7 +12,7 @@ type ProfileSectionProps = {
     displayName: string | null;
     phone: string | null;
     about: string | null;
-    role: 'user' | 'admin';
+    role: UserRole;
   };
   asCard?: boolean;
 };
@@ -19,16 +21,23 @@ export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
   const fetcher = useFetcher<AccountActionData>();
   const isSubmitting = fetcher.state === 'submitting';
   const actionData = fetcher.data;
+  const profileName = user.displayName?.trim() || 'Usuario';
+  const roleLabel = user.role === 'admin' ? 'Admin' : user.role === 'manager' ? 'Manager' : 'User';
+  const avatarFallback = buildAvatarFallback(profileName);
 
   const content = (
     <>
-      <div className="mb-3 space-y-2 text-sm">
-        <p>
-          <span className="font-medium">Email:</span> {user.email}
-        </p>
-        <p>
-          <span className="font-medium">Role:</span> {user.role}
-        </p>
+      <div className="mb-4 rounded border bg-muted/20 p-3">
+        <div className="flex items-center gap-3">
+          <Avatar data-size="lg">
+            <AvatarFallback>{avatarFallback}</AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold">{profileName}</p>
+            <p className="truncate text-xs opacity-75">{user.email}</p>
+            <p className="mt-1 text-xs font-medium uppercase tracking-wide opacity-70">{roleLabel}</p>
+          </div>
+        </div>
       </div>
 
       <fetcher.Form method="post" className="space-y-2">
@@ -151,4 +160,15 @@ function PlaceholderField({ label }: PlaceholderFieldProps) {
       <p className="text-xs opacity-60">Proximamente</p>
     </div>
   );
+}
+
+function buildAvatarFallback(name: string): string {
+  const tokens = name
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter(Boolean);
+
+  if (!tokens.length) return 'U';
+  if (tokens.length === 1) return tokens[0].slice(0, 2).toUpperCase();
+  return `${tokens[0][0]}${tokens[1][0]}`.toUpperCase();
 }

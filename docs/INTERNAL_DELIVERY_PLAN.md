@@ -371,20 +371,20 @@ Tecnologias del dia: React Router actions/loaders + shadcn/ui (Tabs/Card/Form/In
 Fuente roadmap: [P1.4 user panel](./PRODUCT_ROADMAP.md#L204), [P1.4 perfil/seguridad](./PRODUCT_ROADMAP.md#L208), [P1.4 preferencias](./PRODUCT_ROADMAP.md#L212), [P1.4 plan](./PRODUCT_ROADMAP.md#L216).
 Fortalece hoy: auth hardening, seguridad de credenciales, diseno de panel de usuario orientado a producto.
 
-- [ ] Crear vista dedicada de cuenta (corrida desde Dia 10)
+- [x] Crear vista dedicada de cuenta (corrida desde Dia 10)
   - [x] Bloques: Perfil, Seguridad, Preferencias, Plan
-  - [ ] Layout con `shadcn/ui` (`Tabs`, `Card`, `Form`, `Input`, `Button`)
+  - [x] Layout con `shadcn/ui` (`Card`, `Form`, `Input`, `Button`, `Dialog`) con patron `resumen en cards + modal`
   - [x] Navegacion visible desde header
-- [ ] Patron de interaccion del panel (acuerdo UX)
+- [x] Patron de interaccion del panel (acuerdo UX)
   - [x] `Perfil`, `Preferencias` y `Plan` se abren en modal dedicado
   - [x] `Seguridad` tambien se abre en modal dedicado (ajuste UX)
   - [x] Vista principal de `/account` queda como resumen + accion `Editar/Abrir`
   - [x] Definir orden de implementacion modal por modal (primero `Perfil`)
-- [ ] Perfil y seguridad
+- [x] Perfil y seguridad
   - [x] Editar nombre visible
   - [x] Cambio de password
   - [x] Errores y exito visibles sin silencios
-  - [ ] Modal de `Perfil` estilo ficha (header con avatar + nombre + email)
+  - [x] Modal de `Perfil` estilo ficha (header con avatar + nombre + email)
   - [x] `Perfil` v1 persistente: `displayName` + `phone` + `about`
   - [x] `Perfil` v1 visual-only: `Work`, `Expertise`, `Location`, `Other` como placeholders claros
   - [x] `Seguridad` v1: toggle mostrar/ocultar password por campo
@@ -399,13 +399,14 @@ Fortalece hoy: auth hardening, seguridad de credenciales, diseno de panel de usu
   - [x] Ampliar `register` para precargar perfil (`displayName` requerido, `phone` opcional, `timezone` opcional)
   - [x] Mantener `login` con validacion minima de credenciales (sin sobrecargar UX)
   - [x] Revisar output safety: no loggear passwords y mantener validacion/sanitizacion por Zod
-- [ ] Auth verification foundation (email real por link)
-  - [ ] Crear entidad `email_verification_tokens` (`userId`, `tokenHash`, `expiresAt`, `usedAt`)
-  - [ ] Agregar campo `emailVerifiedAt` (nullable) en `users`
-  - [ ] En register: crear usuario no verificado + generar token + enviar email
-  - [ ] Crear endpoint/route de confirmacion por token
-  - [ ] Reglas: token expirado/usado invalido; token valido marca email como verificado
-  - [ ] Infra de email: adapter por puerto (dev SMTP inbox / prod provider)
+- [~] Auth verification foundation (email real por link)
+  - [x] Crear entidad `email_verification_tokens` (`userId`, `tokenHash`, `expiresAt`, `usedAt`)
+  - [x] Agregar campo `emailVerifiedAt` (nullable) en `users`
+  - [x] En register: crear usuario no verificado + generar token + enviar email
+  - [x] Crear endpoint/route de confirmacion por token
+  - [x] Reglas: token expirado/usado invalido; token valido marca email como verificado
+  - [x] Infra de email: adapter por puerto + dev sink/log local (implementado)
+  - [ ] Integrar proveedor real de email (dev SMTP inbox / provider prod) -> movido a Dia 16
 - [ ] Preferencias
   - [ ] Definir `density` de UI (`comfortable` | `compact`) y aplicarlo en layouts/listados principales
   - [ ] Definir `defaultTasksView` (`board` | `list`)
@@ -509,7 +510,7 @@ Fuente roadmap: [P2.3 documentacion](./PRODUCT_ROADMAP.md#L282), [P3.1 stripe](.
 Fortalece hoy: documentacion profesional, narrativa de producto, base de billing con impacto funcional.
 
 - [ ] README alineado con scripts/rutas reales
-- [ ] `docs/MVP.md` actualizado al estado actual
+- [ ] `docs/PRODUCT.md` actualizado al estado actual
 - [ ] Guia corta: debug de actions, errores y smoke local
 - [ ] Modelo de planes y limites (`free`/`pro`) con objetivo didactico (portfolio)
 - [ ] Flujo checkout de upgrade (base)
@@ -526,6 +527,10 @@ Fortalece hoy: integraciones externas confiables, idempotencia, permisos por cap
 - [ ] Persistencia de suscripcion en DB + guards por plan
 - [ ] Capability por plan en server (`canManageTeam` o equivalente)
 - [ ] Validacion de upgrade: plan impacta permisos reales (no solo UI)
+- [ ] Integrar proveedor real de email para verificacion de registro
+  - [ ] Implementar adapter SMTP dev inbox (entorno local)
+  - [ ] Implementar adapter provider prod (interfaz ya existente)
+  - [ ] Configurar seleccion por entorno (`dev`/`prod`) sin tocar flujo de negocio
 
 ## ?? Dia 17 - Sabado 07/03/2026
 

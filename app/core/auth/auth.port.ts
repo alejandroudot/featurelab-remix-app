@@ -25,6 +25,14 @@ export type ChangePasswordInput = {
   newPassword: string;
 };
 
+export type CreateEmailVerificationTokenInput = {
+  userId: string;
+};
+
+export type VerifyEmailTokenInput = {
+  token: string;
+};
+
 export interface AuthService {
   register(input: RegisterInput): Promise<User>;
   login(input: LoginInput): Promise<{ user: User; sessionId: string }>;
@@ -33,4 +41,8 @@ export interface AuthService {
   updateDisplayName(input: UpdateDisplayNameInput): Promise<User>;
   updateProfile(input: UpdateProfileInput): Promise<User>;
   changePassword(input: ChangePasswordInput): Promise<void>;
+  createEmailVerificationToken(
+    input: CreateEmailVerificationTokenInput,
+  ): Promise<{ token: string; expiresAt: Date }>;
+  verifyEmailToken(input: VerifyEmailTokenInput): Promise<void>;
 }

@@ -1,8 +1,9 @@
 import type { FlagCommandService } from '~/core/flags/service/flags.service';
+import type { UserRole } from '~/core/auth/auth.types';
 
 type RunHomeActionInput = {
   formData: FormData;
-  userRole: 'user' | 'admin';
+  userRole: UserRole;
   flagCommandService: FlagCommandService;
 };
 

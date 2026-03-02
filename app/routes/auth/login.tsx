@@ -1,5 +1,5 @@
 import type { Route } from './+types/login';
-import { redirect, useActionData } from 'react-router';
+import { redirect, useActionData, useSearchParams } from 'react-router';
 
 import { LoginPage } from '~/features/auth/LoginPage';
 import type { AuthActionData } from '~/features/auth/types';
@@ -23,6 +23,15 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function LoginRoute() {
+  const [searchParams] = useSearchParams();
   const actionData = useActionData<typeof action>() as AuthActionData;
-  return <LoginPage actionData={actionData} />;
+  const emailVerificationStatus = searchParams.get('emailVerification');
+  const infoMessage =
+    emailVerificationStatus === 'sent'
+      ? 'Te enviamos un link de verificacion por email. Revisa tu casilla.'
+      : emailVerificationStatus === 'verified'
+        ? 'Email verificado. Ya podes iniciar sesion.'
+        : undefined;
+
+  return <LoginPage actionData={actionData} infoMessage={infoMessage} />;
 }

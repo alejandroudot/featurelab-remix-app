@@ -1,5 +1,5 @@
 import { requireUser } from '~/infra/auth/require-user';
-import { taskQueryService } from '~/infra/tasks/task.repository';
+import { taskQueryService } from '~/infra/tasks/task.services';
 import { saveRichTextImageTemp } from '~/infra/files/rich-text-images.storage';
 
 // Endpoint de subida de imagenes del editor rich-text.

@@ -37,11 +37,17 @@ export async function runLoginAction(input: RunLoginActionInput) {
     setSessionCookie(headers, sessionId);
 
     return redirect(safeRedirect(input.redirectTo, '/tasks'), { headers });
-  } catch {
+  } catch (error) {
+    const code = error instanceof Error ? error.message : 'UNKNOWN';
+    const formError =
+      code === 'EMAIL_NOT_VERIFIED'
+        ? 'Tu email todavia no esta verificado. Revisa el link que te enviamos.'
+        : 'Credenciales invalidas.';
+
     return Response.json(
       {
         success: false,
-        formError: 'Credenciales invalidas.',
+        formError,
         values: { email: parsed.data.email },
       } satisfies AuthActionData,
       { status: 401 },

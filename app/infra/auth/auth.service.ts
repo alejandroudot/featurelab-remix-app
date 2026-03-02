@@ -1,5 +1,5 @@
-import { createManualAuthService } from "./auth.service.manual";
+import { createSqliteAuthService } from "./auth.service.sqlite";
 // import { createBetterAuthService } from "./better/auth.service.better"; // v0.2
 
-export const authService = createManualAuthService();
+export const authService = createSqliteAuthService();
 // luego lo pasamos a: createBetterAuthService()

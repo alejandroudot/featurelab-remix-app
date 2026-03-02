@@ -1,5 +1,5 @@
 import { requireUser } from '~/infra/auth/require-user';
-import { taskQueryService } from '~/infra/tasks/task.repository';
+import { taskQueryService } from '~/infra/tasks/task.services';
 import { cleanupRichTextTempImagesNotInPersistedHtml } from '~/infra/files/rich-text-images.storage';
 
 // Endpoint de limpieza de temporales del editor.

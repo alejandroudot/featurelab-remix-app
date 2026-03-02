@@ -1,3 +1,5 @@
+import type { UserRole } from '~/core/auth/auth.types';
+
 export type HomePageProps = {
   env: {
     mode: string;
@@ -37,6 +39,6 @@ export type HomePageProps = {
     }>;
   };
   user: {
-    role: 'user' | 'admin';
+    role: UserRole;
   };
 };

@@ -1,7 +1,7 @@
 import type { Route } from './+types/notifications';
 import { inArray } from 'drizzle-orm';
 import { requireUser } from '~/infra/auth/require-user';
-import { taskActivityQueryService, taskQueryService } from '~/infra/tasks/task.repository';
+import { taskActivityQueryService, taskQueryService } from '~/infra/tasks/task.services';
 import { buildNotificationsFeedFromTaskActivities } from '~/core/notifications/notifications-feed';
 import { db } from '~/infra/db/client.sqlite';
 import { tasks as tasksTable } from '~/infra/db/schema';

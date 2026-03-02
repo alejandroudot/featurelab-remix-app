@@ -1,6 +1,6 @@
 import { useLoaderData, useActionData } from 'react-router';
 import type { Route } from './+types/flags';
-import { flagCommandService, flagQueryService } from '../infra/flags/flags.repository';
+import { flagCommandService, flagQueryService } from '../infra/flags/flags.services';
 import { FlagsPage } from '../features/flags/FlagsPage';
 import type { FlagActionData } from '../features/flags/types';
 import { requireAdmin } from '~/infra/auth/require-admin';

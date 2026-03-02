@@ -5,8 +5,8 @@ import { HomePage } from '~/features/home/HomePage';
 import { runHomeAction } from '~/features/home/server/action';
 import { runHomeLoader } from '~/features/home/server/loader';
 import { requireUser } from '~/infra/auth/require-user';
-import { flagCommandService, flagQueryService } from '~/infra/flags/flags.repository';
-import { taskQueryService } from '~/infra/tasks/task.repository';
+import { flagCommandService, flagQueryService } from '~/infra/flags/flags.services';
+import { taskQueryService } from '~/infra/tasks/task.services';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);

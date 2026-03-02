@@ -249,22 +249,23 @@ Criterio de cierre:
 
 Tecnologias a usar: React Router + Zod + shadcn/ui + Radix (alert dialog/toast).
 
-- [ ] Crear vista dedicada de cuenta
-  - [ ] Bloques: Perfil, Seguridad, Preferencias, Plan
-  - [ ] Layout con `shadcn/ui` (`Tabs`, `Card`, `Form`, `Input`, `Button`)
-  - [ ] Navegacion visible desde header
-- [ ] Perfil y seguridad
-  - [ ] Editar nombre visible
-  - [ ] Cambio de password
-  - [ ] Errores y exito visibles sin silencios
-  - [ ] Register con `confirmEmail` + validacion de match en cliente y server
-  - [ ] Policy de password compartida entre register y change-password
-  - [ ] Verificacion real de email por link
-    - [ ] `email_verification_tokens` (`userId`, `tokenHash`, `expiresAt`, `usedAt`)
-    - [ ] `users.emailVerifiedAt` (nullable)
-    - [ ] Register crea token y envia email
-    - [ ] Endpoint de confirmacion por token (valido/expirado/usado)
-    - [ ] Estrategia de email: dev SMTP inbox + adapter a provider para prod
+- [x] Crear vista dedicada de cuenta
+  - [x] Bloques: Perfil, Seguridad, Preferencias, Plan
+  - [x] Layout con `shadcn/ui` (`Card`, `Form`, `Input`, `Button`, `Dialog`) usando patron resumen + modal
+  - [x] Navegacion visible desde header
+- [~] Perfil y seguridad
+  - [x] Editar nombre visible
+  - [x] Cambio de password
+  - [x] Errores y exito visibles sin silencios
+  - [x] Register con `confirmEmail` + validacion de match en cliente y server
+  - [x] Policy de password compartida entre register y change-password
+  - [~] Verificacion real de email por link
+    - [x] `email_verification_tokens` (`userId`, `tokenHash`, `expiresAt`, `usedAt`)
+    - [x] `users.emailVerifiedAt` (nullable)
+    - [x] Register crea token y envia email
+    - [x] Endpoint de confirmacion por token (valido/expirado/usado)
+    - [x] Infra de email base: adapter por puerto + dev sink/log local
+    - [ ] Integrar proveedor real de email (dev SMTP inbox + provider prod) -> se implementa en P3.1
 - [ ] Preferencias
   - [ ] `density` de UI (`comfortable` | `compact`)
   - [ ] `defaultTasksView` (`board` | `list`) y `defaultTasksScope` (`all` | `assigned` | `created`)
@@ -385,6 +386,10 @@ Tecnologias a usar: Stripe API + webhooks + dominio de equipos (DB + permisos se
 - [ ] Webhooks (`checkout.session.completed`, `customer.subscription.*`) con idempotencia
 - [ ] Persistencia de suscripcion en DB + guards por plan
 - [ ] UI de estado de plan, fallos de pago, cancelaciones
+- [ ] Infra de email productiva para registro verificado
+  - [ ] Adapter SMTP para desarrollo (dev inbox)
+  - [ ] Adapter provider para produccion
+  - [ ] Seleccion por entorno sin cambiar la logica de verificacion
 - [ ] Capacidad de producto ligada al plan
   - [ ] Upgrade a `pro` habilita capacidad `manager`
   - [ ] Fuente de verdad de permisos por plan en server

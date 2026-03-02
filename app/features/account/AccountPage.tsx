@@ -5,6 +5,7 @@ import { PreferencesSection } from './sections/preferences/PreferencesSection';
 import { SecuritySection } from './sections/security/SecuritySection';
 import { PlanSection } from './sections/plan/PlanSection';
 import { ContentDialog } from '~/ui/dialogs/ContentDialog';
+import type { UserRole } from '~/core/auth/auth.types';
 
 type AccountPageProps = {
   user: {
@@ -13,7 +14,7 @@ type AccountPageProps = {
     displayName: string | null;
     phone: string | null;
     about: string | null;
-    role: 'user' | 'admin';
+    role: UserRole;
   };
 };
 

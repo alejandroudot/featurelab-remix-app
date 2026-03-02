@@ -1,4 +1,4 @@
-// app/infra/tasks/task.repository.ts
+// app/infra/tasks/task.services.ts
 import type {
   TaskActivityCommandService,
   TaskActivityQueryService,
@@ -14,7 +14,7 @@ import {
   sqliteTaskCommentQueryService,
   sqliteTaskCommandService,
   sqliteTaskQueryService,
-} from './task.repository.sqlite';
+} from './task.services.sqlite';
 
 // v0.2: aca elegimos por DB_PROVIDER (sqlite vs supabase)
 export const taskQueryService: TaskQueryService = sqliteTaskQueryService;

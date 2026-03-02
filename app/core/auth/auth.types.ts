@@ -1,3 +1,5 @@
+export type UserRole = 'user' | 'manager' | 'admin';
+
 export type User = {
   id: string;
   email: string;
@@ -5,7 +7,8 @@ export type User = {
   phone: string | null;
   timezone: string | null;
   about: string | null;
-  role: "user" | "admin";
+  emailVerifiedAt: Date | null;
+  role: UserRole;
   createdAt: Date;
 };
 

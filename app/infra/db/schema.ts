@@ -70,7 +70,7 @@ export const users = sqliteTable("users", {
   timezone: text("timezone"),
   about: text("about"),
   emailVerifiedAt: integer("email_verified_at", { mode: "timestamp_ms" }),
-	role: text("role", { enum: ["user", "admin"] })
+	role: text("role", { enum: ["user", "manager", "admin"] })
   .notNull()
   .default("user"),
   passwordHash: text("password_hash").notNull(),
@@ -87,6 +87,23 @@ export const sessions = sqliteTable("sessions", {
   .notNull()
   .$defaultFn(() => new Date()),
 });
+
+export const emailVerificationTokens = sqliteTable(
+  "email_verification_tokens",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull(),
+    expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+    usedAt: integer("used_at", { mode: "timestamp_ms" }),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (t) => [uniqueIndex("email_verification_tokens_hash_unique").on(t.tokenHash)],
+);
 
 export const featureFlags = sqliteTable(
   "feature_flags",

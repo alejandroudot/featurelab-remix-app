@@ -3,6 +3,7 @@
 
 import type { FlagCommandService, FlagQueryService } from '~/core/flags/service/flags.service';
 import { ensureProductFlagsSeeded } from '~/core/flags/service/flag-seed';
+import type { UserRole } from '~/core/auth/auth.types';
 import type { TaskQueryService } from '~/core/tasks/tasks.port';
 import type { HomePageProps } from '../types';
 
@@ -10,7 +11,7 @@ type RunHomeLoaderInput = {
   user: {
     id: string;
     email: string;
-    role: 'user' | 'admin';
+    role: UserRole;
   };
   taskQueryService: TaskQueryService;
   flagQueryService: FlagQueryService;

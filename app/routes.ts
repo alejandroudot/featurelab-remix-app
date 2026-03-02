@@ -10,5 +10,6 @@ export default [
   route('/flags', 'routes/flags.tsx'),
 	route('/auth/login', 'routes/auth/login.tsx'),
 	route('/auth/register', 'routes/auth/register.tsx'),
+	route('/auth/verify-email', 'routes/auth/verify-email.tsx'),
 	route('/auth/logout', 'routes/auth/logout.tsx'),
 ] satisfies RouteConfig;

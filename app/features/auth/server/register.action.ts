@@ -5,15 +5,14 @@ import { normalizeComparableEmail } from '~/core/auth/credential-utils';
 import { registerSchema } from '~/core/auth/register.schema';
 import type { AuthActionData } from '~/features/auth/types';
 import { authService } from '~/infra/auth/auth.service';
-import { setSessionCookie } from '~/infra/auth/session-cookie';
-import { safeRedirect } from '~/infra/http/redirects';
+import { emailService } from '~/infra/email/email.service';
 
 type RunRegisterActionInput = {
   formData: FormData;
-  redirectTo: string | null;
+  requestUrl: string;
 };
 
-// Ejecuta register + autologin para que la route solo orqueste.
+// Ejecuta register + disparo de verificacion por email para que la route solo orqueste.
 export async function runRegisterAction(input: RunRegisterActionInput) {
   const parsed = registerSchema.safeParse({
     displayName: input.formData.get('displayName'),
@@ -45,22 +44,27 @@ export async function runRegisterAction(input: RunRegisterActionInput) {
   try {
     const normalizedEmail = normalizeComparableEmail(parsed.data.email);
 
-    await authService.register({
+    const createdUser = await authService.register({
       displayName: parsed.data.displayName,
       email: normalizedEmail,
       password: parsed.data.password,
       phone: parsed.data.phone,
       timezone: parsed.data.timezone,
     });
-    const { sessionId } = await authService.login({
-      email: normalizedEmail,
-      password: parsed.data.password,
+    const { token, expiresAt } = await authService.createEmailVerificationToken({
+      userId: createdUser.id,
+    });
+    const requestUrl = new URL(input.requestUrl);
+    const verifyUrl = new URL('/auth/verify-email', requestUrl.origin);
+    verifyUrl.searchParams.set('token', token);
+
+    await emailService.sendEmailVerification({
+      to: normalizedEmail,
+      verifyUrl: verifyUrl.toString(),
+      expiresAt,
     });
 
-    const headers = new Headers();
-    setSessionCookie(headers, sessionId);
-
-    return redirect(safeRedirect(input.redirectTo, '/'), { headers });
+    return redirect('/auth/login?emailVerification=sent');
   } catch (err) {
     const code = err instanceof Error ? err.message : 'UNKNOWN';
     const formError =

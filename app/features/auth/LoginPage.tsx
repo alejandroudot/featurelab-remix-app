@@ -2,10 +2,22 @@ import { Form, Link } from 'react-router';
 import { ActionFeedbackText } from '~/ui/forms/action-feedback';
 import type { AuthActionData } from './types';
 
-export function LoginPage({ actionData }: { actionData: AuthActionData }) {
+export function LoginPage({
+  actionData,
+  infoMessage,
+}: {
+  actionData: AuthActionData;
+  infoMessage?: string;
+}) {
   return (
     <main className="container mx-auto p-4 max-w-md space-y-4">
       <h1 className="text-2xl font-semibold">Entrar</h1>
+
+      {infoMessage ? (
+        <p className="rounded border border-blue-200 bg-blue-50 p-3 text-sm text-blue-700">
+          {infoMessage}
+        </p>
+      ) : null}
 
       <ActionFeedbackText
         actionData={actionData}

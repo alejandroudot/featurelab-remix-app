@@ -1,4 +1,4 @@
-// app/infra/tasks/task.repository.sqlite.ts
+// app/infra/tasks/task.services.sqlite.ts
 import { and, desc, eq, inArray, or } from 'drizzle-orm';
 import type {
   TaskActivityCommandService,
