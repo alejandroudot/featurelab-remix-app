@@ -1,7 +1,7 @@
 import type {
   NotificationService,
   TaskAssignmentNotificationInput,
-} from '~/core/notifications/notification.port';
+} from '~/core/notifications/notifications.port';
 
 function logAssignmentDebug(input: TaskAssignmentNotificationInput) {
   if (process.env.NOTIFICATIONS_DEBUG !== '1') return;
@@ -14,3 +14,4 @@ export const notificationService: NotificationService = {
     logAssignmentDebug(input);
   },
 };
+
