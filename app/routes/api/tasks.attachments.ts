@@ -1,5 +1,5 @@
 import { requireUser } from '~/infra/auth/require-user';
-import { taskQueryPort } from '~/infra/tasks/task.repository.provider';
+import { taskQueryPort } from '~/infra/task/task.repository.provider';
 import { saveRichTextImageTemp } from '~/infra/files/rich-text-images.storage';
 
 // Endpoint de subida de imagenes del editor rich-text.
@@ -43,3 +43,6 @@ export async function action({ request }: { request: Request }) {
 export async function loader() {
   return Response.json({ success: false, formError: 'Method not allowed' }, { status: 405 });
 }
+
+
+

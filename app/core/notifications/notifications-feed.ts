@@ -1,4 +1,4 @@
-import type { Task, TaskActivity } from '~/core/tasks/tasks.types';
+import type { Task, TaskActivity } from '~/core/task/task.types';
 
 export type NotificationFeedItem = {
   id: string;
@@ -69,3 +69,6 @@ export function buildNotificationsFeedFromTaskActivities({
       };
     });
 }
+
+
+

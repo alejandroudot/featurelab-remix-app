@@ -130,7 +130,7 @@ Objetivo:
 ## 8. 🔄 Estado cliente y datos remotos
 
 Direccion definida por roadmap:
-- Estado actual (P1): `loader/action` como fuente de verdad para datos de negocio en rutas principales (`/tasks`, `/flags`, `/`).
+- Estado actual (P1): `loader/action` como fuente de verdad para datos de negocio en rutas principales (`/projects`, `/flags`, `/`).
 - Zustand para estado global de UI/preferencias.
 - TanStack Query planificado para adopcion completa en `P2.1` (evitando enfoque hibrido parcial en `P1`).
 
@@ -172,3 +172,4 @@ Regla practica:
 - Si hace CRUD/persistencia => `repository`.
 - Si aplica reglas de negocio/decision o comportamiento de canal => `service`.
 - Si solo conecta piezas => `provider`.
+

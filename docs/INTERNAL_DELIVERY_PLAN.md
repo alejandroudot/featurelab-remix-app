@@ -23,7 +23,7 @@ No se agregan features fuera de roadmap. No se omiten bullets del roadmap.
 ## ? DoD diario
 
 - [ ] Lo del dia queda funcional.
-- [ ] No se rompen rutas principales (`/`, `/tasks`, `/flags`, auth).
+- [ ] No se rompen rutas principales (`/`, `/projects`, `/flags`, auth).
 - [ ] Commit local con mensaje claro.
 - [ ] Nota diaria (hecho, pendiente, riesgo).
 
@@ -179,7 +179,7 @@ Fortalece hoy: sistema visual consistente, feedback UX inmediato, estado global 
 - [x] Evolucionar quick action de `Crear task` en Hub
   - [x] Abrir formulario en `Dialog` o `Sheet` (shadcn/ui)
   - [x] Reusar action/validaciones de tasks (sin duplicar logica)
-  - [x] Mantener fallback por link a `/tasks#create-task`
+  - [x] Mantener fallback por link a `/projects#create-task`
 - [x] Agregar toggle de dark mode en Hub (UI facherita y visible)
   - [x] Mostrar switch en header del Hub
   - [x] Implementar switch con `shadcn/ui` (`Switch`)
@@ -220,7 +220,7 @@ Tecnologias del dia: UX definition, board behavior rules, Zod (query params mini
 Fuente roadmap: [P1.2 direccion UX](./PRODUCT_ROADMAP.md#L134), [P1.2 comportamiento de orden](./PRODUCT_ROADMAP.md#L138), [P1.2 URL soporte de vista](./PRODUCT_ROADMAP.md#L142).
 Fortalece hoy: decisiones de UX con tradeoffs, contratos de URL/state, validacion defensiva.
 
-- [x] Definir direccion UX para `/tasks`
+- [x] Definir direccion UX para `/projects`
   - [x] Estilo visual elegido y consistente
   - [x] Prioridades de lectura claras en pantalla
   - [x] Copy de acciones coherente
@@ -242,7 +242,7 @@ Tecnologias del dia: DnD, shadcn/ui (Tabs/ToggleGroup/Card/Avatar/DropdownMenu),
 Fuente roadmap: [P1.2 board base](./PRODUCT_ROADMAP.md#L147).
 Fortalece hoy: interacciones complejas en frontend, consistencia visual, flujo de edicion centrado en contexto.
 
-- [x] Vista Board tipo Jira en `/tasks`
+- [x] Vista Board tipo Jira en `/projects`
   - [x] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
   - [x] Crear task entra en `To Do` por defecto
   - [x] Toggle `List` / `Board`
@@ -272,7 +272,7 @@ Tecnologias del dia: DnD + React Router actions/revalidation (sin Query en esta 
 Fuente roadmap: [P1.2 board base (DnD/optimistic)](./PRODUCT_ROADMAP.md#L147).
 Fortalece hoy: sincronizacion UI-servidor, persistencia con rollback, criterio de fuente de verdad.
 
-- [x] Vista Board tipo Jira en `/tasks`
+- [x] Vista Board tipo Jira en `/projects`
   - [x] Drag and drop entre columnas
   - [x] Drag and drop vertical dentro de columna
   - [x] Update inmediato en UI al mover cards (horizontal y vertical)
@@ -303,7 +303,7 @@ Fortalece hoy: autorizacion server-first, visibilidad por actor, reglas de permi
 
 Regla de colaboracion acordada para este bloque:
 - Las tasks son compartidas entre `creador` y `asignado`.
-- Ambos ven la task en `/tasks` (list + board), incluyendo movimientos de estado/orden.
+- Ambos ven la task en `/projects` (list + board), incluyendo movimientos de estado/orden.
 - Si el creador asigna una task, la sigue viendo y monitoreando.
 - Si un usuario recibe una task asignada, tambien la ve y la puede trabajar.
 - En el `Execution Hub` (`/`) se prioriza actividad/notificaciones de cambios, no listado completo de tasks.
@@ -412,7 +412,7 @@ Fortalece hoy: auth hardening, seguridad de credenciales, diseno de panel de usu
   - [x] Definir `density` de UI (`comfortable` | `compact`) y aplicarlo en layouts/listados principales
   - [x] Definir `defaultTasksView` (`board` | `list`)
   - [x] Definir `defaultTasksScope` (`all` | `assigned` | `created`)
-  - [x] Aplicar defaults en `/tasks` solo cuando la URL no trae query params
+  - [x] Aplicar defaults en `/projects` solo cuando la URL no trae query params
   - [x] Tema (light/dark/system) gestionado desde `Preferencias` (sin toggle en header)
   - [x] Persistencia base con cookie/storage (sin sobreingenieria en Dia 11)
 - [x] Plan/Billing (pre-Stripe)
@@ -427,18 +427,18 @@ Fuente roadmap: [P1.2.1 tasks layout refresh + projects](./PRODUCT_ROADMAP.md#L2
 Fortalece hoy: arquitectura de app shell, navegacion por rol, UX de productividad en tasks y orden manual de proyectos.
 
 - [ ] Ajuste visual de Tasks + Projects v1 (prioridad de producto)
-  - [ ] Rebaseline de navegacion global (app shell)
-    - [ ] Header minimal: solo account/session + notificaciones
-    - [ ] Mover accesos de producto (`Tasks`, `Flags`, vistas relacionadas) a sidebar izquierdo persistente
-    - [ ] Mantener area de contenido cambiante a la derecha del sidebar
-  - [ ] Quitar create task inline de `/tasks`
-  - [ ] Boton `Crear tarea` que abre modal/sheet
-  - [ ] Dejar board como foco principal de la pantalla
+  - [x] Rebaseline de navegacion global (app shell)
+    - [x] Header minimal: solo account/session + notificaciones
+    - [x] Mover accesos de producto (`Tasks`, `Flags`, vistas relacionadas) a sidebar izquierdo persistente
+    - [x] Mantener area de contenido cambiante a la derecha del sidebar
+  - [x] Quitar create task inline de `/projects`
+  - [x] Boton `Crear tarea` que abre modal/sheet
+  - [x] Dejar board como foco principal de la pantalla
   - [ ] Agregar search bar para filtrar tasks por keywords (titulo/descripcion)
-  - [ ] Agregar bloque de acciones superior derecha:
-    - [ ] `Crear tarea`
-    - [ ] `View settings` (dropdown)
-    - [ ] `Scope` (dropdown) para alternar alcance rapido
+  - [x] Agregar bloque de acciones superior derecha:
+    - [x] `Crear tarea`
+    - [x] `View settings` (dropdown)
+    - [x] `Scope` (dropdown) para alternar alcance rapido
   - [ ] Agregar sidebar izquierdo de proyectos
     - [ ] Crear proyecto
     - [ ] Estado vacio con CTA `Crea tu primer proyecto`
@@ -479,7 +479,7 @@ Fortalece hoy: estrategia de estado (server state vs UI state), cache, invalidac
   - [ ] Fase 1 (obligatoria): migrar notificaciones de header a `useQuery` sobre `/api/notifications`
   - [ ] Fase 1: definir `queryKey` por usuario y `staleTime/refetchInterval/retry`
   - [ ] Fase 1: remover `fetch` manual en efectos para ese flujo
-  - [ ] Mantener `loader/action` para mutaciones de negocio (auth/tasks/flags)
+  - [ ] Mantener `loader/action` para mutaciones de negocio (auth/projects/flags)
   - [ ] No crear API paralela para cada action sin necesidad real
   - [ ] Regla: migrar por slice completo (no mitad `loader`, mitad `query` para el mismo flujo)
 - [ ] Mapa explicito de uso (Query vs Zustand vs loader/action)
@@ -498,7 +498,7 @@ Fortalece hoy: estrategia de estado (server state vs UI state), cache, invalidac
   - [ ] `Preferencias`
     - [ ] Zustand: `density`, `defaultTasksView`, `defaultTasksScope` + persist
     - [ ] Query: no requerido (preferencias locales de UX)
-    - [ ] Loader/Action: aplica defaults al entrar a `/tasks` cuando URL no tiene params
+    - [ ] Loader/Action: aplica defaults al entrar a `/projects` cuando URL no tiene params
   - [ ] `Team panel` (cuando entre en P3.1)
     - [ ] Query: lecturas remotas por equipo (`myTeams`, `teamMembers`, `teamInvitations`, `teamProjects`)
     - [ ] Zustand: estado UI local (`activeTeamId`, `activeTab`, filtros, modal abierto, seleccion)
@@ -672,3 +672,5 @@ Dia X - Fecha
 - Bloqueado:
 - Riesgo:
 - Primer tarea de manana:
+
+

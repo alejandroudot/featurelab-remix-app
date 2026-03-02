@@ -31,7 +31,7 @@ El foco principal es `Tasks` y colaboracion.
 
 Vistas objetivo:
 - Home (`/`) como `Execution Hub`;
-- Tasks (`/tasks`) con enfoque board-first (lista como vista secundaria);
+- Tasks (`/projects`) con enfoque board-first (lista como vista secundaria);
 - Flags (`/flags`) para administracion;
 - User Panel (`/account` o `/settings`);
 - Billing/Plan (inicialmente dentro de User Panel).
@@ -47,7 +47,7 @@ Vistas objetivo:
 - toggle de tema;
 - feedback de acciones via toast.
 
-### 4.2 Tasks (`/tasks`)
+### 4.2 Tasks (`/projects`)
 - CRUD base;
 - board-first tipo Jira/Trello;
 - columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`;
@@ -116,3 +116,4 @@ El producto se considera bien encaminado cuando:
 - `docs/stack.md`
 - `docs/INTERNAL_DELIVERY_PLAN.md`
 - `docs/INTERNAL_STUDY_PLAN.md`
+

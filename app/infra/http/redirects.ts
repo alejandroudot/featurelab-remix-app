@@ -1,7 +1,7 @@
 	// para que cuando de alguna url me mandan a logear luego redirija al lugar de donde me mando
 export function safeRedirect(
   redirectTo: string | null | undefined,
-  defaultRedirect = "/tasks"
+  defaultRedirect = "/"
 ) {
   if (!redirectTo) return defaultRedirect;
 
@@ -16,3 +16,4 @@ export function safeRedirect(
 
   return redirectTo;
 }
+

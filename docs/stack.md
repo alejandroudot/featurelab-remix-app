@@ -26,7 +26,7 @@
 
 - **Qué es:** Router para React que ahora incluye modo “framework fullstack”: rutas en archivos, loaders (GET), actions (POST/PUT/DELETE), SSR, etc.
 - **Cómo la usamos:**
-  - Rutas tipo `/`, `/tasks`, `/settings` con archivos en `app/routes`.
+  - Rutas tipo `/`, `/projects`, `/settings` con archivos en `app/routes`.
   - `loader` para traer datos del server y pasarlos al componente con `useLoaderData`.
   - `action` para procesar formularios (`<Form method="post">`) y mutar datos.
   - Base de nuestra parte “fullstack” sin tener que armar SSR a mano.
@@ -52,7 +52,7 @@
 - **Qué es:** Framework CSS utility-first, clases como `flex`, `pt-4`, `bg-slate-900` que combinás en el JSX.
 - **Cómo la usamos:**
   - Layout base, tipografía, espaciados, colores, dark theme.
-  - Construir UI rápida para pages como `/tasks`, `/dashboard`, etc.
+  - Construir UI rápida para pages como `/projects`, `/dashboard`, etc.
   - Integrado con Vite mediante `@tailwindcss/vite` y `@import "tailwindcss";`.
 
 ---
@@ -116,7 +116,7 @@
 - **Qué es:** Librería para manejar “server state”: fetch, cache, revalidación, mutations. ([TanStack][7])
 - **Cómo la usamos:**
   - Adopcion planificada fuerte en `P2.1` (cache, invalidacion y optimistic updates reales).
-  - En `P1` evitamos enfoque hibrido en `/tasks`: prioridad a `loader/action` para no duplicar fuentes de verdad.
+  - En `P1` evitamos enfoque hibrido en `/projects`: prioridad a `loader/action` para no duplicar fuentes de verdad.
   - Uso gradual en features puntuales cuando aporte valor claro.
 
 ---
@@ -291,3 +291,4 @@
 [8]: https://orm.drizzle.team/docs/get-started?utm_source=chatgpt.com 'Drizzle ORM - Get started'
 [9]: https://orm.drizzle.team/docs/get-started-postgresql?utm_source=chatgpt.com 'PostgreSQL - Drizzle ORM'
 [10]: https://supabase.com/docs/guides/database/drizzle?utm_source=chatgpt.com 'Drizzle | Supabase Docs'
+

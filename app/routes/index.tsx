@@ -1,28 +1,19 @@
 import { useActionData, useLoaderData, useNavigation } from 'react-router';
-import { TasksPage } from '~/features/tasks/TasksPage';
+import { ProjectWorkspacePage } from '~/features/project/ProjectWorkspacePage';
 import type { Route } from './+types/index';
-import {
-  taskActivityCommandPort,
-  taskActivityQueryPort,
-  taskCommentCommandPort,
-  taskCommentQueryPort,
-  taskCommandPort,
-  taskQueryPort,
-} from '~/infra/tasks/task.repository.provider';
+import { taskPort } from '~/infra/task/task.repository.provider';
 import { notificationService } from '~/infra/notifications/notifications.service';
-import type { TaskActionData } from '~/features/tasks/types';
+import type { TaskActionData } from '~/features/task/types';
 import { requireUser } from '~/infra/auth/require-user';
-import { runTaskAction } from '~/features/tasks/server/action';
-import { runTaskLoader } from '~/features/tasks/server/loader';
+import { runTaskAction } from '~/features/task/server/action';
+import { runTaskLoader } from '~/features/task/server/loader';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
   return runTaskLoader({
     request,
     userId: user.id,
-    taskQueryPort,
-    taskActivityQueryPort,
-    taskCommentQueryPort,
+    taskPort,
   });
 }
 
@@ -33,11 +24,7 @@ export async function action({ request }: Route.ActionArgs) {
   return runTaskAction({
     formData,
     userId: user.id,
-    taskCommandPort,
-    taskQueryPort,
-    taskActivityCommandPort,
-    taskCommentQueryPort,
-    taskCommentCommandPort,
+    taskPort,
     notificationService,
   });
 }
@@ -50,7 +37,7 @@ export default function IndexRoute() {
   const isSubmitting = navigation.state === 'submitting';
 
   return (
-    <TasksPage
+    <ProjectWorkspacePage
       currentUserId={currentUserId}
       tasks={tasks}
       taskActivities={taskActivities}
@@ -62,3 +49,6 @@ export default function IndexRoute() {
     />
   );
 }
+
+
+

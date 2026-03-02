@@ -41,7 +41,7 @@ Contexto del dia:
 - Objetivo:
 - Bloques del roadmap:
 - Dudas mias actuales:
-- Si estamos en `/tasks`: confirmar si hoy el foco es board-first.
+- Si estamos en `/projects`: confirmar si hoy el foco es board-first.
 ```
 
 ## Como usar este plan
@@ -126,3 +126,4 @@ Dia X - Fecha
   - lo que paso
   - hipotesis
   - proximo paso
+

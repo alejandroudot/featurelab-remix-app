@@ -2,7 +2,6 @@ import { type RouteConfig, index, route } from '@react-router/dev/routes';
 
 export default [
   index('routes/index.tsx'),
-  route('/tasks', 'routes/tasks.tsx'),
   route('/account', 'routes/account.tsx'),
   route('/api/notifications', 'routes/api/notifications.ts'),
   route('/api/tasks/attachments', 'routes/api/tasks.attachments.ts'),
@@ -13,3 +12,5 @@ export default [
   route('/auth/verify-email', 'routes/auth/verify-email.tsx'),
   route('/auth/logout', 'routes/auth/logout.tsx'),
 ] satisfies RouteConfig;
+
+

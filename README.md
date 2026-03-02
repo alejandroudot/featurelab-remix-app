@@ -1,4 +1,4 @@
-﻿# FeatureLab
+# FeatureLab
 
 Plataforma fullstack para planificar, ejecutar y monitorear trabajo de producto.
 Enfoque principal: `Tasks` colaborativas + `Feature Flags` para lanzar con control.
@@ -7,7 +7,7 @@ Nota: el modulo de billing/planes de este proyecto es didactico.
 Se implementa para aprender integracion de pagos, roles y limites de producto,
 no como modelo comercial real.
 
-## 🏗️ Arquitectura
+## ??? Arquitectura
 
 Se usa un enfoque pragmatico de:
 - base de Hexagonal / Clean Architecture;
@@ -19,13 +19,13 @@ Se usa un enfoque pragmatico de:
 No se busca pureza academica extrema: se aplica Hexagonal/Clean de forma pragmatica,
 priorizando claridad operativa y velocidad de iteracion para un proyecto de estudio real.
 
-## ✨ Quick View
+## ? Quick View
 
-- 🎯 `Tasks-first`: trabajo diario y colaborativo como eje del producto.
-- 🧭 `Execution Hub`: home operativa con metricas, actividad y quick actions.
-- 🚦 `Feature Flags`: control de release por entorno, toggles admin y rollout.
-- 👤 `User Panel`: perfil, seguridad, preferencias y plan (en roadmap).
-- 📈 Escalabilidad progresiva: estado cliente avanzado, integraciones y CI/CD.
+- ?? `Tasks-first`: trabajo diario y colaborativo como eje del producto.
+- ?? `Execution Hub`: home operativa con metricas, actividad y quick actions.
+- ?? `Feature Flags`: control de release por entorno, toggles admin y rollout.
+- ?? `User Panel`: perfil, seguridad, preferencias y plan (en roadmap).
+- ?? Escalabilidad progresiva: estado cliente avanzado, integraciones y CI/CD.
 
 Patron general del repo:
 
@@ -36,22 +36,22 @@ Patron general del repo:
 - `core/*`: contratos de dominio (schemas, ports, tipos).
 - `infra/*`: persistencia e integraciones externas.
 
-## 🏷️ Estado
+## ??? Estado
 
-- `✅ Implementado`: disponible hoy en el repo.
-- `🟡 Planeado`: definido en roadmap, todavia no implementado completo.
+- `? Implementado`: disponible hoy en el repo.
+- `?? Planeado`: definido en roadmap, todavia no implementado completo.
 
-## 🧩 Funcionalidades
+## ?? Funcionalidades
 
-- ✅ Autenticacion con sesiones y control por rol (`user`, `admin`).
-- ✅ Gestion de tasks base:
+- ? Autenticacion con sesiones y control por rol (`user`, `admin`).
+- ? Gestion de tasks base:
   - create/update/delete
   - vista lista + board base
   - detalle en modal con edicion rapida (`status`, `priority`, `assignee`)
   - orden de vista (`manual`/`priority`) y estado persistido en URL (`view`, `order`)
   - acciones destructivas con confirmacion (`AlertDialog`)
   - responsable visible en list y board
-- ✅ Gestion de tasks evolucionada:
+- ? Gestion de tasks evolucionada:
   - drag and drop horizontal (cambio de estado) y vertical (reorden manual)
   - vistas por alcance de trabajo (`Todas`, `Asignadas`, `Creadas`)
   - permisos de creador/asignado validados en server
@@ -59,22 +59,22 @@ Patron general del repo:
   - historial de cambios y notificaciones in-app (header)
   - editor rich text (Lexical) en descripcion/comentarios/create
   - menciones `@usuario` + imagen embebida (boton y copy/paste) + cleanup de temporales
-- ✅ Gestion de feature flags:
+- ? Gestion de feature flags:
   - create/toggle/delete/update rollout
   - panel de `Feature Switches` en Execution Hub (admin)
-- ✅ Home (`Execution Hub`) con metricas, actividad y quick actions.
-- 🟡 Preferencias de usuario:
+- ? Home (`Execution Hub`) con metricas, actividad y quick actions.
+- ?? Preferencias de usuario:
   - densidad, vista por defecto, tema (`light`/`dark`/`system`)
   - persistencia local con estado global
-- 🟡 Integraciones:
+- ?? Integraciones:
   - Stripe (billing didactico para habilitar capacidades de producto)
   - Slack (notificaciones)
   - Gemini (asistencia para tasks)
 
-## 🗺️ Vistas del producto (target)
+## ??? Vistas del producto (target)
 
 - `/` `Execution Hub`
-- `/tasks` `Tasks` (List + Board)
+- `/projects` `Tasks` (List + Board)
 - `/flags` `Feature Flags`
 - `/account` o `/settings` `User Panel`
 - Billing dentro de User Panel (inicialmente)
@@ -89,9 +89,9 @@ Decisiones clave:
 - Enfoque hexagonal/clean (simple): `core` define contratos y `infra` implementa.
 - SOLID pragmatico: SRP por capa/feature, DIP con puertos en `core` e implementaciones en `infra`.
 
-## 🧰 Stack
+## ?? Stack
 
-- ✅ En uso hoy:
+- ? En uso hoy:
   - React Router v7 (framework mode)
   - React 19 + TypeScript
   - Drizzle ORM + better-sqlite3
@@ -100,7 +100,7 @@ Decisiones clave:
   - Tailwind CSS v4
   - shadcn/ui (componentes de producto por defecto)
   - Radix UI primitives (comportamiento custom/accesible)
-- 🟡 Planeado / adopcion progresiva:
+- ?? Planeado / adopcion progresiva:
   - TanStack Query (cache, invalidacion, optimistic updates)
   - Zustand (estado global de UI y preferencias)
   - Vitest + Testing Library (unit/integration)
@@ -110,13 +110,13 @@ Decisiones clave:
   - Gemini API
   - GitHub Actions (CI/CD)
 
-## 🎨 Criterio UI (shadcn/ui + Radix)
+## ?? Criterio UI (shadcn/ui + Radix)
 
 - Usar `shadcn/ui` como opcion por defecto para interfaz y layout.
 - Usar `Radix` directo para comportamiento avanzado/composicion custom.
 - Mantener consistencia visual entre Hub, Tasks, Flags y User Panel.
 
-## 🚀 Run Locally
+## ?? Run Locally
 
 Requirements:
 
@@ -134,7 +134,7 @@ App runs at:
 
 - http://localhost:5173
 
-## 📜 Useful Scripts
+## ?? Useful Scripts
 
 ```bash
 npm run dev
@@ -149,7 +149,7 @@ npm run db:push
 npm run db:studio
 ```
 
-## 📁 Estructura del proyecto
+## ?? Estructura del proyecto
 
 ```text
 app/
@@ -161,9 +161,10 @@ app/
 docs/          # estrategia de producto, roadmap, arquitectura
 ```
 
-## 📚 Documentacion
+## ?? Documentacion
 
 - Roadmap principal: `docs/PRODUCT_ROADMAP.md`
 - Vision de producto: `docs/PRODUCT.md`
 - Arquitectura: `docs/ARQUITECTURE.md`
 - Stack y decisiones tecnicas: `docs/stack.md`
+

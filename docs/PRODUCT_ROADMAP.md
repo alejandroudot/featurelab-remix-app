@@ -1,15 +1,15 @@
-﻿# 🛣️ PROXIMAS TAREAS (Pulido MVP + MVP+1)
-> 🎯 Lista viva de ejecucion para avanzar sin perder foco.
+# ??? PROXIMAS TAREAS (Pulido MVP + MVP+1)
+> ?? Lista viva de ejecucion para avanzar sin perder foco.
 
 Este documento es la lista activa de ejecucion.
 
-## 🧾 Leyenda
+## ?? Leyenda
 
 - `[ ]` pendiente
 - `[~]` en progreso
 - `[x]` listo
 
-## 🧭 Direccion del producto (alineada)
+## ?? Direccion del producto (alineada)
 
 - Foco principal: `Tasks` y colaboracion entre usuarios.
 - Flags: se mantienen como modulo de soporte (sin ampliar demasiado alcance funcional).
@@ -25,7 +25,7 @@ Este documento es la lista activa de ejecucion.
   - `Tasks` y `Flags` salen del header y pasan al sidebar.
   - El contenido principal cambia a la derecha del sidebar (layout tipo app shell).
 
-## 🎨 Criterio UI (shadcn/ui + Radix)
+## ?? Criterio UI (shadcn/ui + Radix)
 
 - `shadcn/ui`: componentes de interfaz y layout del producto (cards, table, tabs, dialog, sheet, form controls, badge, button, input, textarea, dropdown).
 - `Radix UI` directo: primitives de comportamiento/accesibilidad que queremos controlar fino (toast provider, tooltip avanzado, alert dialog destructivo, popover/menu complejos).
@@ -33,7 +33,7 @@ Este documento es la lista activa de ejecucion.
   - si existe componente listo en `shadcn/ui`, usar `shadcn/ui`;
   - usar `Radix` directo solo cuando necesitemos comportamiento custom o composicion avanzada.
 
-## ✅ Base ya implementada (tracking historico)
+## ? Base ya implementada (tracking historico)
 
 - [x] Auth con sesiones y control por rol (`requireUser`/`requireAdmin`)
 - [x] Tasks CRUD basico (list, create, update, delete) con validacion Zod
@@ -43,7 +43,7 @@ Este documento es la lista activa de ejecucion.
 - [x] Persistencia local con SQLite + Drizzle
 - [x] Resolucion de flag integrada en flujo de tasks (`beta-tasks-ui`)
 
-## 🔒 P0 - Estabilidad y consistencia
+## ?? P0 - Estabilidad y consistencia
 
 ### P0.1 Endurecer flujo de tasks
 
@@ -96,7 +96,7 @@ Criterio de cierre:
 - El codigo queda entendible sin contexto historico extra
 - No quedan dependencias o tipos "zombie" en el flujo principal
 
-## 🚀 P1 - Producto (Tasks-first)
+## ?? P1 - Producto (Tasks-first)
 
 ### P1.1 Home como Execution Hub
 
@@ -156,7 +156,7 @@ Criterio de cierre:
 
 Tecnologias a usar: Zod (query params) + React Router (loaders/actions) + DnD + shadcn/ui + Radix (dialog/tooltip).
 
-- [x] Definir direccion UX para `/tasks` (acordada antes de codear)
+- [x] Definir direccion UX para `/projects` (acordada antes de codear)
   - [x] Estilo visual elegido y consistente
   - [x] Prioridades de lectura claras en pantalla
   - [x] Copy de acciones coherente
@@ -171,7 +171,7 @@ Tecnologias a usar: Zod (query params) + React Router (loaders/actions) + DnD + 
   - [x] Estado vacio global
   - [x] Estado vacio por columna
   - [x] CTA clara para crear task o limpiar configuracion de vista
-- [x] Vista Board tipo Jira en `/tasks`
+- [x] Vista Board tipo Jira en `/projects`
   - [x] Columnas: `To Do`, `In Progress`, `QA`, `Ready to Go Live`
   - [x] Crear task entra en `To Do` por defecto
   - [x] Toggle `List` / `Board`
@@ -201,14 +201,14 @@ Criterio de cierre:
 
 Tecnologias a usar: React Router loaders/actions + shadcn/ui (`Dialog`, `DropdownMenu`, `Input`, `Button`) + Zod.
 
-- [ ] Limpiar layout de `/tasks` para dejar foco en board
-  - [ ] Sacar formulario inline de create task del medio de la vista
-  - [ ] Crear boton `Crear tarea` que abre modal/sheet de alta (patron similar a Hub)
-  - [ ] Mantener board como contenido principal visible arriba
-- [ ] Header de acciones de Tasks (lado derecho superior)
-  - [ ] Boton `Crear tarea` (abre modal)
-  - [ ] Boton `View settings` con dropdown de configuraciones de vista
-  - [ ] Dropdown `Scope` para cambiar alcance rapido (`Todo`, `Mis tareas`, `Asignadas a mi`, `Creadas por mi`, `Equipo activo`)
+- [x] Limpiar layout de `/projects` para dejar foco en board
+  - [x] Sacar formulario inline de create task del medio de la vista
+  - [x] Crear boton `Crear tarea` que abre modal/sheet de alta (patron similar a Hub)
+  - [x] Mantener board como contenido principal visible arriba
+- [x] Header de acciones de Tasks (lado derecho superior)
+  - [x] Boton `Crear tarea` (abre modal)
+  - [x] Boton `View settings` con dropdown de configuraciones de vista
+  - [x] Dropdown `Scope` para cambiar alcance rapido (`Todo`, `Mis tareas`, `Asignadas a mi`, `Creadas por mi`, `Equipo activo`)
 - [ ] Search bar en Tasks
   - [ ] Buscar por palabras clave en titulo/descripcion
   - [ ] Filtrado reactivo sobre lista/board visible
@@ -234,7 +234,7 @@ Tecnologias a usar: React Router loaders/actions + shadcn/ui (`Dialog`, `Dropdow
 
 Criterio de cierre:
 
-- `/tasks` queda visualmente limpio y centrado en board
+- `/projects` queda visualmente limpio y centrado en board
 - Alta de task se hace por modal y no rompe el layout
 - Existe contexto de proyecto visible + filtro por proyecto + busqueda por keyword
 - Sidebar persistente con navegacion por rol (`Projects`, `Teams`, `Flags`) y orden manual de proyectos
@@ -245,7 +245,7 @@ Tecnologias a usar: Drizzle/SQLite + React Router + Zod + Zustand + TanStack Que
 
 Regla de colaboracion:
 - Las tasks se consideran compartidas entre `creador` y `asignado`.
-- Ambos deben ver la task en `/tasks` (vista list y board), con cambios de estado/orden reflejados para los dos.
+- Ambos deben ver la task en `/projects` (vista list y board), con cambios de estado/orden reflejados para los dos.
 - El creador mantiene visibilidad aunque asigne la task.
 - El asignado obtiene visibilidad y contexto para ejecutarla.
 - El `Execution Hub` muestra actividad/notificaciones de cambios relevantes (no listado completo de tasks).
@@ -317,7 +317,7 @@ Tecnologias a usar: React Router + Zod + shadcn/ui + Radix (alert dialog/toast).
 - [x] Preferencias
   - [x] `density` de UI (`comfortable` | `compact`)
   - [x] `defaultTasksView` (`board` | `list`) y `defaultTasksScope` (`all` | `assigned` | `created`)
-  - [x] Aplicar defaults en `/tasks` solo cuando no hay query params
+  - [x] Aplicar defaults en `/projects` solo cuando no hay query params
   - [x] Tema (light/dark/system) gestionado desde `Preferencias` (sin toggle en header)
   - [x] Persistencia base con cookie/storage
 - [x] Plan/Billing (pre-Stripe)
@@ -348,7 +348,7 @@ Criterio de cierre:
 
 - La UI se percibe intencional y coherente en todas las vistas principales
 
-## 🧪 P2 - Escala cliente y calidad tecnica
+## ?? P2 - Escala cliente y calidad tecnica
 
 ### P2.1 TanStack Query + Zustand (uso real y profundo)
 
@@ -399,7 +399,7 @@ Tecnologias a usar: TanStack Query + Zustand.
 - [ ] Notificaciones clickeables: abrir modal de task desde campana
   - [ ] Payload de notificacion incluye `taskId` cuando corresponde
   - [ ] Click en notificacion abre `Task Detail Modal` de esa task y cierra el panel
-  - [ ] Fallback sin `taskId` a vista de actividad/tasks
+  - [ ] Fallback sin `taskId` a vista de actividad/projects
 - [ ] Cola local de acciones pendientes con reintento manual
 - [ ] Sincronia URL <-> store <-> query keys
 
@@ -436,7 +436,7 @@ Criterio de cierre:
 
 - La documentacion refleja el estado real del proyecto
 
-## 🌐 P3 - Integraciones externas y automatizacion
+## ?? P3 - Integraciones externas y automatizacion
 
 ### P3.1 Stripe (billing didactico) + Team Manager
 
@@ -593,3 +593,4 @@ Criterio de cierre:
 Nota de replanificacion:
 - El corrimiento diario del calendario operativo se gestiona en `docs/INTERNAL_DELIVERY_PLAN.md`.
 - El orden de roadmap por fases (`P0 -> P1 -> P2 -> P3`) se mantiene igual.
+
