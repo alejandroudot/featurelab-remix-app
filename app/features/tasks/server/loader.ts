@@ -1,5 +1,4 @@
 import { asc } from 'drizzle-orm';
-import { z } from 'zod';
 import type {
   TaskActivityQueryPort,
   TaskCommentQueryPort,
@@ -9,6 +8,7 @@ import type { TasksFiltersState } from '../types';
 import { db } from '~/infra/db/client.sqlite';
 import { users } from '~/infra/db/schema';
 import { getUserPreferencesFromRequest } from '~/infra/preferences/preferences-cookie';
+import { z } from 'zod';
 
 type RunTaskLoaderInput = {
   request: Request;
@@ -18,24 +18,20 @@ type RunTaskLoaderInput = {
   taskCommentQueryPort: TaskCommentQueryPort;
 };
 
-const tasksFiltersSearchParamsSchema = z.object({
-  view: z.enum(['list', 'board']).optional(),
-  order: z.enum(['manual', 'priority']).optional(),
-  scope: z.enum(['all', 'assigned', 'created']).optional(),
-});
+const viewQueryParamSchema = z.enum(['list', 'board']);
+const orderQueryParamSchema = z.enum(['manual', 'priority']);
+const scopeQueryParamSchema = z.enum(['all', 'assigned', 'created']);
 
 function parseTasksFiltersFromUrl(url: URL): Partial<TasksFiltersState> {
-  const parsed = tasksFiltersSearchParamsSchema.safeParse({
-    view: url.searchParams.get('view') ?? undefined,
-    order: url.searchParams.get('order') ?? undefined,
-    scope: url.searchParams.get('scope') ?? undefined,
-  });
+  const parsedView = viewQueryParamSchema.safeParse(url.searchParams.get('view'));
+  const parsedOrder = orderQueryParamSchema.safeParse(url.searchParams.get('order'));
+  const parsedScope = scopeQueryParamSchema.safeParse(url.searchParams.get('scope'));
 
-  if (!parsed.success) {
-    return {};
-  }
-
-  return parsed.data;
+  return {
+    view: parsedView.success ? parsedView.data : undefined,
+    order: parsedOrder.success ? parsedOrder.data : undefined,
+    scope: parsedScope.success ? parsedScope.data : undefined,
+  };
 }
 
 export async function runTaskLoader({ request, userId, taskQueryPort, taskActivityQueryPort, taskCommentQueryPort }: RunTaskLoaderInput) {

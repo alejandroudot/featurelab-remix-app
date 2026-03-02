@@ -5,7 +5,7 @@ import type { ThemeMode } from '~/infra/theme/theme-cookie';
 import type { AccountActionData } from '../../types';
 import { ActionFeedbackText } from '~/ui/forms/action-feedback';
 import { SectionCard } from '../../shared/SectionCard';
-import { applyThemeModeAndNotify } from '~/ui/layout/theme-sync';
+import { applyThemeModeAndNotify } from '~/ui/theme/theme-sync';
 
 type PreferencesSectionProps = {
   initialValues: UserPreferences & { theme: ThemeMode };

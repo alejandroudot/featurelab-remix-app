@@ -185,6 +185,7 @@ Fortalece hoy: sistema visual consistente, feedback UX inmediato, estado global 
   - [x] Implementar switch con `shadcn/ui` (`Switch`)
   - [x] Persistir preferencia de tema por usuario (Zustand + storage)
   - [x] Aplicar tema sin salto visual al recargar
+  - [x] Rebaseline posterior (Dia 11): toggle removido de header y centralizado en `Account > Preferencias`
 - [x] Agregar bloque `Feature Switches` (solo admin) en Hub
   - [x] Mostrar toggles de flags clave con estado actual
   - [x] Implementar panel con `shadcn/ui` (`Card`, `Switch`, `Tooltip`)
@@ -408,16 +409,16 @@ Fortalece hoy: auth hardening, seguridad de credenciales, diseno de panel de usu
   - [x] Infra de email: adapter por puerto + dev sink/log local (implementado)
   - [ ] Integrar proveedor real de email (dev SMTP inbox / provider prod) -> movido a Dia 16
 - [ ] Preferencias
-  - [ ] Definir `density` de UI (`comfortable` | `compact`) y aplicarlo en layouts/listados principales
-  - [ ] Definir `defaultTasksView` (`board` | `list`)
-  - [ ] Definir `defaultTasksScope` (`all` | `assigned` | `created`)
-  - [ ] Aplicar defaults en `/tasks` solo cuando la URL no trae query params
-  - [ ] Tema (light/dark/system) con sincronizacion a toggle del Hub
-  - [ ] Persistencia base con cookie/storage (sin sobreingenieria en Dia 11)
-- [ ] Plan/Billing (pre-Stripe)
-  - [ ] Mostrar plan actual (`Free`) y limites visibles de uso
-  - [ ] CTA de upgrade (`coming soon`) sin checkout real en Dia 11
-  - [ ] Dejar estructura lista para conectar Stripe en fase posterior
+  - [x] Definir `density` de UI (`comfortable` | `compact`) y aplicarlo en layouts/listados principales
+  - [x] Definir `defaultTasksView` (`board` | `list`)
+  - [x] Definir `defaultTasksScope` (`all` | `assigned` | `created`)
+  - [x] Aplicar defaults en `/tasks` solo cuando la URL no trae query params
+  - [x] Tema (light/dark/system) gestionado desde `Preferencias` (sin toggle en header)
+  - [x] Persistencia base con cookie/storage (sin sobreingenieria en Dia 11)
+- [x] Plan/Billing (pre-Stripe)
+  - [x] Mostrar plan actual (`Free`) y limites visibles de uso
+  - [x] CTA de upgrade (`coming soon`) sin checkout real en Dia 11
+  - [x] Dejar estructura lista para conectar Stripe en fase posterior
 
 ## ?? Dia 12 - Lunes 02/03/2026
 

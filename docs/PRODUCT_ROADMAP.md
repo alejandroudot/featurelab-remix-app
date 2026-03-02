@@ -119,6 +119,7 @@ Tecnologias a usar: React Router + TanStack Query + Zustand + shadcn/ui + Radix 
   - [x] Implementar switch con `shadcn/ui` (`Switch`)
   - [x] Persistir preferencia de tema por usuario (Zustand + storage)
   - [x] Aplicar tema sin salto visual al recargar
+  - [x] Rebaseline UX Dia 11: el control de tema queda centralizado en `Account > Preferencias` (se removio toggle de header)
 - [x] Agregar bloque `Feature Switches` (solo admin) en Hub
   - [x] Mostrar toggles de flags clave con estado actual
   - [x] Implementar panel con `shadcn/ui` (`Card`, `Switch`, `Tooltip`)
@@ -266,16 +267,16 @@ Tecnologias a usar: React Router + Zod + shadcn/ui + Radix (alert dialog/toast).
     - [x] Endpoint de confirmacion por token (valido/expirado/usado)
     - [x] Infra de email base: adapter por puerto + dev sink/log local
     - [ ] Integrar proveedor real de email (dev SMTP inbox + provider prod) -> se implementa en P3.1
-- [ ] Preferencias
-  - [ ] `density` de UI (`comfortable` | `compact`)
-  - [ ] `defaultTasksView` (`board` | `list`) y `defaultTasksScope` (`all` | `assigned` | `created`)
-  - [ ] Aplicar defaults en `/tasks` solo cuando no hay query params
-  - [ ] Tema (light/dark/system) con sincronizacion a toggle del Hub
-  - [ ] Persistencia base con cookie/storage
-- [ ] Plan/Billing (pre-Stripe)
-  - [ ] Mostrar plan actual (`Free`) y limites visibles
-  - [ ] CTA de upgrade (`coming soon`)
-  - [ ] Dejar base lista para integrar Stripe en fase siguiente
+- [x] Preferencias
+  - [x] `density` de UI (`comfortable` | `compact`)
+  - [x] `defaultTasksView` (`board` | `list`) y `defaultTasksScope` (`all` | `assigned` | `created`)
+  - [x] Aplicar defaults en `/tasks` solo cuando no hay query params
+  - [x] Tema (light/dark/system) gestionado desde `Preferencias` (sin toggle en header)
+  - [x] Persistencia base con cookie/storage
+- [x] Plan/Billing (pre-Stripe)
+  - [x] Mostrar plan actual (`Free`) y limites visibles
+  - [x] CTA de upgrade (`coming soon`)
+  - [x] Dejar base lista para integrar Stripe en fase siguiente
 
 Criterio de cierre:
 
