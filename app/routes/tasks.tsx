@@ -8,7 +8,7 @@ import {
   taskCommentQueryPort,
   taskCommandPort,
   taskQueryPort,
-} from '../infra/tasks/task.repository.provider';
+} from '~/infra/tasks/task.repository.provider';
 import { notificationService } from '~/infra/notifications/notifications.service';
 import type { TaskActionData } from '~/features/tasks/types';
 import { requireUser } from '~/infra/auth/require-user';
