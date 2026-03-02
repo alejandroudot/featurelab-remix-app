@@ -2,12 +2,13 @@
 
 ## Context
 
-Estado actual:
-- `projects` vive en localStorage.
-- La relacion `task -> project` vive en `task_project_map` (localStorage).
-- En DB no existe tabla `projects` y `tasks` no tiene `project_id`.
+Estado actual (2026-03-02):
+- `projects` ya vive en DB.
+- `tasks.project_id` ya existe y se usa para filtrar tareas por proyecto.
+- `task_project_map` local ya fue removido.
+- `teams`, `team_members` y `project_members` ya existen como base de schema.
 
-Esto sirve para UI v1, pero no escala para P1.3/P3.1 (colaboracion + teams + ACL por proyecto).
+Todavia faltan piezas de enforcement para P1.3/P3.1 (ACL activa y constraints finales).
 
 ## Goal
 
@@ -64,6 +65,16 @@ Agregar:
 Regla:
 - Toda task pertenece a un proyecto.
 
+## Implementado hoy (safe, sin romper)
+
+- [x] `projects` en DB + repository unico.
+- [x] `tasks.project_id` agregado y usado en UI/loader.
+- [x] `teams`, `team_members`, `project_members` creados.
+- [x] `projects.team_id` nullable.
+- [x] `projects.description`, `projects.icon`, `projects.status` agregados.
+- [x] `project_members.sidebar_order` y `project_members.pinned` agregados.
+- [x] Backfill de owner en `project_members` (si no existe fila owner).
+
 ## Core types (target)
 
 ```ts
@@ -119,6 +130,13 @@ Agrupado (igual criterio que `taskPort`):
    - crear fila owner en `project_members`.
 4. Hacer `tasks.project_id` not null.
 5. Remover uso de `task_project_map` local.
+
+## Pendiente para mas adelante
+
+- [ ] Hacer `tasks.project_id` `NOT NULL` cuando no haya casos legacy.
+- [ ] Activar ACL server-side real via `project_members.role` (`viewer | member | full`).
+- [ ] Usar `sidebar_order` + `pinned` en sidebar (UX y persistencia real).
+- [ ] Completar operaciones de membresia de proyecto (`invite`, `role update`, `remove member`).
 
 ## Acceptance to move forward
 

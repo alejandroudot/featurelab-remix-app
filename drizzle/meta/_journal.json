@@ -22,6 +22,13 @@
       "when": 1772481137676,
       "tag": "0002_sweet_doctor_faustus",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1772481928533,
+      "tag": "0003_tense_hobgoblin",
+      "breakpoints": true
     }
   ]
 }

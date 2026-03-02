@@ -8,7 +8,11 @@ function mapProjectRow(row: any): Project {
   return {
     id: row.id,
     ownerUserId: row.ownerUserId,
+    teamId: row.teamId ?? null,
     name: row.name,
+    description: row.description ?? null,
+    icon: row.icon ?? null,
+    status: row.status === 'archived' ? 'archived' : 'active',
     imageUrl: row.imageUrl ?? null,
     createdAt: Number(row.createdAt),
     updatedAt: Number(row.updatedAt),
@@ -38,7 +42,11 @@ export const sqliteProjectRepository: ProjectRepository = {
       .values({
         id: crypto.randomUUID(),
         ownerUserId: input.userId,
+        teamId: null,
         name: input.name,
+        description: null,
+        icon: null,
+        status: 'active',
         imageUrl: input.imageUrl,
         createdAt: now,
         updatedAt: now,

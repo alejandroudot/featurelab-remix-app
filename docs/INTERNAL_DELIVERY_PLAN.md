@@ -434,26 +434,35 @@ Fortalece hoy: arquitectura de app shell, navegacion por rol, UX de productivida
   - [x] Quitar create task inline de `/projects`
   - [x] Boton `Crear tarea` que abre modal/sheet
   - [x] Dejar board como foco principal de la pantalla
-  - [ ] Agregar search bar para filtrar tasks por keywords (titulo/descripcion)
+  - [x] Agregar search bar para filtrar tasks por keywords (titulo/descripcion)
   - [x] Agregar bloque de acciones superior derecha:
     - [x] `Crear tarea`
     - [x] `View settings` (dropdown)
     - [x] `Scope` (dropdown) para alternar alcance rapido
   - [ ] Agregar sidebar izquierdo de proyectos
-    - [ ] Crear proyecto
-    - [ ] Estado vacio con CTA `Crea tu primer proyecto`
-    - [ ] Header `Projects` con icono y accion rapida
-    - [ ] Soporte de icono/imagen por proyecto
-    - [ ] Mostrar icono en lista lateral y en vista de proyecto
-    - [ ] Seleccionar proyecto y filtrar tasks por proyecto activo
+    - [ ] Crear proyecto desde sidebar (decision actual: se crea desde overview)
+    - [x] Estado vacio con CTA `Crea tu primer proyecto`
+    - [x] Header `Projects` con icono y accion rapida
+    - [x] Soporte de icono/imagen por proyecto
+    - [ ] Mostrar icono en lista lateral y en vista de proyecto (solo lateral implementado)
+    - [x] Seleccionar proyecto y filtrar tasks por proyecto activo
   - [ ] Sidebar con secciones desplegables
     - [ ] `Projects` desplegable con `Pinned`
     - [ ] Orden manual por drag and drop vertical en lista de proyectos
-    - [ ] `Teams` desplegable (solo visible para manager/admin; UI base)
-    - [ ] `Flags` desplegable (solo visible para admin)
+    - [x] `Teams` desplegable (solo visible para manager/admin; UI base)
+    - [x] `Flags` desplegable (solo visible para admin)
   - [ ] Header de Tasks por proyecto activo
-    - [ ] Titulo editable (nombre del proyecto)
+    - [x] Titulo = nombre del proyecto activo
     - [ ] Descripcion editable (inline click)
+
+- [ ] Base DB incremental para Projects/Teams (sin romper runtime)
+  - [x] Migrar `projects` a DB y remover dependencia de storage local
+  - [x] Agregar `tasks.project_id` y filtrar tareas por proyecto en server/UI
+  - [x] Crear base de schema para `teams`, `team_members`, `project_members`
+  - [x] Agregar campos futuros en `projects` (`description`, `icon`, `status`)
+  - [x] Agregar campos de preferencia por usuario en `project_members` (`pinned`, `sidebar_order`)
+  - [ ] Hacer `tasks.project_id` `NOT NULL` (cuando no haya casos legacy)
+  - [ ] Activar ACL real por `project_members.role` en actions/loaders
 
 - [ ] Sistema consistente de feedback
   - [ ] Toasts success/error/warn (`Radix Toast` + estilo `shadcn`)

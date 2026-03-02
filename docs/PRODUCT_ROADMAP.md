@@ -239,6 +239,13 @@ Criterio de cierre:
 - Existe contexto de proyecto visible + filtro por proyecto + busqueda por keyword
 - Sidebar persistente con navegacion por rol (`Projects`, `Teams`, `Flags`) y orden manual de proyectos
 
+Post-migracion DB (pendiente corto plazo):
+- [x] `projects` en DB + `tasks.project_id`
+- [x] Base de `teams`, `team_members`, `project_members`
+- [ ] `tasks.project_id` `NOT NULL` (cuando no queden casos legacy)
+- [ ] Enforcement ACL por `project_members.role` en server actions/loaders
+- [ ] Usar `pinned` + `sidebar_order` en sidebar real
+
 ### P1.3 Colaboracion y asignaciones (foco principal)
 
 Tecnologias a usar: Drizzle/SQLite + React Router + Zod + Zustand + TanStack Query.
