@@ -1,12 +1,4 @@
-type SendEmailVerificationInput = {
-  to: string;
-  verifyUrl: string;
-  expiresAt: Date;
-};
-
-export interface EmailService {
-  sendEmailVerification(input: SendEmailVerificationInput): Promise<void>;
-}
+import type { EmailService, SendEmailVerificationInput } from '~/core/email/email.port';
 
 function logVerificationEmail(input: SendEmailVerificationInput) {
   // Dev-only sink: deja trazabilidad local hasta integrar SMTP/provider real.
@@ -22,4 +14,5 @@ export const emailService: EmailService = {
     logVerificationEmail(input);
   },
 };
+
 
