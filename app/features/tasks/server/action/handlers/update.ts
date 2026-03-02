@@ -48,7 +48,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
       });
     }
 
-    const updatedTask = await input.taskCommandService.update({
+    const updatedTask = await input.taskCommandPort.update({
       id: parsed.data.id,
       userId: input.userId,
       title: parsed.data.title,
@@ -71,7 +71,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     const activityWrites: Array<Promise<void>> = [];
     if (!labelsEqual(task.labels, updatedTask.labels)) {
       activityWrites.push(
-        input.taskActivityCommandService.create({
+        input.taskActivityCommandPort.create({
           taskId: updatedTask.id,
           actorUserId: input.userId,
           action: 'labels-changed',
@@ -85,7 +85,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     if (!checklistEqual(task.checklist, updatedTask.checklist)) {
       const doneCount = updatedTask.checklist.filter((item) => item.done).length;
       activityWrites.push(
-        input.taskActivityCommandService.create({
+        input.taskActivityCommandPort.create({
           taskId: updatedTask.id,
           actorUserId: input.userId,
           action: 'checklist-changed',
@@ -100,7 +100,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     const afterDueDate = updatedTask.dueDate?.getTime() ?? null;
     if (beforeDueDate !== afterDueDate) {
       activityWrites.push(
-        input.taskActivityCommandService.create({
+        input.taskActivityCommandPort.create({
           taskId: updatedTask.id,
           actorUserId: input.userId,
           action: 'due-date-changed',
@@ -113,7 +113,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     }
     if (task.status !== updatedTask.status) {
       activityWrites.push(
-        input.taskActivityCommandService.create({
+        input.taskActivityCommandPort.create({
           taskId: updatedTask.id,
           actorUserId: input.userId,
           action: 'status-changed',
@@ -123,7 +123,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     }
     if (task.priority !== updatedTask.priority) {
       activityWrites.push(
-        input.taskActivityCommandService.create({
+        input.taskActivityCommandPort.create({
           taskId: updatedTask.id,
           actorUserId: input.userId,
           action: 'priority-changed',
@@ -133,7 +133,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     }
     if ((task.assigneeId ?? null) !== (updatedTask.assigneeId ?? null)) {
       activityWrites.push(
-        input.taskActivityCommandService.create({
+        input.taskActivityCommandPort.create({
           taskId: updatedTask.id,
           actorUserId: input.userId,
           action: 'assignee-changed',
@@ -156,7 +156,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     }
     if (task.orderIndex !== updatedTask.orderIndex) {
       activityWrites.push(
-        input.taskActivityCommandService.create({
+        input.taskActivityCommandPort.create({
           taskId: updatedTask.id,
           actorUserId: input.userId,
           action: 'reordered',
@@ -173,13 +173,13 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
         source: 'description',
         text: updatedTask.description ?? null,
         skipNotificationForUserId: input.userId,
-        writer: input.taskActivityCommandService,
+        writer: input.taskActivityCommandPort,
       });
     }
 
     if (activityWrites.length === 0) {
       activityWrites.push(
-        input.taskActivityCommandService.create({
+        input.taskActivityCommandPort.create({
           taskId: updatedTask.id,
           actorUserId: input.userId,
           action: 'updated',

@@ -1,5 +1,5 @@
 import { requireUser } from '~/infra/auth/require-user';
-import { taskQueryService } from '~/infra/tasks/task.services';
+import { taskQueryPort } from '~/infra/tasks/task.repository.provider';
 import { saveRichTextImageTemp } from '~/infra/files/rich-text-images.storage';
 
 // Endpoint de subida de imagenes del editor rich-text.
@@ -22,7 +22,7 @@ export async function action({ request }: { request: Request }) {
 
   // Si viene taskId validamos permisos. Sin taskId permitimos upload temporal para create form.
   if (taskId) {
-    const task = await taskQueryService.getByIdForUser({ id: taskId, userId: user.id });
+    const task = await taskQueryPort.getByIdForUser({ id: taskId, userId: user.id });
     if (!task) {
       return Response.json({ success: false, formError: 'No tenes permisos para editar esta task.' }, { status: 403 });
     }

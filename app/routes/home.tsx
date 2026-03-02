@@ -6,11 +6,11 @@ import { runHomeAction } from '~/features/home/server/action';
 import { runHomeLoader } from '~/features/home/server/loader';
 import { requireUser } from '~/infra/auth/require-user';
 import { flagCommandService, flagQueryService } from '~/infra/flags/flags.services';
-import { taskQueryService } from '~/infra/tasks/task.services';
+import { taskQueryPort } from '~/infra/tasks/task.repository.provider';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
-  return runHomeLoader({ user, taskQueryService, flagQueryService, flagCommandService });
+  return runHomeLoader({ user, taskQueryPort, flagQueryService, flagCommandService });
 }
 
 export async function action({ request }: Route.ActionArgs) {

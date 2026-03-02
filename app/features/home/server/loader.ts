@@ -4,7 +4,7 @@
 import type { FlagCommandService, FlagQueryService } from '~/core/flags/service/flags.service';
 import { ensureProductFlagsSeeded } from '~/core/flags/service/flag-seed';
 import type { UserRole } from '~/core/auth/auth.types';
-import type { TaskQueryService } from '~/core/tasks/tasks.port';
+import type { TaskQueryPort } from '~/core/tasks/task.repository.port';
 import type { HomePageProps } from '../types';
 
 type RunHomeLoaderInput = {
@@ -13,13 +13,13 @@ type RunHomeLoaderInput = {
     email: string;
     role: UserRole;
   };
-  taskQueryService: TaskQueryService;
+  taskQueryPort: TaskQueryPort;
   flagQueryService: FlagQueryService;
   flagCommandService: FlagCommandService;
 };
 
 export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePageProps> {
-  const { user, taskQueryService, flagQueryService, flagCommandService } = input;
+  const { user, taskQueryPort, flagQueryService, flagCommandService } = input;
   await ensureProductFlagsSeeded({
     listAll: () => flagQueryService.listAll(),
     create: (createInput) => flagCommandService.create(createInput),
@@ -28,7 +28,7 @@ export async function runHomeLoader(input: RunHomeLoaderInput): Promise<HomePage
   const environment: 'development' | 'production' =
     process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
-  const tasks = await taskQueryService.listByUser(user.id);
+  const tasks = await taskQueryPort.listByUser(user.id);
   const ready = tasks.filter((task) => task.status === 'ready-to-go-live').length;
   const closed =
     tasks.filter((task) => task.status === 'done').length +

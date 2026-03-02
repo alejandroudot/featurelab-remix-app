@@ -1,10 +1,10 @@
 import { asc } from 'drizzle-orm';
 import { z } from 'zod';
 import type {
-  TaskActivityQueryService,
-  TaskCommentQueryService,
-  TaskQueryService,
-} from '~/core/tasks/tasks.port';
+  TaskActivityQueryPort,
+  TaskCommentQueryPort,
+  TaskQueryPort,
+} from '~/core/tasks/task.repository.port';
 import type { TasksFiltersState } from '../types';
 import { db } from '~/infra/db/client.sqlite';
 import { users } from '~/infra/db/schema';
@@ -12,9 +12,9 @@ import { users } from '~/infra/db/schema';
 type RunTaskLoaderInput = {
   request: Request;
   userId: string;
-  taskQueryService: TaskQueryService;
-  taskActivityQueryService: TaskActivityQueryService;
-  taskCommentQueryService: TaskCommentQueryService;
+  taskQueryPort: TaskQueryPort;
+  taskActivityQueryPort: TaskActivityQueryPort;
+  taskCommentQueryPort: TaskCommentQueryPort;
 };
 
 const tasksFiltersSearchParamsSchema = z.object({
@@ -41,16 +41,10 @@ function parseTasksFiltersFromUrl(url: URL): TasksFiltersState {
   return parsed.data;
 }
 
-export async function runTaskLoader({
-  request,
-  userId,
-  taskQueryService,
-  taskActivityQueryService,
-  taskCommentQueryService,
-}: RunTaskLoaderInput) {
-  const tasks = await taskQueryService.listByUser(userId);
-  const taskActivities = await taskActivityQueryService.listByUser(userId);
-  const taskComments = await taskCommentQueryService.listByUser(userId);
+export async function runTaskLoader({ request, userId, taskQueryPort, taskActivityQueryPort, taskCommentQueryPort }: RunTaskLoaderInput) {
+  const tasks = await taskQueryPort.listByUser(userId);
+  const taskActivities = await taskActivityQueryPort.listByUser(userId);
+  const taskComments = await taskCommentQueryPort.listByUser(userId);
   // Por ahora trae todos los usuarios.
   const assignableUsers = await db
     .select({ id: users.id, email: users.email })

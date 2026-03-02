@@ -20,8 +20,8 @@ export const handleCreate: TaskIntentHandler = async (input) => {
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'create');
 
   try {
-    const createdTask = await input.taskCommandService.create({ ...parsed.data, userId: input.userId });
-    await input.taskActivityCommandService.create({
+    const createdTask = await input.taskCommandPort.create({ ...parsed.data, userId: input.userId });
+    await input.taskActivityCommandPort.create({
       taskId: createdTask.id,
       actorUserId: input.userId,
       action: 'created',
@@ -32,7 +32,7 @@ export const handleCreate: TaskIntentHandler = async (input) => {
       source: 'description',
       text: createdTask.description ?? null,
       skipNotificationForUserId: input.userId,
-      writer: input.taskActivityCommandService,
+      writer: input.taskActivityCommandPort,
     });
     return redirect(getSafeRedirectTo(formData, '/tasks'));
   } catch (err) {

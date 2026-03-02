@@ -34,7 +34,7 @@ export async function createMentionActivities(input: {
   source: 'comment' | 'description';
   text: string | null | undefined;
   skipNotificationForUserId?: string;
-  writer: RunTaskActionInput['taskActivityCommandService'];
+  writer: RunTaskActionInput['taskActivityCommandPort'];
 }) {
   const mentionTokens = extractMentionTokens(input.text);
   const mentionedUserIds = await resolveMentionedUserIds(mentionTokens);

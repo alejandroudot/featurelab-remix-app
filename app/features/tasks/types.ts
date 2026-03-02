@@ -1,10 +1,10 @@
 import type {
-  TaskActivityCommandService,
-  TaskCommentQueryService,
-  TaskCommentCommandService,
-  TaskQueryService,
-  TaskCommandService,
-} from '~/core/tasks/tasks.port';
+  TaskActivityCommandPort,
+  TaskCommentQueryPort,
+  TaskCommentCommandPort,
+  TaskQueryPort,
+  TaskCommandPort,
+} from '~/core/tasks/task.repository.port';
 import type { NotificationService } from '~/core/notifications/notification.port';
 
 export type TaskAssigneeOption = { id: string; email: string };
@@ -52,10 +52,10 @@ export type TaskActionResult = Response | TaskActionData;
 export type RunTaskActionInput = {
 	formData: FormData;
 	userId: string;
-	taskCommandService: TaskCommandService;
-	taskQueryService: TaskQueryService;
-	taskActivityCommandService: TaskActivityCommandService;
-	taskCommentQueryService: TaskCommentQueryService;
-	taskCommentCommandService: TaskCommentCommandService;
+	taskCommandPort: TaskCommandPort;
+	taskQueryPort: TaskQueryPort;
+	taskActivityCommandPort: TaskActivityCommandPort;
+	taskCommentQueryPort: TaskCommentQueryPort;
+	taskCommentCommandPort: TaskCommentCommandPort;
 	notificationService: NotificationService;
 };

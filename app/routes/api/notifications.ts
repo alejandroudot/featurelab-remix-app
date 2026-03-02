@@ -1,15 +1,15 @@
 import type { Route } from './+types/notifications';
 import { inArray } from 'drizzle-orm';
 import { requireUser } from '~/infra/auth/require-user';
-import { taskActivityQueryService, taskQueryService } from '~/infra/tasks/task.services';
+import { taskActivityQueryPort, taskQueryPort } from '~/infra/tasks/task.repository.provider';
 import { buildNotificationsFeedFromTaskActivities } from '~/core/notifications/notifications-feed';
 import { db } from '~/infra/db/client.sqlite';
 import { tasks as tasksTable } from '~/infra/db/schema';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
-  const tasks = await taskQueryService.listByUser(user.id);
-  const taskActivities = await taskActivityQueryService.listByUser(user.id);
+  const tasks = await taskQueryPort.listByUser(user.id);
+  const taskActivities = await taskActivityQueryPort.listByUser(user.id);
 
   const knownTaskIdSet = new Set(tasks.map((task) => task.id));
   const missingTaskIds = Array.from(

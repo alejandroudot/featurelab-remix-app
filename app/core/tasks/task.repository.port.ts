@@ -1,4 +1,4 @@
-// app/core/tasks/task.port.ts
+// app/core/tasks/task.repository.port.ts
 import type { z } from 'zod';
 import type { taskCreateSchema } from './task.schema';
 import type {
@@ -29,22 +29,22 @@ export type TaskUpdateInput = {
   assigneeId?: string | null;
 };
 
-export interface TaskQueryService {
+export interface TaskQueryPort {
   listAll(): Promise<Task[]>;
   listByUser(userId: string): Promise<Task[]>;
   getByIdForUser(input: { id: string; userId: string }): Promise<Task | null>;
 }
 
-export interface TaskActivityQueryService {
+export interface TaskActivityQueryPort {
   listByUser(userId: string): Promise<TaskActivity[]>;
 }
 
-export interface TaskCommentQueryService {
+export interface TaskCommentQueryPort {
   listByUser(userId: string): Promise<TaskComment[]>;
   getByIdForUser(input: { id: string; userId: string }): Promise<TaskComment | null>;
 }
 
-export interface TaskCommandService {
+export interface TaskCommandPort {
   create(input: TaskCreateInput): Promise<Task>;
   update(input: TaskUpdateInput): Promise<Task>;
   reorderColumn(input: {
@@ -55,7 +55,7 @@ export interface TaskCommandService {
   remove(input: { id: string; userId: string }): Promise<void>;
 }
 
-export interface TaskActivityCommandService {
+export interface TaskActivityCommandPort {
   create(input: {
     taskId: string;
     actorUserId: string;
@@ -64,7 +64,7 @@ export interface TaskActivityCommandService {
   }): Promise<void>;
 }
 
-export interface TaskCommentCommandService {
+export interface TaskCommentCommandPort {
   create(input: {
     taskId: string;
     authorUserId: string;
@@ -80,3 +80,5 @@ export interface TaskCommentCommandService {
     authorUserId: string;
   }): Promise<void>;
 }
+
+

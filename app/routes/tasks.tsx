@@ -2,13 +2,13 @@ import { useActionData, useLoaderData, useNavigation } from 'react-router';
 import { TasksPage } from '~/features/tasks/TasksPage';
 import type { Route } from './+types/tasks';
 import {
-  taskActivityCommandService,
-  taskActivityQueryService,
-  taskCommentCommandService,
-  taskCommentQueryService,
-  taskCommandService,
-  taskQueryService,
-} from '../infra/tasks/task.services';
+  taskActivityCommandPort,
+  taskActivityQueryPort,
+  taskCommentCommandPort,
+  taskCommentQueryPort,
+  taskCommandPort,
+  taskQueryPort,
+} from '../infra/tasks/task.repository.provider';
 import { notificationService } from '~/infra/notifications/notification.service';
 import type { TaskActionData } from '~/features/tasks/types';
 import { requireUser } from '~/infra/auth/require-user';
@@ -20,9 +20,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   return runTaskLoader({
     request,
     userId: user.id,
-    taskQueryService,
-    taskActivityQueryService,
-    taskCommentQueryService,
+    taskQueryPort,
+    taskActivityQueryPort,
+    taskCommentQueryPort,
   });
 }
 
@@ -34,11 +34,11 @@ export async function action({ request }: Route.ActionArgs) {
   return runTaskAction({
     formData,
     userId: user.id,
-    taskCommandService,
-    taskQueryService,
-    taskActivityCommandService,
-    taskCommentQueryService,
-    taskCommentCommandService,
+    taskCommandPort,
+    taskQueryPort,
+    taskActivityCommandPort,
+    taskCommentQueryPort,
+    taskCommentCommandPort,
     notificationService,
   });
 }

@@ -1,21 +1,21 @@
-// app/infra/tasks/task.services.sqlite.ts
+// app/infra/tasks/task.repository.sqlite.ts
 import { and, desc, eq, inArray, or } from 'drizzle-orm';
 import type {
-  TaskActivityCommandService,
-  TaskActivityQueryService,
-  TaskCommentCommandService,
-  TaskCommentQueryService,
-  TaskCommandService,
+  TaskActivityCommandPort,
+  TaskActivityQueryPort,
+  TaskCommentCommandPort,
+  TaskCommentQueryPort,
+  TaskCommandPort,
   TaskCreateInput,
-  TaskQueryService,
+  TaskQueryPort,
   TaskUpdateInput,
-} from '../../core/tasks/tasks.port';
+} from '../../core/tasks/task.repository.port';
 import type { Task, TaskActivity, TaskComment } from '../../core/tasks/tasks.types';
 import { db } from '../db/client.sqlite';
 import { taskActivities, taskComments, tasks, users } from '../db/schema';
-import { mapTasksRow } from './tasks-mapper';
+import { mapTasksRow } from './task.repository.mapper';
 
-export const sqliteTaskQueryService: TaskQueryService = {
+export const sqliteTaskQueryAdapter: TaskQueryPort = {
   async listAll(): Promise<Task[]> {
     const rows = db.select().from(tasks).orderBy(desc(tasks.createdAt)).all();
     return rows.map(mapTasksRow);
@@ -48,7 +48,7 @@ export const sqliteTaskQueryService: TaskQueryService = {
   },
 };
 
-export const sqliteTaskCommandService: TaskCommandService = {
+export const sqliteTaskCommandAdapter: TaskCommandPort = {
   async create(input: TaskCreateInput): Promise<Task> {
     const [row] = db
       .insert(tasks)
@@ -130,7 +130,7 @@ export const sqliteTaskCommandService: TaskCommandService = {
   },
 };
 
-export const sqliteTaskActivityQueryService: TaskActivityQueryService = {
+export const sqliteTaskActivityQueryAdapter: TaskActivityQueryPort = {
   async listByUser(userId: string): Promise<TaskActivity[]> {
     const visibleTaskRows = db
       .select({ id: tasks.id })
@@ -184,7 +184,7 @@ export const sqliteTaskActivityQueryService: TaskActivityQueryService = {
   },
 };
 
-export const sqliteTaskActivityCommandService: TaskActivityCommandService = {
+export const sqliteTaskActivityCommandAdapter: TaskActivityCommandPort = {
   async create(input): Promise<void> {
     db.insert(taskActivities)
       .values({
@@ -199,7 +199,7 @@ export const sqliteTaskActivityCommandService: TaskActivityCommandService = {
   },
 };
 
-export const sqliteTaskCommentQueryService: TaskCommentQueryService = {
+export const sqliteTaskCommentQueryAdapter: TaskCommentQueryPort = {
   async listByUser(userId: string): Promise<TaskComment[]> {
     const visibleTaskRows = db
       .select({ id: tasks.id })
@@ -270,7 +270,7 @@ export const sqliteTaskCommentQueryService: TaskCommentQueryService = {
   },
 };
 
-export const sqliteTaskCommentCommandService: TaskCommentCommandService = {
+export const sqliteTaskCommentCommandAdapter: TaskCommentCommandPort = {
   async create(input): Promise<TaskComment> {
     const newId = crypto.randomUUID();
     db.insert(taskComments)
@@ -348,3 +348,5 @@ export const sqliteTaskCommentCommandService: TaskCommentCommandService = {
       .run();
   },
 };
+
+
