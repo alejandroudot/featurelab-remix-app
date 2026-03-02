@@ -8,6 +8,7 @@ import type {
 import type { TasksFiltersState } from '../types';
 import { db } from '~/infra/db/client.sqlite';
 import { users } from '~/infra/db/schema';
+import { getUserPreferencesFromRequest } from '~/infra/preferences/preferences-cookie';
 
 type RunTaskLoaderInput = {
   request: Request;
@@ -18,12 +19,12 @@ type RunTaskLoaderInput = {
 };
 
 const tasksFiltersSearchParamsSchema = z.object({
-  view: z.enum(['list', 'board']).default('board'),
-  order: z.enum(['manual', 'priority']).default('manual'),
-  scope: z.enum(['all', 'assigned', 'created']).default('all'),
+  view: z.enum(['list', 'board']).optional(),
+  order: z.enum(['manual', 'priority']).optional(),
+  scope: z.enum(['all', 'assigned', 'created']).optional(),
 });
 
-function parseTasksFiltersFromUrl(url: URL): TasksFiltersState {
+function parseTasksFiltersFromUrl(url: URL): Partial<TasksFiltersState> {
   const parsed = tasksFiltersSearchParamsSchema.safeParse({
     view: url.searchParams.get('view') ?? undefined,
     order: url.searchParams.get('order') ?? undefined,
@@ -31,11 +32,7 @@ function parseTasksFiltersFromUrl(url: URL): TasksFiltersState {
   });
 
   if (!parsed.success) {
-    return {
-      view: 'board',
-      order: 'manual',
-      scope: 'all',
-    };
+    return {};
   }
 
   return parsed.data;
@@ -53,7 +50,14 @@ export async function runTaskLoader({ request, userId, taskQueryPort, taskActivi
     .all();
 
   const url = new URL(request.url);
-  const viewState = parseTasksFiltersFromUrl(url);
+  const urlFilters = parseTasksFiltersFromUrl(url);
+  const preferences = getUserPreferencesFromRequest(request);
+
+  const viewState: TasksFiltersState = {
+    view: urlFilters.view ?? preferences.defaultTasksView,
+    order: urlFilters.order ?? preferences.defaultTasksOrder,
+    scope: urlFilters.scope ?? preferences.defaultTasksScope,
+  };
 
   return {
     currentUserId: userId,
@@ -64,4 +68,3 @@ export async function runTaskLoader({ request, userId, taskQueryPort, taskActivi
     viewState,
   };
 }
-

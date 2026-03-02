@@ -1,1 +1,0 @@
-ALTER TABLE `tasks` ADD `labels` text DEFAULT '[]' NOT NULL;

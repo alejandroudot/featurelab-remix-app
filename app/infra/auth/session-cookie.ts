@@ -1,3 +1,5 @@
+import { getCookieValue } from '~/infra/http/cookies';
+
 const COOKIE_NAME = "fl_session";
 
 function cookieBase() {
@@ -20,6 +22,5 @@ export function clearSessionCookie(headers: Headers) {
 
 export function getSessionId(request: Request) {
   const cookie = request.headers.get("cookie") ?? "";
-  const match = cookie.match(new RegExp(`${COOKIE_NAME}=([^;]+)`));
-  return match?.[1] ?? null;
+  return getCookieValue(cookie, COOKIE_NAME);
 }

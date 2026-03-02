@@ -12,6 +12,7 @@ import type { Route } from './+types/root';
 import './app.css';
 import { getOptionalUser } from '~/infra/auth/require-user';
 import { getThemeFromRequest } from '~/infra/theme/theme-cookie';
+import { getUserPreferencesFromRequest } from '~/infra/preferences/preferences-cookie';
 import { AppHeader } from './ui/layout/app-header';
 import { Toaster } from './ui/primitives/sonner';
 
@@ -42,14 +43,16 @@ export async function loader({ request }: Route.LoaderArgs) {
   // auth (optional)
   const user = await getOptionalUser(request);
   const theme = getThemeFromRequest(request);
+  const preferences = getUserPreferencesFromRequest(request);
 
-  return { user, theme };
+  return { user, theme, density: preferences.density };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const data = useLoaderData<typeof loader>();
   const user = data?.user ?? null;
   const theme = data?.theme ?? 'system';
+  const density = data?.density ?? 'comfortable';
   const isDark = theme === 'dark';
   const colorScheme = isDark ? 'dark' : 'light';
 
@@ -62,7 +65,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
 
-      <body>
+      <body data-density={density}>
         <AppHeader user={user} />
         {children}
         <Toaster position="bottom-right" richColors theme={isDark ? 'dark' : 'light'} />

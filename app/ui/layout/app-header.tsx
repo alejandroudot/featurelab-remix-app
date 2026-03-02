@@ -3,7 +3,6 @@ import { Menu } from 'lucide-react';
 import { Form, Link, useLocation } from 'react-router';
 import type { UserRole } from '~/core/auth/auth.types';
 import { HeaderNotifications } from './header-notifications';
-import { ThemeToggle } from './theme-toggle';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/ui/primitives/sheet';
 
 type Props = {
@@ -37,7 +36,6 @@ export function AppHeader({ user }: Props) {
       {user.role === 'manager' ? <span className="rounded border px-2 py-0.5 text-xs">MANAGER</span> : null}
       <span className="opacity-80">Hola, {user.email}</span>
       <HeaderNotifications />
-      <ThemeToggle />
       <Form method="post" action="/auth/logout">
         <button type="submit" className="border rounded px-3 py-1 text-sm" onClick={() => setIsMobileMenuOpen(false)}>
           Logout

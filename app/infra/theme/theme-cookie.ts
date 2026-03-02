@@ -1,3 +1,5 @@
+import { getCookieValue } from '~/infra/http/cookies';
+
 export type ThemeMode = 'light' | 'dark' | 'system';
 
 const THEME_COOKIE_NAME = 'fl_theme';
@@ -13,8 +15,7 @@ export function parseThemeMode(value: unknown): ThemeMode | null {
 
 export function getThemeFromRequest(request: Request): ThemeMode {
   const cookie = request.headers.get('cookie') ?? '';
-  const match = cookie.match(new RegExp(`${THEME_COOKIE_NAME}=([^;]+)`));
-  const parsed = parseThemeMode(match?.[1]);
+  const parsed = parseThemeMode(getCookieValue(cookie, THEME_COOKIE_NAME));
   return parsed ?? 'system';
 }
 

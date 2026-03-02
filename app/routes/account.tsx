@@ -5,10 +5,14 @@ import { runAccountAction } from '~/features/account/server/action';
 import { runAccountLoader } from '~/features/account/server/loader';
 import { requireUser } from '~/infra/auth/require-user';
 import { authRepository } from '~/infra/auth/auth.repository.provider';
+import { getThemeFromRequest } from '~/infra/theme/theme-cookie';
+import { getUserPreferencesFromRequest } from '~/infra/preferences/preferences-cookie';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
-  return runAccountLoader({ user });
+  const theme = getThemeFromRequest(request);
+  const preferences = getUserPreferencesFromRequest(request);
+  return runAccountLoader({ user, theme, preferences });
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -18,6 +22,6 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function AccountRoute() {
-  const { user } = useLoaderData<typeof loader>();
-  return <AccountPage user={user} />;
+  const { user, theme, preferences } = useLoaderData<typeof loader>();
+  return <AccountPage user={user} theme={theme} preferences={preferences} />;
 }
