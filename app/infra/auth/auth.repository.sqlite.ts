@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { createHash, randomUUID } from 'node:crypto';
 import { and, eq, gt, isNull } from 'drizzle-orm';
 
-import type { AuthService } from '~/core/auth/auth.port';
+import type { AuthRepository } from '~/core/auth/auth.port';
 import type { User, UserRole } from '~/core/auth/auth.types';
 import { db } from '~/infra/db/client.sqlite';
 import { emailVerificationTokens, sessions, users } from '~/infra/db/schema';
@@ -28,7 +28,7 @@ function hashVerificationToken(token: string) {
   return createHash('sha256').update(token).digest('hex');
 }
 
-export function createSqliteAuthService(): AuthService {
+export function createSqliteAuthRepository(): AuthRepository {
   return {
     async register({ displayName, email, password, phone, timezone }) {
       const existing = await db.select().from(users).where(eq(users.email, email)).get();

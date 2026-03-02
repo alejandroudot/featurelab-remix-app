@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { loginSchema } from '~/core/auth/login.schema';
 import type { AuthActionData } from '~/features/auth/types';
-import { authService } from '~/infra/auth/auth.service';
+import { authRepository } from '~/infra/auth/auth.repository.provider';
 import { setSessionCookie } from '~/infra/auth/session-cookie';
 import { safeRedirect } from '~/infra/http/redirects';
 
@@ -31,7 +31,7 @@ export async function runLoginAction(input: RunLoginActionInput) {
   }
 
   try {
-    const { sessionId } = await authService.login(parsed.data);
+    const { sessionId } = await authRepository.login(parsed.data);
 
     const headers = new Headers();
     setSessionCookie(headers, sessionId);

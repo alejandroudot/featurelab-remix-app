@@ -1,5 +1,5 @@
 import { redirect } from "react-router";
-import { authService } from "~/infra/auth/auth.service";
+import { authRepository } from "~/infra/auth/auth.repository.provider";
 import { getSessionId } from "~/infra/auth/session-cookie";
 
 export async function requireUser(request: Request) {
@@ -12,7 +12,7 @@ export async function requireUser(request: Request) {
     throw redirect(`/auth/login?redirectTo=${encodeURIComponent(redirectTo)}`);
   }
 
-  const user = await authService.getUserBySession(sessionId);
+  const user = await authRepository.getUserBySession(sessionId);
 
   if (!user) {
     throw redirect(`/auth/login?redirectTo=${encodeURIComponent(redirectTo)}`);
@@ -24,5 +24,5 @@ export async function requireUser(request: Request) {
 export async function getOptionalUser(request: Request) {
   const sessionId = getSessionId(request);
   if (!sessionId) return null;
-  return authService.getUserBySession(sessionId);
+  return authRepository.getUserBySession(sessionId);
 }

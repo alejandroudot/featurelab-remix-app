@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { normalizeComparableEmail } from '~/core/auth/credential-utils';
 import { registerSchema } from '~/core/auth/register.schema';
 import type { AuthActionData } from '~/features/auth/types';
-import { authService } from '~/infra/auth/auth.service';
+import { authRepository } from '~/infra/auth/auth.repository.provider';
 import { emailService } from '~/infra/email/email.service';
 
 type RunRegisterActionInput = {
@@ -44,14 +44,14 @@ export async function runRegisterAction(input: RunRegisterActionInput) {
   try {
     const normalizedEmail = normalizeComparableEmail(parsed.data.email);
 
-    const createdUser = await authService.register({
+    const createdUser = await authRepository.register({
       displayName: parsed.data.displayName,
       email: normalizedEmail,
       password: parsed.data.password,
       phone: parsed.data.phone,
       timezone: parsed.data.timezone,
     });
-    const { token, expiresAt } = await authService.createEmailVerificationToken({
+    const { token, expiresAt } = await authRepository.createEmailVerificationToken({
       userId: createdUser.id,
     });
     const requestUrl = new URL(input.requestUrl);

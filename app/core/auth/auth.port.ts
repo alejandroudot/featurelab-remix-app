@@ -33,7 +33,7 @@ export type VerifyEmailTokenInput = {
   token: string;
 };
 
-export interface AuthService {
+export interface AuthRepository {
   register(input: RegisterInput): Promise<User>;
   login(input: LoginInput): Promise<{ user: User; sessionId: string }>;
   logout(sessionId: string): Promise<void>;

@@ -1,13 +1,13 @@
 import type { Route } from "./+types/logout";
 import { redirect } from "react-router";
-import { authService } from "~/infra/auth/auth.service";
+import { authRepository } from "~/infra/auth/auth.repository.provider";
 import { clearSessionCookie, getSessionId } from "~/infra/auth/session-cookie";
 
 export async function action({ request }: Route.ActionArgs) {
   const sessionId = getSessionId(request);
 
   if (sessionId) {
-    await authService.logout(sessionId);
+    await authRepository.logout(sessionId);
   }
 
   const headers = new Headers();
@@ -15,3 +15,6 @@ export async function action({ request }: Route.ActionArgs) {
 
   return redirect("/auth/login", { headers });
 }
+
+
+

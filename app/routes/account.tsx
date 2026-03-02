@@ -4,7 +4,7 @@ import { AccountPage } from '~/features/account/AccountPage';
 import { runAccountAction } from '~/features/account/server/action';
 import { runAccountLoader } from '~/features/account/server/loader';
 import { requireUser } from '~/infra/auth/require-user';
-import { authService } from '~/infra/auth/auth.service';
+import { authRepository } from '~/infra/auth/auth.repository.provider';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
@@ -14,7 +14,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
   const user = await requireUser(request);
   const formData = await request.formData();
-  return runAccountAction({ formData, userId: user.id, authService });
+  return runAccountAction({ formData, userId: user.id, authRepository });
 }
 
 export default function AccountRoute() {

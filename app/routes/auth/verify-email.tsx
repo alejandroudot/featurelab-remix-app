@@ -1,7 +1,7 @@
 import { Link, useLoaderData } from 'react-router';
 import type { Route } from './+types/verify-email';
 
-import { authService } from '~/infra/auth/auth.service';
+import { authRepository } from '~/infra/auth/auth.repository.provider';
 
 type VerifyEmailLoaderData = {
   status: 'success' | 'invalid' | 'expired' | 'missing' | 'error';
@@ -20,7 +20,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   try {
-    await authService.verifyEmailToken({ token });
+    await authRepository.verifyEmailToken({ token });
     return Response.json({
       status: 'success',
       message: 'Tu email fue verificado correctamente.',

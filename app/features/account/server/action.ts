@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { AuthService } from '~/core/auth/auth.port';
+import type { AuthRepository } from '~/core/auth/auth.port';
 import { passwordPolicySchema } from '~/core/auth/password.schema';
 import type { AccountActionData } from '../types';
 
@@ -42,14 +42,10 @@ const passwordSchema = z
 type RunAccountActionInput = {
   formData: FormData;
   userId: string;
-  authService: AuthService;
+  authRepository: AuthRepository;
 };
 
-export async function runAccountAction({
-  formData,
-  userId,
-  authService,
-}: RunAccountActionInput) {
+export async function runAccountAction({ formData, userId, authRepository }: RunAccountActionInput) {
   const intent = String(formData.get('intent') ?? '');
 
   if (intent === 'profile-update') {
@@ -75,7 +71,7 @@ export async function runAccountAction({
       );
     }
 
-    await authService.updateProfile({
+    await authRepository.updateProfile({
       userId,
       displayName: parsed.data.displayName,
       phone: parsed.data.phone ?? null,
@@ -111,7 +107,7 @@ export async function runAccountAction({
     }
 
     try {
-      await authService.changePassword({
+      await authRepository.changePassword({
         userId,
         currentPassword: parsed.data.currentPassword,
         newPassword: parsed.data.newPassword,
