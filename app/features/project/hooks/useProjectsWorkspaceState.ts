@@ -1,11 +1,7 @@
-import { useCallback, useEffect, useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import type { FormEvent } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate, useSubmit } from 'react-router';
 import type { Project } from '~/core/project/project.types';
-import {
-  PROJECTS_UPDATED_EVENT,
-  localProjectStoragePort,
-} from '~/infra/project/project.storage.local';
 
 type State = {
   projects: Project[];
@@ -90,31 +86,23 @@ const initialState: State = {
   projectToDelete: null,
 };
 
-export function useProjectsWorkspaceState(activeProjectId: string | null) {
+export function useProjectsWorkspaceState(activeProjectId: string | null, initialProjects: Project[] = []) {
   const navigate = useNavigate();
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const submit = useSubmit();
+  const location = useLocation();
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    projects: initialProjects,
+    ...deriveProjectUi(initialProjects, activeProjectId),
+  });
 
-  const syncFromStorage = useCallback(() => {
+  useEffect(() => {
     dispatch({
       type: 'sync',
-      projects: localProjectStoragePort.readAll(),
+      projects: initialProjects,
       activeProjectId,
     });
-  }, [activeProjectId]);
-
-  useEffect(() => {
-    syncFromStorage();
-  }, [syncFromStorage]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    window.addEventListener('storage', syncFromStorage);
-    window.addEventListener(PROJECTS_UPDATED_EVENT, syncFromStorage);
-    return () => {
-      window.removeEventListener('storage', syncFromStorage);
-      window.removeEventListener(PROJECTS_UPDATED_EVENT, syncFromStorage);
-    };
-  }, [syncFromStorage]);
+  }, [initialProjects, activeProjectId]);
 
   function setCreateProjectOpen(open: boolean) {
     dispatch({ type: 'setCreateOpen', open });
@@ -147,10 +135,21 @@ export function useProjectsWorkspaceState(activeProjectId: string | null) {
     event.preventDefault();
     const name = state.newProjectName.trim();
     if (!name) return;
-    const created = localProjectStoragePort.create(name, state.newProjectImageUrl);
-    const nextProjects = [...state.projects, created].sort((a, b) => a.createdAt - b.createdAt);
-    localProjectStoragePort.saveAll(nextProjects);
-    dispatch({ type: 'created', projects: nextProjects, activeProjectId });
+
+    const formData = new FormData();
+    formData.set('intent', 'project-create');
+    formData.set('name', name);
+    if (state.newProjectImageUrl) {
+      formData.set('imageUrl', state.newProjectImageUrl);
+    }
+
+    submit(formData, { method: 'post', action: location.pathname });
+    dispatch({
+      type: 'setCreateOpen',
+      open: false,
+    });
+    dispatch({ type: 'setProjectNameInput', value: '' });
+    dispatch({ type: 'setProjectImageInput', value: null });
   }
 
   function openProjectDeleteDialog(project: Project) {
@@ -161,17 +160,19 @@ export function useProjectsWorkspaceState(activeProjectId: string | null) {
     dispatch({ type: 'setDeleteOpen', open });
   }
 
-  function deleteSelectedProject(onAfterDelete?: (projectId: string) => void) {
+  function deleteSelectedProject() {
     const target = state.projectToDelete;
     if (!target) return;
-    const nextProjects = state.projects.filter((project) => project.id !== target.id);
-    localProjectStoragePort.saveAll(nextProjects);
-    if (onAfterDelete) onAfterDelete(target.id);
-    dispatch({ type: 'deleted', projects: nextProjects, activeProjectId });
 
     if (activeProjectId === target.id) {
       navigate('/', { replace: true });
     }
+
+    const formData = new FormData();
+    formData.set('intent', 'project-delete');
+    formData.set('id', target.id);
+    submit(formData, { method: 'post', action: location.pathname });
+    dispatch({ type: 'setDeleteOpen', open: false });
   }
 
   return {

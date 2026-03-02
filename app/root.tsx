@@ -17,6 +17,7 @@ import { getUserPreferencesFromRequest } from '~/infra/preferences/preferences-c
 import { AppHeader } from './ui/layout/app-header';
 import { AppShell } from './ui/layout/app-shell';
 import { Toaster } from './ui/primitives/sonner';
+import { projectRepository } from './infra/project/project.repository.provider';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -46,8 +47,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   const user = await getOptionalUser(request);
   const theme = getThemeFromRequest(request);
   const preferences = getUserPreferencesFromRequest(request);
+  const projects = user ? await projectRepository.listByUser(user.id) : [];
 
-  return { user, theme, density: preferences.density };
+  return { user, theme, density: preferences.density, projects };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -56,6 +58,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const user = data?.user ?? null;
   const theme = data?.theme ?? 'system';
   const density = data?.density ?? 'comfortable';
+  const projects = data?.projects ?? [];
   const isDark = theme === 'dark';
   const colorScheme = isDark ? 'dark' : 'light';
   const shouldRenderAppShell = Boolean(user) && !location.pathname.startsWith('/auth');
@@ -71,7 +74,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       <body data-density={density}>
         {shouldRenderAppShell && user ? (
-          <AppShell user={user} theme={theme}>
+          <AppShell user={user} theme={theme} projects={projects}>
             {children}
           </AppShell>
         ) : (

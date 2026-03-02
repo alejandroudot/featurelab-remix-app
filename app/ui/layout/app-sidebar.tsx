@@ -1,15 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { ChevronDown, FolderKanban, Flag, Users } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 import type { UserRole } from '~/core/auth/auth.types';
 import type { Project } from '~/core/project/project.types';
-import {
-  PROJECTS_UPDATED_EVENT,
-  localProjectStoragePort,
-} from '~/infra/project/project.storage.local';
 
 type Props = {
   userRole: UserRole;
+  projects: Project[];
 };
 
 function navClassName(isActive: boolean) {
@@ -18,9 +15,8 @@ function navClassName(isActive: boolean) {
   }`;
 }
 
-export function AppSidebar({ userRole }: Props) {
+export function AppSidebar({ userRole, projects }: Props) {
   const location = useLocation();
-  const [projects, setProjects] = useState<Project[]>([]);
   const isFlagsActive = location.pathname === '/flags';
   const showTeams = userRole === 'manager' || userRole === 'admin';
   const showFlags = userRole === 'admin';
@@ -32,22 +28,6 @@ export function AppSidebar({ userRole }: Props) {
     () => [...projects].sort((a, b) => a.createdAt - b.createdAt),
     [projects],
   );
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    function syncProjectsFromStorage() {
-      setProjects(localProjectStoragePort.readAll());
-    }
-
-    syncProjectsFromStorage();
-    window.addEventListener('storage', syncProjectsFromStorage);
-    window.addEventListener(PROJECTS_UPDATED_EVENT, syncProjectsFromStorage);
-    return () => {
-      window.removeEventListener('storage', syncProjectsFromStorage);
-      window.removeEventListener(PROJECTS_UPDATED_EVENT, syncProjectsFromStorage);
-    };
-  }, [location.search]);
 
   function buildTasksHref(projectId: string) {
     const next = new URLSearchParams(location.search);

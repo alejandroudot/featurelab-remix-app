@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { TaskActionData, TaskAssigneeOption, ProjectViewState } from '~/features/task/types';
 import { useSearchParams } from 'react-router';
 import { Plus } from 'lucide-react';
@@ -11,6 +11,7 @@ import { ProjectTopSection } from './components/ProjectTopSection';
 import { ProjectsOverview } from './components/ProjectsOverview';
 import { ProjectCreateDialog } from './components/create/ProjectCreateDialog';
 import type { Task, TaskActivity, TaskComment } from '~/core/task/task.types';
+import type { Project } from '~/core/project/project.types';
 import { toast } from 'sonner';
 import { getTaskActionToastError } from '~/features/task/utils/client-errors';
 import { useProjectTasksController } from './hooks/useProjectTasksController';
@@ -23,13 +24,13 @@ import {
 import { ContentDialog } from '~/ui/dialogs/ContentDialog';
 import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
 import { persistProjectViewPreferences } from './utils/project-view-preferences';
-import { removeProjectFromTaskMap, syncTaskProjectMap } from './utils/project-task-map';
 
 export function ProjectWorkspacePage({
   currentUserId,
   tasks,
   taskActivities,
   taskComments,
+  projects,
   assignableUsers,
   viewState,
   actionData,
@@ -39,6 +40,7 @@ export function ProjectWorkspacePage({
   tasks: Task[];
   taskActivities: TaskActivity[];
   taskComments: TaskComment[];
+  projects: Project[];
   assignableUsers: TaskAssigneeOption[];
   viewState: ProjectViewState;
   actionData: TaskActionData;
@@ -47,8 +49,6 @@ export function ProjectWorkspacePage({
   const [searchParams] = useSearchParams();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [taskProjectMap, setTaskProjectMap] = useState<Record<string, string>>({});
-  const previousTaskIdsRef = useRef<Set<string>>(new Set());
   const {
     setView,
     setOrder,
@@ -65,7 +65,7 @@ export function ProjectWorkspacePage({
 
   const activeProjectId = searchParams.get('project');
   const {
-    projects,
+    projects: workspaceProjects,
     hasProjects,
     projectName,
     activeProject,
@@ -82,7 +82,7 @@ export function ProjectWorkspacePage({
     openProjectDeleteDialog,
     setProjectDeleteOpen,
     deleteSelectedProject,
-  } = useProjectsWorkspaceState(activeProjectId);
+  } = useProjectsWorkspaceState(activeProjectId, projects);
 
   const visibleTasks = useMemo(
     () =>
@@ -97,8 +97,8 @@ export function ProjectWorkspacePage({
 
   const projectScopedTasks = useMemo(() => {
     if (!activeProjectId) return visibleTasks;
-    return visibleTasks.filter((task) => taskProjectMap[task.id] === activeProjectId);
-  }, [visibleTasks, taskProjectMap, activeProjectId]);
+    return visibleTasks.filter((task) => task.projectId === activeProjectId);
+  }, [visibleTasks, activeProjectId]);
 
   const searchedTasks = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
@@ -133,16 +133,6 @@ export function ProjectWorkspacePage({
     const message = getTaskActionToastError(actionData);
     if (message) toast.error(message);
   }, [actionData]);
-
-  useEffect(() => {
-    const next = syncTaskProjectMap({
-      tasks,
-      activeProjectId,
-      previousTaskIds: previousTaskIdsRef.current,
-    });
-    setTaskProjectMap(next);
-    previousTaskIdsRef.current = new Set(tasks.map((task) => task.id));
-  }, [tasks, activeProjectId]);
 
   useEffect(() => {
     if (!actionData) {
@@ -208,12 +198,7 @@ export function ProjectWorkspacePage({
       id={projectToDelete?.id ?? ''}
       name={projectToDelete?.name ?? 'proyecto'}
       description="Esta accion eliminara el proyecto y desvinculara sus tareas. Queres continuar?"
-      onConfirm={() => {
-        deleteSelectedProject((projectId) => {
-          const cleanedTaskMap = removeProjectFromTaskMap(projectId);
-          setTaskProjectMap(cleanedTaskMap);
-        });
-      }}
+      onConfirm={deleteSelectedProject}
     />
   );
 
@@ -221,7 +206,7 @@ export function ProjectWorkspacePage({
     return (
       <>
         <ProjectsOverview
-          projects={projects}
+          projects={workspaceProjects}
           onOpenCreateProject={() => setCreateProjectOpen(true)}
           onOpenDeleteProject={openProjectDeleteDialog}
         />
@@ -277,6 +262,7 @@ export function ProjectWorkspacePage({
         contentClassName="max-h-[90vh] sm:max-w-3xl"
       >
         <CreateTask
+          activeProjectId={activeProjectId ?? ''}
           actionData={actionData}
           isSubmitting={isSubmitting}
           mentionCandidates={mentionCandidates}

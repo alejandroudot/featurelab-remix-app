@@ -1,5 +1,6 @@
 import { asc } from 'drizzle-orm';
-import type { TaskPort } from '~/core/task/task.repository.port';
+import type { ProjectRepository } from '~/core/project/project.repository.port';
+import type { TaskRepository } from '~/core/task/task.repository.port';
 import type { ProjectViewState } from '../types';
 import { db } from '~/infra/db/client.sqlite';
 import { users } from '~/infra/db/schema';
@@ -9,7 +10,8 @@ import { z } from 'zod';
 type RunTaskLoaderInput = {
   request: Request;
   userId: string;
-  taskPort: TaskPort;
+  taskRepository: TaskRepository;
+  projectRepository: ProjectRepository;
 };
 
 const viewQueryParamSchema = z.enum(['list', 'board']);
@@ -28,10 +30,11 @@ function parseTasksFiltersFromUrl(url: URL): Partial<ProjectViewState> {
   };
 }
 
-export async function runTaskLoader({ request, userId, taskPort }: RunTaskLoaderInput) {
-  const tasks = await taskPort.task.listByUser(userId);
-  const taskActivities = await taskPort.activity.listByUser(userId);
-  const taskComments = await taskPort.comment.listByUser(userId);
+export async function runTaskLoader({ request, userId, taskRepository, projectRepository }: RunTaskLoaderInput) {
+  const projects = await projectRepository.listByUser(userId);
+  const tasks = await taskRepository.listByUser(userId);
+  const taskActivities = await taskRepository.listActivitiesByUser(userId);
+  const taskComments = await taskRepository.listCommentsByUser(userId);
   // Por ahora trae todos los usuarios.
   const assignableUsers = await db
     .select({ id: users.id, email: users.email })
@@ -51,6 +54,7 @@ export async function runTaskLoader({ request, userId, taskPort }: RunTaskLoader
 
   return {
     currentUserId: userId,
+    projects,
     tasks,
     taskActivities,
     taskComments,

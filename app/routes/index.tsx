@@ -1,7 +1,8 @@
 import { useActionData, useLoaderData, useNavigation } from 'react-router';
 import { ProjectWorkspacePage } from '~/features/project/ProjectWorkspacePage';
 import type { Route } from './+types/index';
-import { taskPort } from '~/infra/task/task.repository.provider';
+import { taskRepository } from '~/infra/task/task.repository.provider';
+import { projectRepository } from '~/infra/project/project.repository.provider';
 import { notificationService } from '~/infra/notifications/notifications.service';
 import type { TaskActionData } from '~/features/task/types';
 import { requireUser } from '~/infra/auth/require-user';
@@ -13,24 +14,50 @@ export async function loader({ request }: Route.LoaderArgs) {
   return runTaskLoader({
     request,
     userId: user.id,
-    taskPort,
+    taskRepository,
+    projectRepository,
   });
 }
 
 export async function action({ request }: Route.ActionArgs) {
   const user = await requireUser(request);
   const formData = await request.formData();
+  const intent = String(formData.get('intent') ?? '').trim();
+
+  if (intent === 'project-create') {
+    const name = String(formData.get('name') ?? '').trim();
+    const imageUrlRaw = String(formData.get('imageUrl') ?? '').trim();
+    if (name.length > 0) {
+      await projectRepository.create({
+        userId: user.id,
+        name,
+        imageUrl: imageUrlRaw.length > 0 ? imageUrlRaw : null,
+      });
+    }
+    return null;
+  }
+
+  if (intent === 'project-delete') {
+    const id = String(formData.get('id') ?? '').trim();
+    if (id.length > 0) {
+      await projectRepository.remove({
+        id,
+        userId: user.id,
+      });
+    }
+    return null;
+  }
 
   return runTaskAction({
     formData,
     userId: user.id,
-    taskPort,
+    taskRepository,
     notificationService,
   });
 }
 
 export default function IndexRoute() {
-  const { currentUserId, tasks, taskActivities, taskComments, assignableUsers, viewState } =
+  const { currentUserId, projects, tasks, taskActivities, taskComments, assignableUsers, viewState } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<TaskActionData>();
   const navigation = useNavigation();
@@ -39,6 +66,7 @@ export default function IndexRoute() {
   return (
     <ProjectWorkspacePage
       currentUserId={currentUserId}
+      projects={projects}
       tasks={tasks}
       taskActivities={taskActivities}
       taskComments={taskComments}

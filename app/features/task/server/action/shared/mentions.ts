@@ -34,7 +34,7 @@ export async function createMentionActivities(input: {
   source: 'comment' | 'description';
   text: string | null | undefined;
   skipNotificationForUserId?: string;
-  writer: RunTaskActionInput['taskPort']['activity'];
+  writer: Pick<RunTaskActionInput['taskRepository'], 'createActivity'>;
 }) {
   const mentionTokens = extractMentionTokens(input.text);
   const mentionedUserIds = await resolveMentionedUserIds(mentionTokens);
@@ -44,7 +44,7 @@ export async function createMentionActivities(input: {
 
   await Promise.all(
     usersToNotify.map((targetUserId) =>
-      input.writer.create({
+      input.writer.createActivity({
         taskId: input.taskId,
         actorUserId: input.actorUserId,
         action: 'updated',

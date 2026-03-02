@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import type { UserRole } from '~/core/auth/auth.types';
+import type { Project } from '~/core/project/project.types';
 import { AppHeader } from './app-header';
 import { AppSidebar } from './app-sidebar';
 import type { ThemeMode } from '~/infra/theme/theme-cookie';
@@ -12,10 +13,12 @@ type AppShellUser = {
 export function AppShell({
   user,
   theme,
+  projects,
   children,
 }: {
   user: AppShellUser;
   theme: ThemeMode;
+  projects: Project[];
   children: React.ReactNode;
 }) {
   return (
@@ -31,7 +34,7 @@ export function AppShell({
       </div>
 
       <div className="md:col-start-1 md:row-start-2">
-        <AppSidebar userRole={user.role} />
+        <AppSidebar userRole={user.role} projects={projects} />
       </div>
 
       <div className="min-w-0 md:col-start-2 md:row-start-2">{children}</div>

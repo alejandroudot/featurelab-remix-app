@@ -22,6 +22,10 @@ export const taskIntentSchema = z.enum([
 // Schema exclusivo para crear tasks (intent=create).
 export const taskCreateSchema = z
   .object({
+    projectId: z.preprocess(
+      (value) => (typeof value === 'string' ? value.trim() : ''),
+      z.string().min(1, 'Project requerido'),
+    ),
     title: z.preprocess(
       (value) => (typeof value === 'string' ? value.trim() : ''),
       z.string().min(1, 'El titulo es obligatorio'),
@@ -32,6 +36,7 @@ export const taskCreateSchema = z
     ),
   })
   .transform((data) => ({
+    projectId: data.projectId,
     title: data.title,
     description: data.description?.length ? data.description : undefined,
   }));

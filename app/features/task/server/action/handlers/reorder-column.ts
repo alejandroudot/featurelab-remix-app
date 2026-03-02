@@ -14,14 +14,14 @@ export const handleReorderColumn: TaskIntentHandler = async (input) => {
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'reorder-column');
 
   try {
-    await input.taskPort.task.reorderColumn({
+    await input.taskRepository.reorderColumn({
       userId: input.userId,
       status: parsed.data.status,
       orderedTaskIds: parsed.data.orderedTaskIds,
     });
     await Promise.all(
       parsed.data.orderedTaskIds.map((taskId, index) =>
-        input.taskPort.activity.create({
+        input.taskRepository.createActivity({
           taskId,
           actorUserId: input.userId,
           action: 'reordered',

@@ -29,13 +29,10 @@ export type TaskUpdateInput = {
   assigneeId?: string | null;
 };
 
-export interface TaskQueryPort {
+export interface TaskRepository {
   listAll(): Promise<Task[]>;
   listByUser(userId: string): Promise<Task[]>;
   getByIdForUser(input: { id: string; userId: string }): Promise<Task | null>;
-}
-
-export interface TaskCommandPort {
   create(input: TaskCreateInput): Promise<Task>;
   update(input: TaskUpdateInput): Promise<Task>;
   reorderColumn(input: {
@@ -44,45 +41,27 @@ export interface TaskCommandPort {
     orderedTaskIds: string[];
   }): Promise<void>;
   remove(input: { id: string; userId: string }): Promise<void>;
-}
-
-export interface TaskActivityQueryPort {
-  listByUser(userId: string): Promise<TaskActivity[]>;
-}
-
-export interface TaskActivityCommandPort {
-  create(input: {
+  listActivitiesByUser(userId: string): Promise<TaskActivity[]>;
+  createActivity(input: {
     taskId: string;
     actorUserId: string;
     action: TaskActivityAction;
     metadata?: Record<string, string | number | boolean | null>;
   }): Promise<void>;
-}
-
-export interface TaskCommentQueryPort {
-  listByUser(userId: string): Promise<TaskComment[]>;
-  getByIdForUser(input: { id: string; userId: string }): Promise<TaskComment | null>;
-}
-
-export interface TaskCommentCommandPort {
-  create(input: {
+  listCommentsByUser(userId: string): Promise<TaskComment[]>;
+  getCommentByIdForUser(input: { id: string; userId: string }): Promise<TaskComment | null>;
+  createComment(input: {
     taskId: string;
     authorUserId: string;
     body: string;
   }): Promise<TaskComment>;
-  update(input: {
+  updateComment(input: {
     id: string;
     authorUserId: string;
     body: string;
   }): Promise<TaskComment>;
-  remove(input: {
+  removeComment(input: {
     id: string;
     authorUserId: string;
   }): Promise<void>;
-}
-
-export interface TaskPort {
-  task: TaskQueryPort & TaskCommandPort;
-  activity: TaskActivityQueryPort & TaskActivityCommandPort;
-  comment: TaskCommentQueryPort & TaskCommentCommandPort;
 }

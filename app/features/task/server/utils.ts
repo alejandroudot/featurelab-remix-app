@@ -5,6 +5,7 @@ import type { TaskActionData } from '../types';
 export function getTaskFormValues(formData: FormData): NonNullable<TaskActionData>['values'] {
   return {
     id: String(formData.get('id') ?? ''),
+    projectId: String(formData.get('projectId') ?? ''),
     title: String(formData.get('title') ?? ''),
     description: String(formData.get('description') ?? ''),
     labels: String(formData.get('labels') ?? ''),

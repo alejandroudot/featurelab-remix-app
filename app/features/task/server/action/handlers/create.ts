@@ -13,6 +13,7 @@ export const handleCreate: TaskIntentHandler = async (input) => {
     ? await finalizeRichTextTempImagesInHtml(rawDescription)
     : rawDescription;
   const parsed = taskCreateSchema.safeParse({
+    projectId: formData.get('projectId'),
     title: formData.get('title'),
     description,
   });
@@ -20,8 +21,8 @@ export const handleCreate: TaskIntentHandler = async (input) => {
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'create');
 
   try {
-    const createdTask = await input.taskPort.task.create({ ...parsed.data, userId: input.userId });
-    await input.taskPort.activity.create({
+    const createdTask = await input.taskRepository.create({ ...parsed.data, userId: input.userId });
+    await input.taskRepository.createActivity({
       taskId: createdTask.id,
       actorUserId: input.userId,
       action: 'created',
@@ -32,7 +33,7 @@ export const handleCreate: TaskIntentHandler = async (input) => {
       source: 'description',
       text: createdTask.description ?? null,
       skipNotificationForUserId: input.userId,
-      writer: input.taskPort.activity,
+      writer: input.taskRepository,
     });
     return redirect(getSafeRedirectTo(formData, '/'));
   } catch (err) {

@@ -29,13 +29,13 @@ export const handleCommentCreate: TaskIntentHandler = async (input) => {
       });
     }
 
-    await input.taskPort.comment.create({
+    await input.taskRepository.createComment({
       taskId: parsed.data.id,
       authorUserId: input.userId,
       body: parsed.data.commentBody,
     });
 
-    await input.taskPort.activity.create({
+    await input.taskRepository.createActivity({
       taskId: parsed.data.id,
       actorUserId: input.userId,
       action: 'comment-added',
@@ -46,7 +46,7 @@ export const handleCommentCreate: TaskIntentHandler = async (input) => {
       source: 'comment',
       text: parsed.data.commentBody,
       skipNotificationForUserId: input.userId,
-      writer: input.taskPort.activity,
+      writer: input.taskRepository,
     });
 
     return redirect(getSafeRedirectTo(formData, '/'));
@@ -86,13 +86,13 @@ export const handleCommentUpdate: TaskIntentHandler = async (input) => {
       });
     }
 
-    await input.taskPort.comment.update({
+    await input.taskRepository.updateComment({
       id: parsed.data.commentId,
       authorUserId: input.userId,
       body: parsed.data.commentBody,
     });
 
-    await input.taskPort.activity.create({
+    await input.taskRepository.createActivity({
       taskId: comment.taskId,
       actorUserId: input.userId,
       action: 'comment-updated',
@@ -104,7 +104,7 @@ export const handleCommentUpdate: TaskIntentHandler = async (input) => {
       source: 'comment',
       text: parsed.data.commentBody,
       skipNotificationForUserId: input.userId,
-      writer: input.taskPort.activity,
+      writer: input.taskRepository,
     });
 
     return redirect(getSafeRedirectTo(formData, '/'));
@@ -143,12 +143,12 @@ export const handleCommentDelete: TaskIntentHandler = async (input) => {
       });
     }
 
-    await input.taskPort.comment.remove({
+    await input.taskRepository.removeComment({
       id: parsed.data.commentId,
       authorUserId: input.userId,
     });
 
-    await input.taskPort.activity.create({
+    await input.taskRepository.createActivity({
       taskId: comment.taskId,
       actorUserId: input.userId,
       action: 'comment-deleted',

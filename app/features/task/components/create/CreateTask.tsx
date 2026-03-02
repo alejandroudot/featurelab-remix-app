@@ -9,11 +9,13 @@ import { getFieldError } from './utils/errors';
 import { uploadCreateTaskImage } from './utils/upload';
 
 export function CreateTask({
+  activeProjectId,
   actionData,
   isSubmitting,
   mentionCandidates,
   className,
 }: {
+  activeProjectId: string;
   actionData: TaskActionData;
   isSubmitting: boolean;
   mentionCandidates: string[];
@@ -59,6 +61,7 @@ export function CreateTask({
 
       <Form method="post" className="space-y-3" onSubmit={handleSubmitGuard}>
         <input type="hidden" name="intent" value="create" />
+        <input type="hidden" name="projectId" value={activeProjectId} />
 
         <TitleField value={title} error={titleError} onChange={setTitle} />
 

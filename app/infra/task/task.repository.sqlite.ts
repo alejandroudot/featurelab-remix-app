@@ -1,21 +1,16 @@
 // app/infra/task/task.repository.sqlite.ts
 import { and, desc, eq, inArray, or } from 'drizzle-orm';
 import type {
-  TaskActivityCommandPort,
-  TaskActivityQueryPort,
-  TaskCommentCommandPort,
-  TaskCommentQueryPort,
-  TaskCommandPort,
   TaskCreateInput,
-  TaskQueryPort,
+  TaskRepository,
   TaskUpdateInput,
 } from '../../core/task/task.repository.port';
 import type { Task, TaskActivity, TaskComment } from '../../core/task/task.types';
 import { db } from '../db/client.sqlite';
-import { taskActivities, taskComments, tasks, users } from '../db/schema';
+import { projects, taskActivities, taskComments, tasks, users } from '../db/schema';
 import { mapTasksRow } from './task.repository.mapper';
 
-export const sqliteTaskQueryAdapter: TaskQueryPort = {
+const taskQueryAdapter = {
   async listAll(): Promise<Task[]> {
     const rows = db.select().from(tasks).orderBy(desc(tasks.createdAt)).all();
     return rows.map(mapTasksRow);
@@ -48,13 +43,25 @@ export const sqliteTaskQueryAdapter: TaskQueryPort = {
   },
 };
 
-export const sqliteTaskCommandAdapter: TaskCommandPort = {
+const taskCommandAdapter = {
   async create(input: TaskCreateInput): Promise<Task> {
+    const [projectRow] = db
+      .select({ id: projects.id })
+      .from(projects)
+      .where(and(eq(projects.id, input.projectId), eq(projects.ownerUserId, input.userId)))
+      .limit(1)
+      .all();
+
+    if (!projectRow) {
+      throw new Response('Project not found', { status: 404 });
+    }
+
     const [row] = db
       .insert(tasks)
       .values({
         id: crypto.randomUUID(),
         userId: input.userId,
+        projectId: input.projectId,
         title: input.title,
         description: input.description ?? null,
         labels: '[]',
@@ -130,7 +137,7 @@ export const sqliteTaskCommandAdapter: TaskCommandPort = {
   },
 };
 
-export const sqliteTaskActivityQueryAdapter: TaskActivityQueryPort = {
+const taskActivityQueryAdapter = {
   async listByUser(userId: string): Promise<TaskActivity[]> {
     const visibleTaskRows = db
       .select({ id: tasks.id })
@@ -184,8 +191,8 @@ export const sqliteTaskActivityQueryAdapter: TaskActivityQueryPort = {
   },
 };
 
-export const sqliteTaskActivityCommandAdapter: TaskActivityCommandPort = {
-  async create(input): Promise<void> {
+const taskActivityCommandAdapter = {
+  async create(input: Parameters<TaskRepository['createActivity']>[0]): Promise<void> {
     db.insert(taskActivities)
       .values({
         id: crypto.randomUUID(),
@@ -199,7 +206,7 @@ export const sqliteTaskActivityCommandAdapter: TaskActivityCommandPort = {
   },
 };
 
-export const sqliteTaskCommentQueryAdapter: TaskCommentQueryPort = {
+const taskCommentQueryAdapter = {
   async listByUser(userId: string): Promise<TaskComment[]> {
     const visibleTaskRows = db
       .select({ id: tasks.id })
@@ -270,8 +277,8 @@ export const sqliteTaskCommentQueryAdapter: TaskCommentQueryPort = {
   },
 };
 
-export const sqliteTaskCommentCommandAdapter: TaskCommentCommandPort = {
-  async create(input): Promise<TaskComment> {
+const taskCommentCommandAdapter = {
+  async create(input: Parameters<TaskRepository['createComment']>[0]): Promise<TaskComment> {
     const newId = crypto.randomUUID();
     db.insert(taskComments)
       .values({
@@ -307,7 +314,7 @@ export const sqliteTaskCommentCommandAdapter: TaskCommentCommandPort = {
     };
   },
 
-  async update(input): Promise<TaskComment> {
+  async update(input: Parameters<TaskRepository['updateComment']>[0]): Promise<TaskComment> {
     const [updated] = db
       .update(taskComments)
       .set({ body: input.body })
@@ -342,11 +349,28 @@ export const sqliteTaskCommentCommandAdapter: TaskCommentCommandPort = {
     };
   },
 
-  async remove(input): Promise<void> {
+  async remove(input: Parameters<TaskRepository['removeComment']>[0]): Promise<void> {
     db.delete(taskComments)
       .where(and(eq(taskComments.id, input.id), eq(taskComments.authorUserId, input.authorUserId)))
       .run();
   },
+};
+
+export const sqliteTaskRepository: TaskRepository = {
+  listAll: taskQueryAdapter.listAll,
+  listByUser: taskQueryAdapter.listByUser,
+  getByIdForUser: taskQueryAdapter.getByIdForUser,
+  create: taskCommandAdapter.create,
+  update: taskCommandAdapter.update,
+  reorderColumn: taskCommandAdapter.reorderColumn,
+  remove: taskCommandAdapter.remove,
+  listActivitiesByUser: taskActivityQueryAdapter.listByUser,
+  createActivity: taskActivityCommandAdapter.create,
+  listCommentsByUser: taskCommentQueryAdapter.listByUser,
+  getCommentByIdForUser: taskCommentQueryAdapter.getByIdForUser,
+  createComment: taskCommentCommandAdapter.create,
+  updateComment: taskCommentCommandAdapter.update,
+  removeComment: taskCommentCommandAdapter.remove,
 };
 
 

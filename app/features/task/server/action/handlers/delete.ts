@@ -32,13 +32,13 @@ export const handleDelete: TaskIntentHandler = async (input) => {
       });
     }
 
-    await input.taskPort.activity.create({
+    await input.taskRepository.createActivity({
       taskId: parsedDelete.data.id,
       actorUserId: input.userId,
       action: 'deleted',
     });
 
-    await input.taskPort.task.remove({
+    await input.taskRepository.remove({
       id: parsedDelete.data.id,
       userId: input.userId,
     });

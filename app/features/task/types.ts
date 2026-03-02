@@ -1,5 +1,5 @@
 import type {
-  TaskPort,
+  TaskRepository,
 } from '~/core/task/task.repository.port';
 import type { NotificationService } from '~/core/notifications/notifications.port';
 
@@ -28,6 +28,7 @@ export type TaskActionData =
 		values?: {
 			title?: string;
 			description?: string;
+      projectId?: string;
 			labels?: string;
       checklist?: string;
       commentBody?: string;
@@ -48,7 +49,7 @@ export type TaskActionResult = Response | TaskActionData;
 export type RunTaskActionInput = {
 	formData: FormData;
 	userId: string;
-	taskPort: TaskPort;
+	taskRepository: TaskRepository;
 	notificationService: NotificationService;
 };
 

@@ -32,6 +32,7 @@ export function mapTasksRow(row: any): Task {
   return {
     id: row.id,
     userId: row.userId,
+    projectId: row.projectId ?? null,
     title: row.title,
     description: row.description ?? undefined,
     labels,

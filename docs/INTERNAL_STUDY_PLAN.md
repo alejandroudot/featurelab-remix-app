@@ -4,6 +4,19 @@
 Plan interno de estudio.
 Objetivo: que entiendas de verdad lo que construimos cada dia, sin depender de memoria pasiva.
 
+## Destino actual (cierre de bloque Projects/Tasks)
+
+- Cerrar P1.2.1 con estado real:
+  - `Pinned` en sidebar de Projects.
+  - Orden manual de proyectos en sidebar (drag vertical).
+  - Header de proyecto con descripcion editable inline.
+- Consolidar modelo DB ya agregado:
+  - `projects` + `tasks.project_id` (activo).
+  - `teams`, `team_members`, `project_members` (base creada, sin ACL activa aun).
+- Proximo salto tecnico:
+  - guard central de permisos por proyecto (`viewer | member | full`) en server actions/loaders.
+  - separar estado de `ProjectWorkspace` para bajar complejidad de hooks/efectos.
+
 ## Acuerdo de colaboracion (fuente de verdad)
 
 - `Codex` hace boilerplate/plomeria:

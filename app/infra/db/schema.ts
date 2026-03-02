@@ -1,9 +1,20 @@
 // app/infra/db/schema.ts
 import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
+export const projects = sqliteTable('projects', {
+  id: text('id').primaryKey(),
+  ownerUserId: text('owner_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  teamId: text('team_id').references(() => teams.id, { onDelete: 'set null' }),
+  name: text('name').notNull(),
+  imageUrl: text('image_url'),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull(),
+});
+
 export const tasks = sqliteTable('tasks', {
   id: text('id').primaryKey(),
 	userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  projectId: text('project_id').references(() => projects.id, { onDelete: 'set null' }),
   assigneeId: text("assignee_id").references(() => users.id, { onDelete: "set null" }),
   title: text('title').notNull(),
   description: text('description'),
@@ -78,6 +89,42 @@ export const users = sqliteTable("users", {
   .notNull()
   .$defaultFn(() => new Date()),
 });
+
+export const teams = sqliteTable('teams', {
+  id: text('id').primaryKey(),
+  ownerUserId: text('owner_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull(),
+});
+
+export const teamMembers = sqliteTable(
+  'team_members',
+  {
+    id: text('id').primaryKey(),
+    teamId: text('team_id').notNull().references(() => teams.id, { onDelete: 'cascade' }),
+    userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    status: text('status', { enum: ['invited', 'accepted', 'rejected'] }).notNull().default('invited'),
+    invitedBy: text('invited_by').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    respondedAt: integer('responded_at'),
+    createdAt: integer('created_at').notNull(),
+    updatedAt: integer('updated_at').notNull(),
+  },
+  (t) => [uniqueIndex('team_members_team_user_unique').on(t.teamId, t.userId)],
+);
+
+export const projectMembers = sqliteTable(
+  'project_members',
+  {
+    id: text('id').primaryKey(),
+    projectId: text('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+    userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    role: text('role', { enum: ['viewer', 'member', 'full'] }).notNull().default('member'),
+    createdAt: integer('created_at').notNull(),
+    updatedAt: integer('updated_at').notNull(),
+  },
+  (t) => [uniqueIndex('project_members_project_user_unique').on(t.projectId, t.userId)],
+);
 
 export const sessions = sqliteTable("sessions", {
   id: text("id").primaryKey(),

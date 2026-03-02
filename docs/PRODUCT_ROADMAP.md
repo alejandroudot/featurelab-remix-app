@@ -209,26 +209,26 @@ Tecnologias a usar: React Router loaders/actions + shadcn/ui (`Dialog`, `Dropdow
   - [x] Boton `Crear tarea` (abre modal)
   - [x] Boton `View settings` con dropdown de configuraciones de vista
   - [x] Dropdown `Scope` para cambiar alcance rapido (`Todo`, `Mis tareas`, `Asignadas a mi`, `Creadas por mi`, `Equipo activo`)
-- [ ] Search bar en Tasks
-  - [ ] Buscar por palabras clave en titulo/descripcion
-  - [ ] Filtrado reactivo sobre lista/board visible
+- [x] Search bar en Tasks
+  - [x] Buscar por palabras clave en titulo/descripcion
+  - [x] Filtrado reactivo sobre lista/board visible
 - [ ] Proyectos v1 (nuevo scope funcional)
-  - [ ] Panel lateral izquierdo con lista de proyectos
+  - [x] Panel lateral izquierdo con lista de proyectos
   - [ ] Crear proyecto desde el panel lateral
-  - [ ] Estado vacio de proyectos: CTA `Crea tu primer proyecto` con iconografia clara
-  - [ ] Header del bloque `Projects` con icono visual (estilo marcador/cohete) y accion rapida
-  - [ ] Cada proyecto puede tener icono/imagen personalizada
+  - [x] Estado vacio de proyectos: CTA `Crea tu primer proyecto` con iconografia clara
+  - [x] Header del bloque `Projects` con icono visual (estilo marcador/cohete) y accion rapida
+  - [x] Cada proyecto puede tener icono/imagen personalizada
   - [ ] Render del icono del proyecto en sidebar y en encabezado de vista del proyecto
-  - [ ] Al seleccionar proyecto, Tasks muestra solo tasks de ese proyecto
-  - [ ] Contexto visual por proyecto en el header de Tasks
+  - [x] Al seleccionar proyecto, Tasks muestra solo tasks de ese proyecto
+  - [x] Contexto visual por proyecto en el header de Tasks
 - [ ] Panel lateral con secciones desplegables (v1)
   - [ ] Seccion `Projects` desplegable con `Pinned`
   - [ ] Orden manual de proyectos por drag and drop vertical (solo arriba/abajo)
   - [ ] Seccion `Teams` desplegable (visible solo para manager)
   - [ ] `Teams` funciona como entrypoint de gestion para manager (crear equipo y navegar equipos creados)
-  - [ ] Seccion `Flags` desplegable (visible solo admin) como acceso de navegacion lateral
+  - [x] Seccion `Flags` desplegable (visible solo admin) como acceso de navegacion lateral
 - [ ] Header editable por proyecto en vista Tasks
-  - [ ] Titulo de vista = nombre del proyecto activo
+  - [x] Titulo de vista = nombre del proyecto activo
   - [ ] Descripcion del proyecto editable
   - [ ] Edicion inline por click en titulo y descripcion
 

@@ -1,7 +1,7 @@
 import type { Route } from './+types/notifications';
 import { inArray } from 'drizzle-orm';
 import { getOptionalUser } from '~/infra/auth/require-user';
-import { taskActivityQueryPort, taskQueryPort } from '~/infra/task/task.repository.provider';
+import { taskRepository } from '~/infra/task/task.repository.provider';
 import { buildNotificationsFeedFromTaskActivities } from '~/core/notifications/notifications-feed';
 import { db } from '~/infra/db/client.sqlite';
 import { tasks as tasksTable } from '~/infra/db/schema';
@@ -17,8 +17,8 @@ export async function loader({ request }: Route.LoaderArgs) {
       { status: 401 },
     );
   }
-  const tasks = await taskQueryPort.listByUser(user.id);
-  const taskActivities = await taskActivityQueryPort.listByUser(user.id);
+  const tasks = await taskRepository.listByUser(user.id);
+  const taskActivities = await taskRepository.listActivitiesByUser(user.id);
 
   const knownTaskIdSet = new Set(tasks.map((task) => task.id));
   const missingTaskIds = Array.from(
