@@ -36,7 +36,7 @@ export async function runLoginAction(input: RunLoginActionInput) {
     const headers = new Headers();
     setSessionCookie(headers, sessionId);
 
-    return redirect(safeRedirect(input.redirectTo, '/tasks'), { headers });
+    return redirect(safeRedirect(input.redirectTo, '/'), { headers });
   } catch (error) {
     const code = error instanceof Error ? error.message : 'UNKNOWN';
     const formError =

@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useLocation,
 } from 'react-router';
 
 import type { Route } from './+types/root';
@@ -14,6 +15,7 @@ import { getOptionalUser } from '~/infra/auth/require-user';
 import { getThemeFromRequest } from '~/infra/theme/theme-cookie';
 import { getUserPreferencesFromRequest } from '~/infra/preferences/preferences-cookie';
 import { AppHeader } from './ui/layout/app-header';
+import { AppShell } from './ui/layout/app-shell';
 import { Toaster } from './ui/primitives/sonner';
 
 export const links: Route.LinksFunction = () => [
@@ -50,11 +52,13 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const data = useLoaderData<typeof loader>();
+  const location = useLocation();
   const user = data?.user ?? null;
   const theme = data?.theme ?? 'system';
   const density = data?.density ?? 'comfortable';
   const isDark = theme === 'dark';
   const colorScheme = isDark ? 'dark' : 'light';
+  const shouldRenderAppShell = Boolean(user) && !location.pathname.startsWith('/auth');
 
   return (
     <html lang="en" className={isDark ? 'dark' : undefined} style={{ colorScheme }}>
@@ -66,8 +70,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
 
       <body data-density={density}>
-        <AppHeader user={user} />
-        {children}
+        {shouldRenderAppShell && user ? (
+          <AppShell user={user}>{children}</AppShell>
+        ) : (
+          <>
+            <AppHeader user={user} />
+            {children}
+          </>
+        )}
         <Toaster position="bottom-right" richColors theme={isDark ? 'dark' : 'light'} />
         <ScrollRestoration />
         <Scripts />

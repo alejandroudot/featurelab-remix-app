@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, UserRound } from 'lucide-react';
 import { Form, Link, useLocation } from 'react-router';
 import type { UserRole } from '~/core/auth/auth.types';
 import { HeaderNotifications } from './header-notifications';
@@ -7,33 +7,51 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/ui
 
 type Props = {
   user: { email: string; role: UserRole } | null;
+  hideBrand?: boolean;
+  noBorder?: boolean;
 };
 
-export function AppHeader({ user }: Props) {
+export function AppHeader({ user, hideBrand = false, noBorder = false }: Props) {
   const loc = useLocation();
   const redirectTo = loc.pathname + loc.search;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isAccountActive = loc.pathname === '/account';
 
-  const navigationLinks = (
+  const mobileNavigationLinks = user ? (
     <>
-      <Link to="/tasks" className="underline-offset-4 hover:underline" onClick={() => setIsMobileMenuOpen(false)}>
+      <Link to="/" className="underline-offset-4 hover:underline" onClick={() => setIsMobileMenuOpen(false)}>
         Tasks
       </Link>
-      <Link to="/flags" className="underline-offset-4 hover:underline" onClick={() => setIsMobileMenuOpen(false)}>
-        Flags
-      </Link>
-      {user ? (
-        <Link to="/account" className="underline-offset-4 hover:underline" onClick={() => setIsMobileMenuOpen(false)}>
-          Account
+      <p className="text-xs text-muted-foreground">Projects (proximamente)</p>
+      {(user.role === 'manager' || user.role === 'admin') ? (
+        <p className="text-xs text-muted-foreground">Teams (proximamente)</p>
+      ) : null}
+      {user.role === 'admin' ? (
+        <Link to="/flags" className="underline-offset-4 hover:underline" onClick={() => setIsMobileMenuOpen(false)}>
+          Flags
         </Link>
       ) : null}
+      <Link to="/account" className="underline-offset-4 hover:underline" onClick={() => setIsMobileMenuOpen(false)}>
+        Account
+      </Link>
     </>
-  );
+  ) : null;
 
   const authLinks = user ? (
     <>
       {user.role === 'admin' ? <span className="rounded border px-2 py-0.5 text-xs">ADMIN</span> : null}
       {user.role === 'manager' ? <span className="rounded border px-2 py-0.5 text-xs">MANAGER</span> : null}
+      <Link
+        to="/account"
+        className={`inline-flex items-center gap-2 rounded border px-3 py-1 text-sm font-medium transition ${
+          isAccountActive
+            ? 'bg-slate-900 text-white shadow-sm dark:bg-slate-100 dark:text-slate-900'
+            : 'bg-background hover:bg-muted'
+        }`}
+      >
+        <UserRound className="size-4" />
+        Account
+      </Link>
       <span className="opacity-80">Hola, {user.email}</span>
       <HeaderNotifications />
       <Form method="post" action="/auth/logout">
@@ -62,16 +80,16 @@ export function AppHeader({ user }: Props) {
   );
 
   return (
-    <header className="border-b">
-      <div className="container mx-auto p-4 flex items-center justify-between gap-4">
-        <Link to="/" className="font-semibold">
-          FeatureLab
-        </Link>
-        <nav className="hidden md:flex items-center gap-3 text-sm">
-          {navigationLinks}
-          <span className="mx-2 opacity-40">|</span>
-          {authLinks}
-        </nav>
+    <header className={noBorder ? undefined : 'border-b'}>
+      <div className="flex h-[65px] items-center justify-between gap-4 px-4">
+        {!hideBrand ? (
+          <Link to="/" className="font-semibold">
+            FeatureLab
+          </Link>
+        ) : (
+          <span />
+        )}
+        <nav className="hidden md:flex items-center gap-3 text-sm">{authLinks}</nav>
 
         <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
           <SheetTrigger asChild>
@@ -85,7 +103,7 @@ export function AppHeader({ user }: Props) {
               <SheetTitle>Menu</SheetTitle>
             </SheetHeader>
             <div className="flex flex-col gap-3 px-4 pb-4 text-sm">
-              {navigationLinks}
+              {mobileNavigationLinks}
               <div className="h-px bg-muted-foreground/30" />
               {authLinks}
             </div>

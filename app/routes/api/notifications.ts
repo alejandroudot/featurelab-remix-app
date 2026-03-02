@@ -1,13 +1,22 @@
 import type { Route } from './+types/notifications';
 import { inArray } from 'drizzle-orm';
-import { requireUser } from '~/infra/auth/require-user';
+import { getOptionalUser } from '~/infra/auth/require-user';
 import { taskActivityQueryPort, taskQueryPort } from '~/infra/tasks/task.repository.provider';
 import { buildNotificationsFeedFromTaskActivities } from '~/core/notifications/notifications-feed';
 import { db } from '~/infra/db/client.sqlite';
 import { tasks as tasksTable } from '~/infra/db/schema';
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const user = await requireUser(request);
+  const user = await getOptionalUser(request);
+  if (!user) {
+    return Response.json(
+      {
+        currentUserId: 'anonymous',
+        notifications: [],
+      },
+      { status: 401 },
+    );
+  }
   const tasks = await taskQueryPort.listByUser(user.id);
   const taskActivities = await taskActivityQueryPort.listByUser(user.id);
 

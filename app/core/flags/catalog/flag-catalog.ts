@@ -1,8 +1,6 @@
 import type { Environment, FeatureFlagType } from '../contracts/flags.types';
 
 export type ProductFlagKey =
-  | 'execution-hub-enabled'
-  | 'hub-activity-feed-enabled'
   | 'tasks-board-enabled'
   | 'tasks-comments-enabled'
   | 'tasks-mentions-enabled'
@@ -21,20 +19,6 @@ type ProductFlagCatalogItem = {
 };
 
 export const PRODUCT_FLAG_CATALOG: readonly ProductFlagCatalogItem[] = [
-  {
-    key: 'execution-hub-enabled',
-    description: 'Habilita la pantalla Home como Execution Hub.',
-    type: 'boolean',
-    rolloutPercent: null,
-    defaultsByEnvironment: { development: true, production: true },
-  },
-  {
-    key: 'hub-activity-feed-enabled',
-    description: 'Habilita el panel de actividad reciente en el Hub.',
-    type: 'boolean',
-    rolloutPercent: null,
-    defaultsByEnvironment: { development: true, production: true },
-  },
   {
     key: 'tasks-board-enabled',
     description: 'Habilita la vista board tipo Jira en Tasks.',
