@@ -156,3 +156,19 @@ Calidad tecnica objetivo:
 - Fuente de verdad de alcance y orden de implementacion: `docs/PRODUCT_ROADMAP.md`.
 - Este documento describe el "como" tecnico.
 - Si hay desalineacion, se corrige primero el roadmap y luego esta arquitectura.
+
+## 11. 📛 Convencion de naming (obligatoria)
+
+- `*.port.ts`:
+  contratos del dominio en `core/*` (interfaces/tipos de dependencia).
+- `*.repository.*`:
+  acceso a persistencia (DB/API) e implementaciones concretas en `infra/*`.
+- `*.service.*`:
+  logica de dominio o de canal (no CRUD puro de persistencia).
+- `*.provider.ts`:
+  wiring/composicion de dependencias concretas (elige adapter real y exporta instancia).
+
+Regla practica:
+- Si hace CRUD/persistencia => `repository`.
+- Si aplica reglas de negocio/decision o comportamiento de canal => `service`.
+- Si solo conecta piezas => `provider`.

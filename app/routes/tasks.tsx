@@ -9,7 +9,7 @@ import {
   taskCommandPort,
   taskQueryPort,
 } from '../infra/tasks/task.repository.provider';
-import { notificationService } from '~/infra/notifications/notification.service';
+import { notificationService } from '~/infra/notifications/notifications.service';
 import type { TaskActionData } from '~/features/tasks/types';
 import { requireUser } from '~/infra/auth/require-user';
 import { runTaskAction } from '~/features/tasks/server/action';
@@ -70,4 +70,5 @@ export default function TasksRoute() {
     />
   );
 }
+
 

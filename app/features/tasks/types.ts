@@ -5,7 +5,7 @@ import type {
   TaskQueryPort,
   TaskCommandPort,
 } from '~/core/tasks/task.repository.port';
-import type { NotificationService } from '~/core/notifications/notification.port';
+import type { NotificationService } from '~/core/notifications/notifications.port';
 
 export type TaskAssigneeOption = { id: string; email: string };
 
@@ -59,3 +59,4 @@ export type RunTaskActionInput = {
 	taskCommentCommandPort: TaskCommentCommandPort;
 	notificationService: NotificationService;
 };
+
