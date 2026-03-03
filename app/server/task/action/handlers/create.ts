@@ -6,7 +6,7 @@ import { createMentionActivities } from '../shared/mentions';
 import type { TaskIntentHandler } from '../shared/types';
 
 export const handleCreate: TaskIntentHandler = async (input) => {
-  const { formData } = input;
+  const { formData, taskRepository, userId } = input;
   const rawDescription = String(formData.get('description') ?? '');
   const description = rawDescription
     ? await finalizeRichTextTempImagesInHtml(rawDescription)
@@ -20,19 +20,19 @@ export const handleCreate: TaskIntentHandler = async (input) => {
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'create');
 
   try {
-    const createdTask = await input.taskRepository.create({ ...parsed.data, userId: input.userId });
-    await input.taskRepository.createActivity({
+    const createdTask = await taskRepository.create({ ...parsed.data, userId: userId });
+    await taskRepository.createActivity({
       taskId: createdTask.id,
-      actorUserId: input.userId,
+      actorUserId: userId,
       action: 'created',
     });
     await createMentionActivities({
       taskId: createdTask.id,
-      actorUserId: input.userId,
+      actorUserId: userId,
       source: 'description',
       text: createdTask.description ?? null,
-      skipNotificationForUserId: input.userId,
-      writer: input.taskRepository,
+      skipNotificationForUserId: userId,
+      writer: taskRepository,
     });
     return Response.json({ success: true });
   } catch (err) {

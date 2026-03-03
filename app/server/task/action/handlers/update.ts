@@ -3,12 +3,11 @@ import { cleanupRichTextTempImagesNotInPersistedHtml } from '~/infra/files/rich-
 import { jsonTaskError, toTaskFormError, zodErrorToActionData } from '../../errors';
 import { getTaskFormValues } from '../../utils';
 import { checklistEqual, labelsEqual } from '../shared/compare';
-import { getTaskOrNull } from '../shared/helpers';
 import { createMentionActivities } from '../shared/mentions';
 import type { TaskIntentHandler } from '../shared/types';
 
 export const handleUpdate: TaskIntentHandler = async (input) => {
-  const { formData } = input;
+  const { formData, taskRepository, userId } = input;
   const parsed = taskUpdateSchema.safeParse({
     id: formData.get('id'),
     title: formData.get('title'),
@@ -25,7 +24,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'update');
 
   try {
-    const task = await getTaskOrNull(input, parsed.data.id);
+    const task = await taskRepository.getByIdForUser({ id: parsed.data.id, userId: userId });
     if (!task) {
       return jsonTaskError({
         intent: 'update',
@@ -34,7 +33,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
       });
     }
 
-    const isCreator = task.userId === input.userId;
+    const isCreator = task.userId === userId;
     const nextAssigneeId = parsed.data.assigneeId;
     const currentAssigneeId = task.assigneeId ?? null;
     const isChangingAssignee =
@@ -47,9 +46,9 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
       });
     }
 
-    const updatedTask = await input.taskRepository.update({
+    const updatedTask = await taskRepository.update({
       id: parsed.data.id,
-      userId: input.userId,
+      userId: userId,
       title: parsed.data.title,
       description: parsed.data.description,
       labels: parsed.data.labels,
@@ -70,9 +69,9 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     const activityWrites: Array<Promise<void>> = [];
     if (!labelsEqual(task.labels, updatedTask.labels)) {
       activityWrites.push(
-        input.taskRepository.createActivity({
+        taskRepository.createActivity({
           taskId: updatedTask.id,
-          actorUserId: input.userId,
+          actorUserId: userId,
           action: 'labels-changed',
           metadata: {
             from: task.labels.join(', '),
@@ -84,9 +83,9 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     if (!checklistEqual(task.checklist, updatedTask.checklist)) {
       const doneCount = updatedTask.checklist.filter((item) => item.done).length;
       activityWrites.push(
-        input.taskRepository.createActivity({
+        taskRepository.createActivity({
           taskId: updatedTask.id,
-          actorUserId: input.userId,
+          actorUserId: userId,
           action: 'checklist-changed',
           metadata: {
             total: updatedTask.checklist.length,
@@ -99,9 +98,9 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     const afterDueDate = updatedTask.dueDate?.getTime() ?? null;
     if (beforeDueDate !== afterDueDate) {
       activityWrites.push(
-        input.taskRepository.createActivity({
+        taskRepository.createActivity({
           taskId: updatedTask.id,
-          actorUserId: input.userId,
+          actorUserId: userId,
           action: 'due-date-changed',
           metadata: {
             from: task.dueDate ? task.dueDate.toISOString() : null,
@@ -112,9 +111,9 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     }
     if (task.status !== updatedTask.status) {
       activityWrites.push(
-        input.taskRepository.createActivity({
+        taskRepository.createActivity({
           taskId: updatedTask.id,
-          actorUserId: input.userId,
+          actorUserId: userId,
           action: 'status-changed',
           metadata: { from: task.status, to: updatedTask.status },
         }),
@@ -122,9 +121,9 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     }
     if (task.priority !== updatedTask.priority) {
       activityWrites.push(
-        input.taskRepository.createActivity({
+        taskRepository.createActivity({
           taskId: updatedTask.id,
-          actorUserId: input.userId,
+          actorUserId: userId,
           action: 'priority-changed',
           metadata: { from: task.priority, to: updatedTask.priority },
         }),
@@ -132,9 +131,9 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     }
     if ((task.assigneeId ?? null) !== (updatedTask.assigneeId ?? null)) {
       activityWrites.push(
-        input.taskRepository.createActivity({
+        taskRepository.createActivity({
           taskId: updatedTask.id,
-          actorUserId: input.userId,
+          actorUserId: userId,
           action: 'assignee-changed',
           metadata: {
             from: task.assigneeId ?? null,
@@ -147,7 +146,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
           input.notificationService.notifyTaskAssigned({
             taskId: updatedTask.id,
             taskTitle: updatedTask.title,
-            actorUserId: input.userId,
+            actorUserId: userId,
             assigneeUserId: updatedTask.assigneeId,
           }),
         );
@@ -155,9 +154,9 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     }
     if (task.orderIndex !== updatedTask.orderIndex) {
       activityWrites.push(
-        input.taskRepository.createActivity({
+        taskRepository.createActivity({
           taskId: updatedTask.id,
-          actorUserId: input.userId,
+          actorUserId: userId,
           action: 'reordered',
           metadata: { from: task.orderIndex, to: updatedTask.orderIndex },
         }),
@@ -168,19 +167,19 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     if (beforeDescriptionForMentions !== afterDescriptionForMentions) {
       await createMentionActivities({
         taskId: updatedTask.id,
-        actorUserId: input.userId,
+        actorUserId: userId,
         source: 'description',
         text: updatedTask.description ?? null,
-        skipNotificationForUserId: input.userId,
-        writer: input.taskRepository,
+        skipNotificationForUserId: userId,
+        writer: taskRepository,
       });
     }
 
     if (activityWrites.length === 0) {
       activityWrites.push(
-        input.taskRepository.createActivity({
+        taskRepository.createActivity({
           taskId: updatedTask.id,
-          actorUserId: input.userId,
+          actorUserId: userId,
           action: 'updated',
         }),
       );

@@ -1,11 +1,10 @@
 import { taskDeleteSchema } from '~/core/task/task.schema';
 import { jsonTaskError, toTaskFormError, zodErrorToActionData } from '../../errors';
 import { getTaskFormValues } from '../../utils';
-import { getTaskOrNull } from '../shared/helpers';
 import type { TaskIntentHandler } from '../shared/types';
 
 export const handleDelete: TaskIntentHandler = async (input) => {
-  const { formData } = input;
+  const { formData, taskRepository, userId } = input;
   const parsedDelete = taskDeleteSchema.safeParse({
     id: formData.get('id'),
   });
@@ -13,7 +12,7 @@ export const handleDelete: TaskIntentHandler = async (input) => {
   if (!parsedDelete.success) return zodErrorToActionData(parsedDelete.error, formData, 'delete');
 
   try {
-    const task = await getTaskOrNull(input, parsedDelete.data.id);
+    const task = await taskRepository.getByIdForUser({ id: parsedDelete.data.id, userId: userId });
     if (!task) {
       return jsonTaskError({
         intent: 'delete',
@@ -22,7 +21,7 @@ export const handleDelete: TaskIntentHandler = async (input) => {
       });
     }
 
-    const isCreator = task.userId === input.userId;
+    const isCreator = task.userId === userId;
     if (!isCreator) {
       return jsonTaskError({
         intent: 'delete',
@@ -31,15 +30,15 @@ export const handleDelete: TaskIntentHandler = async (input) => {
       });
     }
 
-    await input.taskRepository.createActivity({
+    await taskRepository.createActivity({
       taskId: parsedDelete.data.id,
-      actorUserId: input.userId,
+      actorUserId: userId,
       action: 'deleted',
     });
 
-    await input.taskRepository.remove({
+    await taskRepository.remove({
       id: parsedDelete.data.id,
-      userId: input.userId,
+      userId: userId,
     });
 
     return Response.json({ success: true });

@@ -5,12 +5,11 @@ import {
 } from '~/core/task/task.schema';
 import { jsonTaskError, toTaskFormError, zodErrorToActionData } from '../../errors';
 import { getTaskFormValues } from '../../utils';
-import { getCommentOrNull, getTaskOrNull } from '../shared/helpers';
 import { createMentionActivities } from '../shared/mentions';
 import type { TaskIntentHandler } from '../shared/types';
 
 export const handleCommentCreate: TaskIntentHandler = async (input) => {
-  const { formData } = input;
+  const { formData, taskRepository, userId } = input;
   const parsed = taskCommentCreateSchema.safeParse({
     id: formData.get('id'),
     commentBody: formData.get('commentBody'),
@@ -19,7 +18,7 @@ export const handleCommentCreate: TaskIntentHandler = async (input) => {
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'comment-create');
 
   try {
-    const task = await getTaskOrNull(input, parsed.data.id);
+    const task = await taskRepository.getByIdForUser({ id: parsed.data.id, userId: userId });
     if (!task) {
       return jsonTaskError({
         intent: 'comment-create',
@@ -28,24 +27,24 @@ export const handleCommentCreate: TaskIntentHandler = async (input) => {
       });
     }
 
-    await input.taskRepository.createComment({
+    await taskRepository.createComment({
       taskId: parsed.data.id,
-      authorUserId: input.userId,
+      authorUserId: userId,
       body: parsed.data.commentBody,
     });
 
-    await input.taskRepository.createActivity({
+    await taskRepository.createActivity({
       taskId: parsed.data.id,
-      actorUserId: input.userId,
+      actorUserId: userId,
       action: 'comment-added',
     });
     await createMentionActivities({
       taskId: parsed.data.id,
-      actorUserId: input.userId,
+      actorUserId: userId,
       source: 'comment',
       text: parsed.data.commentBody,
-      skipNotificationForUserId: input.userId,
-      writer: input.taskRepository,
+      skipNotificationForUserId: userId,
+      writer: taskRepository,
     });
 
     return Response.json({ success: true });
@@ -59,7 +58,7 @@ export const handleCommentCreate: TaskIntentHandler = async (input) => {
 };
 
 export const handleCommentUpdate: TaskIntentHandler = async (input) => {
-  const { formData } = input;
+  const { formData, taskRepository, userId } = input;
   const parsed = taskCommentUpdateSchema.safeParse({
     commentId: formData.get('commentId'),
     commentBody: formData.get('commentBody'),
@@ -68,7 +67,10 @@ export const handleCommentUpdate: TaskIntentHandler = async (input) => {
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'comment-update');
 
   try {
-    const comment = await getCommentOrNull(input, parsed.data.commentId);
+    const comment = await taskRepository.getCommentByIdForUser({
+      id: parsed.data.commentId,
+      userId: userId,
+    });
     if (!comment) {
       return jsonTaskError({
         intent: 'comment-update',
@@ -77,7 +79,7 @@ export const handleCommentUpdate: TaskIntentHandler = async (input) => {
       });
     }
 
-    if (comment.authorUserId !== input.userId) {
+    if (comment.authorUserId !== userId) {
       return jsonTaskError({
         intent: 'comment-update',
         formError: 'Solo el autor puede editar su comentario.',
@@ -85,25 +87,25 @@ export const handleCommentUpdate: TaskIntentHandler = async (input) => {
       });
     }
 
-    await input.taskRepository.updateComment({
+    await taskRepository.updateComment({
       id: parsed.data.commentId,
-      authorUserId: input.userId,
+      authorUserId: userId,
       body: parsed.data.commentBody,
     });
 
-    await input.taskRepository.createActivity({
+    await taskRepository.createActivity({
       taskId: comment.taskId,
-      actorUserId: input.userId,
+      actorUserId: userId,
       action: 'comment-updated',
       metadata: { commentId: comment.id },
     });
     await createMentionActivities({
       taskId: comment.taskId,
-      actorUserId: input.userId,
+      actorUserId: userId,
       source: 'comment',
       text: parsed.data.commentBody,
-      skipNotificationForUserId: input.userId,
-      writer: input.taskRepository,
+      skipNotificationForUserId: userId,
+      writer: taskRepository,
     });
 
     return Response.json({ success: true });
@@ -117,7 +119,7 @@ export const handleCommentUpdate: TaskIntentHandler = async (input) => {
 };
 
 export const handleCommentDelete: TaskIntentHandler = async (input) => {
-  const { formData } = input;
+  const { formData, taskRepository, userId } = input;
   const parsed = taskCommentDeleteSchema.safeParse({
     commentId: formData.get('commentId'),
   });
@@ -125,7 +127,10 @@ export const handleCommentDelete: TaskIntentHandler = async (input) => {
   if (!parsed.success) return zodErrorToActionData(parsed.error, formData, 'comment-delete');
 
   try {
-    const comment = await getCommentOrNull(input, parsed.data.commentId);
+    const comment = await taskRepository.getCommentByIdForUser({
+      id: parsed.data.commentId,
+      userId: userId,
+    });
     if (!comment) {
       return jsonTaskError({
         intent: 'comment-delete',
@@ -134,7 +139,7 @@ export const handleCommentDelete: TaskIntentHandler = async (input) => {
       });
     }
 
-    if (comment.authorUserId !== input.userId) {
+    if (comment.authorUserId !== userId) {
       return jsonTaskError({
         intent: 'comment-delete',
         formError: 'Solo el autor puede eliminar su comentario.',
@@ -142,14 +147,14 @@ export const handleCommentDelete: TaskIntentHandler = async (input) => {
       });
     }
 
-    await input.taskRepository.removeComment({
+    await taskRepository.removeComment({
       id: parsed.data.commentId,
-      authorUserId: input.userId,
+      authorUserId: userId,
     });
 
-    await input.taskRepository.createActivity({
+    await taskRepository.createActivity({
       taskId: comment.taskId,
-      actorUserId: input.userId,
+      actorUserId: userId,
       action: 'comment-deleted',
       metadata: { commentId: comment.id },
     });
