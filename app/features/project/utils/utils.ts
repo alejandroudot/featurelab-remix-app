@@ -38,8 +38,13 @@ export function buildAssigneeById(assignableUsers: Array<{ id: string; email: st
   return Object.fromEntries(assignableUsers.map((user) => [user.id, user.email])) as Record<string, string>;
 }
 
-export function buildMentionCandidates(assignableUsers: Array<{ id: string; email: string }>) {
-  return [...new Set(assignableUsers.map((user) => user.email.toLowerCase()))];
+export function filterTasksBySearch(tasks: Task[], searchTerm: string) {
+  const query = searchTerm.trim().toLowerCase();
+  if (!query) return tasks;
+
+  return tasks.filter((task) =>
+    `${task.title} ${(task.description ?? '').replace(/<[^>]*>/g, ' ')}`.toLowerCase().includes(query),
+  );
 }
 
 

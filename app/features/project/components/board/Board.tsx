@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Task, TaskStatus } from '~/core/task/task.types';
-import type { ProjectViewState } from '~/features/task/types';
+import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
 import { Column } from './Column';
 import {
   BOARD_COLUMNS,
@@ -15,25 +15,20 @@ type DraggingState = { taskId: string; fromColumn: BoardColumnId } | null;
 
 type BoardViewProps = {
   tasks: Task[];
-  order: ProjectViewState['order'];
   assigneeById: Record<string, string>;
-  onOpenTask?: (taskId: string) => void;
-  onEditTask?: (taskId: string) => void;
   onDeleteTask?: (taskId: string) => void;
   onMoveTaskStatus?: (taskId: string, toStatus: TaskStatus, orderIndex?: number) => void;
   onReorderColumn?: (status: BoardColumnId, orderedTaskIds: string[]) => void;
 };
 
-export function BoardView({
+export function Board({
   tasks,
-  order,
   assigneeById,
-  onOpenTask,
-  onEditTask,
   onDeleteTask,
   onMoveTaskStatus,
   onReorderColumn,
 }: BoardViewProps) {
+  const order = useWorkspaceUiStore((state) => state.order);
   // Estado base derivado desde datos reales del server.
   const tasksByColumn = useMemo(() => buildBoardState(tasks, order), [tasks, order]);
 
@@ -107,8 +102,6 @@ export function BoardView({
               onDropAtTask={(_taskId, toColumn, toIndex) => {
                 handleDrop({ toColumn, toIndex });
               }}
-              onOpenTask={onOpenTask}
-              onEditTask={onEditTask}
               onDeleteTask={onDeleteTask}
             />
           );

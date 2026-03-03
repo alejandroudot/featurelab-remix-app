@@ -2,17 +2,13 @@ import { Plus, Trash2 } from 'lucide-react';
 import { Link } from 'react-router';
 import type { Project } from '~/core/project/project.types';
 
-type ProjectsOverviewProps = {
+type ProjectsListProps = {
   projects: Project[];
   onOpenCreateProject: () => void;
-  onOpenDeleteProject: (project: Project) => void;
+  onOpenDeleteProject: (projectId: string) => void;
 };
 
-export function ProjectsOverview({
-  projects,
-  onOpenCreateProject,
-  onOpenDeleteProject,
-}: ProjectsOverviewProps) {
+export function ProjectsList({ projects, onOpenCreateProject, onOpenDeleteProject }: ProjectsListProps) {
   return (
     <main className="container mx-auto space-y-4 p-4">
       <header className="flex flex-wrap items-end justify-between gap-3">
@@ -51,7 +47,7 @@ export function ProjectsOverview({
             </Link>
             <button
               type="button"
-              onClick={() => onOpenDeleteProject(project)}
+              onClick={() => onOpenDeleteProject(project.id)}
               className="absolute right-3 top-3 z-10 inline-flex h-7 w-7 items-center justify-center rounded-md border text-destructive transition hover:bg-destructive/10"
               aria-label={`Eliminar proyecto ${project.name}`}
               title="Eliminar proyecto"

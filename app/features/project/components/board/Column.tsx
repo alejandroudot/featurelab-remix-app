@@ -1,5 +1,5 @@
 import type { Task } from '~/core/task/task.types';
-import { TaskBoardCardItem } from '~/features/task/TaskBoardCardItem';
+import { TaskBoardCard } from '~/features/task/TaskBoardCard';
 import type { BoardColumn, BoardColumnId } from './utils';
 
 type ColumnProps = {
@@ -9,8 +9,6 @@ type ColumnProps = {
   onColumnDrop: (toColumn: BoardColumnId) => void;
   onStartDrag: (taskId: string, fromColumn: BoardColumnId) => void;
   onDropAtTask: (taskId: string, toColumn: BoardColumnId, toIndex: number) => void;
-  onOpenTask?: (taskId: string) => void;
-  onEditTask?: (taskId: string) => void;
   onDeleteTask?: (taskId: string) => void;
 };
 
@@ -21,8 +19,6 @@ export function Column({
   onColumnDrop,
   onStartDrag,
   onDropAtTask,
-  onOpenTask,
-  onEditTask,
   onDeleteTask,
 }: ColumnProps) {
   return (
@@ -42,7 +38,7 @@ export function Column({
       ) : (
         <ul className="space-y-2">
           {tasks.map((task, index) => (
-            <TaskBoardCardItem
+            <TaskBoardCard
               key={task.id}
               task={task}
               columnId={column.id}
@@ -51,8 +47,6 @@ export function Column({
               onDropAtTask={(taskId) => {
                 onDropAtTask(taskId, column.id, index);
               }}
-              onOpenTask={onOpenTask}
-              onEditTask={onEditTask}
               onDeleteTask={onDeleteTask}
             />
           ))}

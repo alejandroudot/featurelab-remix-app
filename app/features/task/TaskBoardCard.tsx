@@ -1,29 +1,27 @@
 import type { Task, TaskStatus } from '~/core/task/task.types';
 import { TaskCard } from '~/features/task/components/card/TaskCard';
+import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
 
 type TaskBoardColumnId = Extract<TaskStatus, 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live'>;
 
-type TaskBoardCardItemProps = {
+type TaskBoardCardProps = {
   task: Task;
   columnId: TaskBoardColumnId;
   assigneeLabel?: string | null;
   onStartDrag: (taskId: string, fromColumn: TaskBoardColumnId) => void;
   onDropAtTask: (taskId: string) => void;
-  onOpenTask?: (taskId: string) => void;
-  onEditTask?: (taskId: string) => void;
   onDeleteTask?: (taskId: string) => void;
 };
 
-export function TaskBoardCardItem({
+export function TaskBoardCard({
   task,
   columnId,
   assigneeLabel,
   onStartDrag,
   onDropAtTask,
-  onOpenTask,
-  onEditTask,
   onDeleteTask,
-}: TaskBoardCardItemProps) {
+}: TaskBoardCardProps) {
+  const openTaskDetail = useWorkspaceUiStore((state) => state.openTaskDetail);
   return (
     <li
       draggable
@@ -47,8 +45,8 @@ export function TaskBoardCardItem({
         task={task}
         assigneeLabel={assigneeLabel}
         compact
-        onOpen={onOpenTask}
-        onEdit={onEditTask}
+        onOpen={openTaskDetail}
+        onEdit={openTaskDetail}
         onDelete={onDeleteTask}
       />
     </li>

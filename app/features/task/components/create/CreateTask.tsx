@@ -7,6 +7,7 @@ import { TitleField } from './Title';
 import { useCreateFormState } from './hooks/useCreateFormState';
 import { getFieldError } from './utils/errors';
 import { uploadCreateTaskImage } from './utils/upload';
+import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
 
 export function CreateTask({
   activeProjectId,
@@ -15,12 +16,14 @@ export function CreateTask({
   mentionCandidates,
   className,
 }: {
-  activeProjectId: string;
+  activeProjectId?: string;
   actionData: TaskActionData;
   isSubmitting: boolean;
   mentionCandidates: string[];
   className?: string;
 }) {
+  const storeActiveProjectId = useWorkspaceUiStore((state) => state.activeProjectId);
+  const resolvedActiveProjectId = activeProjectId ?? storeActiveProjectId ?? '';
   const createErrorActionData = getErrorActionDataByIntent(actionData, 'create');
   const createIntentError = getFieldError(createErrorActionData?.fieldErrors, 'intent');
   const titleError = getFieldError(createErrorActionData?.fieldErrors, 'title');
@@ -61,7 +64,7 @@ export function CreateTask({
 
       <Form method="post" className="space-y-3" onSubmit={handleSubmitGuard}>
         <input type="hidden" name="intent" value="create" />
-        <input type="hidden" name="projectId" value={activeProjectId} />
+        <input type="hidden" name="projectId" value={resolvedActiveProjectId} />
 
         <TitleField value={title} error={titleError} onChange={setTitle} />
 

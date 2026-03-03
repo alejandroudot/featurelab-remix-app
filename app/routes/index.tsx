@@ -1,5 +1,5 @@
 import { useActionData, useLoaderData, useNavigation } from 'react-router';
-import { ProjectWorkspacePage } from '~/features/project/ProjectWorkspacePage';
+import { ProjectWorkspace } from '~/features/project/ProjectWorkspace';
 import type { Route } from './+types/index';
 import { taskRepository } from '~/infra/task/task.repository.provider';
 import { projectRepository } from '~/infra/project/project.repository.provider';
@@ -64,7 +64,7 @@ export default function IndexRoute() {
   const isSubmitting = navigation.state === 'submitting';
 
   return (
-    <ProjectWorkspacePage
+    <ProjectWorkspace
       currentUserId={currentUserId}
       projects={projects}
       tasks={tasks}
@@ -77,6 +77,3 @@ export default function IndexRoute() {
     />
   );
 }
-
-
-

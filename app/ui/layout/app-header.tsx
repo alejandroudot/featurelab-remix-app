@@ -85,7 +85,7 @@ export function AppHeader({ user, theme = 'system', hideBrand = false, noBorder 
 
   return (
     <header className={noBorder ? undefined : 'border-b'}>
-      <div className="flex h-[65px] items-center justify-between gap-4 px-4">
+      <div className="flex h-16.25 items-center justify-between gap-4 px-4">
         {!hideBrand ? (
           <Link to="/" className="font-semibold">
             FeatureLab

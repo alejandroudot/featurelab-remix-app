@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import type { Task, TaskActivity, TaskComment } from '~/core/task/task.types';
-import type { TaskAssigneeOption } from '../../types';
+import { useLocation, useSubmit } from 'react-router';
+import { useShallow } from 'zustand/react/shallow';
 import {
   Dialog,
   DialogContent,
@@ -12,33 +12,46 @@ import { Description } from './description/Description';
 import { Comments } from './comments/Comments';
 import { History } from './History';
 import { EditableTitle } from './EditableTitle';
+import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
+import { useWorkspaceDataStore } from '~/features/project/store/data.store';
 
-type ModalProps = {
-  task: Task | null;
-  currentUserId: string;
-  activities: TaskActivity[];
-  comments: TaskComment[];
-  assignableUsers: TaskAssigneeOption[];
-  open: boolean;
-  onDeleteTask?: (taskId: string) => void;
-  onOpenChange: (open: boolean) => void;
-};
-
-export function Modal({
-  task,
-  currentUserId,
-  activities,
-  comments,
-  assignableUsers,
-  open,
-  onDeleteTask,
-  onOpenChange,
-}: ModalProps) {
+export function Modal() {
+  const submit = useSubmit();
+  const location = useLocation();
+  const { isDetailOpen, selectedTaskId, setDetailOpen } = useWorkspaceUiStore(
+    useShallow((state) => ({
+      isDetailOpen: state.isDetailOpen,
+      selectedTaskId: state.selectedTaskId,
+      setDetailOpen: state.setDetailOpen,
+    })),
+  );
+  const { currentUserId, tasks, taskActivities, taskComments, assignableUsers } = useWorkspaceDataStore(
+    useShallow((state) => ({
+      currentUserId: state.currentUserId,
+      tasks: state.tasks,
+      taskActivities: state.taskActivities,
+      taskComments: state.taskComments,
+      assignableUsers: state.assignableUsers,
+    })),
+  );
   const [closeSignal, setCloseSignal] = useState(0);
+  const task = useMemo(() => tasks.find((candidate) => candidate.id === selectedTaskId) ?? null, [tasks, selectedTaskId]);
+  const activities = useMemo(
+    () => (selectedTaskId ? taskActivities.filter((activity) => activity.taskId === selectedTaskId) : []),
+    [selectedTaskId, taskActivities],
+  );
+  const comments = useMemo(
+    () => (selectedTaskId ? taskComments.filter((comment) => comment.taskId === selectedTaskId) : []),
+    [selectedTaskId, taskComments],
+  );
   const mentionCandidates = useMemo(
     () => [...new Set(assignableUsers.map((user) => user.email.toLowerCase()))],
     [assignableUsers],
   );
+
+  function handleDeleteTask(taskId: string) {
+    submit({ intent: 'delete', id: taskId, redirectTo: `${location.pathname}${location.search}` }, { method: 'post' });
+  }
 
   function handleModalOpenChange(nextOpen: boolean) {
     if (!nextOpen && typeof document !== 'undefined') {
@@ -48,11 +61,11 @@ export function Modal({
         activeElement.blur();
       }
     }
-    onOpenChange(nextOpen);
+    setDetailOpen(nextOpen);
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleModalOpenChange}>
+    <Dialog open={isDetailOpen} onOpenChange={handleModalOpenChange}>
       <DialogContent className="h-[80vh] w-full max-w-5xl overflow-hidden p-0 sm:max-w-5xl">
         {task ? (
           <>
@@ -84,7 +97,7 @@ export function Modal({
                   task={task}
                   currentUserId={currentUserId}
                   assignableUsers={assignableUsers}
-                  onDeleteTask={onDeleteTask}
+                  onDeleteTask={handleDeleteTask}
                 />
               </div>
             </div>

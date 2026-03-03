@@ -1,14 +1,13 @@
 import type { Task } from '~/core/task/task.types';
-import { TaskListCardItem } from '~/features/task/TaskListCardItem';
+import { TaskListCardItem } from '~/features/task/TaskListCard';
 
 type ListProps = {
   tasks: Task[];
   assigneeById: Record<string, string>;
-  onOpenTask?: (taskId: string) => void;
   onDeleteTask?: (taskId: string) => void;
 };
 
-export function List({ tasks, assigneeById, onOpenTask, onDeleteTask }: ListProps) {
+export function List({ tasks, assigneeById, onDeleteTask }: ListProps) {
   return (
     <section>
       <ul className="space-y-2">
@@ -17,7 +16,6 @@ export function List({ tasks, assigneeById, onOpenTask, onDeleteTask }: ListProp
             key={task.id}
             task={task}
             assigneeLabel={task.assigneeId ? assigneeById[task.assigneeId] ?? 'Unknown user' : 'Unassigned'}
-            onOpenTask={onOpenTask}
             onDeleteTask={onDeleteTask}
           />
         ))}

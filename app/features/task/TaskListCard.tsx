@@ -1,33 +1,28 @@
 import type { Task } from '~/core/task/task.types';
 import { formatDateUTC, isTaskOverdue } from '~/features/task/utils/task-due-date';
 import { Badge } from '~/ui/primitives/badge';
+import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
 
 type TaskListCardItemProps = {
   task: Task;
   assigneeLabel: string;
-  onOpenTask?: (taskId: string) => void;
   onDeleteTask?: (taskId: string) => void;
 };
 
-export function TaskListCardItem({
-  task,
-  assigneeLabel,
-  onOpenTask,
-  onDeleteTask,
-}: TaskListCardItemProps) {
+export function TaskListCardItem({ task, assigneeLabel, onDeleteTask }: TaskListCardItemProps) {
+  const openTaskDetail = useWorkspaceUiStore((state) => state.openTaskDetail);
   const description = formatPlainDescription(task.description ?? '');
 
   return (
     <li
       className="rounded border bg-card p-3 transition-colors hover:bg-accent/30"
-      onClick={() => onOpenTask?.(task.id)}
-      role={onOpenTask ? 'button' : undefined}
-      tabIndex={onOpenTask ? 0 : undefined}
+      onClick={() => openTaskDetail(task.id)}
+      role="button"
+      tabIndex={0}
       onKeyDown={(event) => {
-        if (!onOpenTask) return;
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          onOpenTask(task.id);
+          openTaskDetail(task.id);
         }
       }}
     >
