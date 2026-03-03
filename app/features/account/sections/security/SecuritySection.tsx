@@ -37,8 +37,7 @@ export function SecuritySection({ asCard = true }: SecuritySectionProps) {
 
   const content = (
     <>
-      <fetcher.Form method="post" className="space-y-2">
-        <input type="hidden" name="intent" value="password-update" />
+      <fetcher.Form method="post" action="/api/account/password" className="space-y-2">
 
         <div className="flex flex-col gap-1">
           <label htmlFor="currentPassword" className="text-sm font-medium">

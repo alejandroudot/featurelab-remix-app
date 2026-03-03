@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Form } from 'react-router';
+import { useFetcher } from 'react-router';
 import { ActionFeedbackText } from '~/ui/forms/action-feedback';
 import type { FlagActionData } from './types';
 
-export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
+export function CreateFlagForm() {
+  const fetcher = useFetcher<FlagActionData>();
+  const actionData = fetcher.data;
   const [currentType, setCurrentType] = useState<string>(
     actionData?.values?.type ?? 'boolean',
   );
@@ -22,8 +24,7 @@ export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
         errorClassName="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm"
       />
 
-      <Form method="post" className="space-y-3">
-        <input type="hidden" name="intent" value="create" />
+      <fetcher.Form method="post" action="/api/flags/create" className="space-y-3">
 
         <div className="flex flex-col gap-1">
           <label className="font-medium" htmlFor="key">
@@ -101,7 +102,7 @@ export function CreateFlagForm({ actionData }: { actionData: FlagActionData }) {
         <button className="rounded bg-blue-600 text-white px-4 py-2 text-sm font-medium">
           Crear
         </button>
-      </Form>
+      </fetcher.Form>
     </section>
   );
 }

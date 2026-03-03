@@ -77,21 +77,19 @@ export function Comments({
       if (!nextMeaningfulBody) {
         deleteFetcher.submit(
           {
-            intent: 'comment-delete',
             commentId: editingCommentId,
             redirectTo,
           },
-          { method: 'post', action: '/api/tasks' },
+          { method: 'post', action: '/api/task-comments/delete' },
         );
       } else if (editingBody !== currentBody) {
         updateFetcher.submit(
           {
-            intent: 'comment-update',
             commentId: editingCommentId,
             commentBody: editingBody,
             redirectTo,
           },
-          { method: 'post', action: '/api/tasks' },
+          { method: 'post', action: '/api/task-comments/update' },
         );
       }
       setEditingCommentId(null);
@@ -102,12 +100,11 @@ export function Comments({
       if (getMeaningfulTextFromHtml(createBody)) {
         createFetcher.submit(
           {
-            intent: 'comment-create',
             id: taskId,
             commentBody: createBody,
             redirectTo,
           },
-          { method: 'post', action: '/api/tasks' },
+          { method: 'post', action: '/api/task-comments/create' },
         );
       }
       setIsCreateOpen(false);

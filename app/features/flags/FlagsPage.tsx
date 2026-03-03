@@ -1,8 +1,8 @@
-import type { FlagActionData, Flag } from './types';
+import type { Flag } from './types';
 import { CreateFlagForm } from './CreateFlagForm';
 import { FlagsList } from './FlagList';
 
-export function FlagsPage({ flags, actionData }: { flags: Flag[]; actionData: FlagActionData }) {
+export function FlagsPage({ flags }: { flags: Flag[] }) {
   return (
     <main className="container mx-auto p-4 space-y-6">
       <header className="space-y-2">
@@ -11,7 +11,7 @@ export function FlagsPage({ flags, actionData }: { flags: Flag[]; actionData: Fl
           Flags globales por entorno para activar/desactivar features de producto.
         </p>
       </header>
-      <CreateFlagForm actionData={actionData} />
+      <CreateFlagForm />
       <FlagsList flags={flags} />
     </main>
   );

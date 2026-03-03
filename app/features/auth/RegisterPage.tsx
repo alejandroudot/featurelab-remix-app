@@ -1,4 +1,4 @@
-import { Form, Link } from 'react-router';
+import { Link, useFetcher } from 'react-router';
 import { ActionFeedbackText } from '~/ui/forms/action-feedback';
 import { PasswordPolicyChecklist } from '~/ui/forms/password-policy-checklist';
 import { PasswordField } from '~/ui/primitives/password-field';
@@ -6,7 +6,9 @@ import { TimezoneSelect } from '~/ui/primitives/timezone-select';
 import { useRegisterFormState } from './hooks/useRegisterFormState';
 import type { AuthActionData } from './types';
 
-export function RegisterPage({ actionData }: { actionData: AuthActionData }) {
+export function RegisterPage() {
+  const fetcher = useFetcher<AuthActionData>();
+  const actionData = fetcher.data;
   const { values, setFieldValue, passwordChecks, passwordMatch, emailMatch, isRegisterEnabled } =
     useRegisterFormState(actionData);
 
@@ -29,7 +31,7 @@ export function RegisterPage({ actionData }: { actionData: AuthActionData }) {
         errorClassName="border rounded p-3 text-sm bg-red-50 border-red-200 text-red-700 dark:bg-red-950/30 dark:border-red-900 dark:text-red-200"
       />
 
-      <Form method="post" className="space-y-3">
+      <fetcher.Form method="post" action="/api/auth/register" className="space-y-3">
         <div className="space-y-1">
           <label className="text-sm font-medium" htmlFor="displayName">
             Nombre visible
@@ -152,7 +154,7 @@ export function RegisterPage({ actionData }: { actionData: AuthActionData }) {
         >
           Registrarme
         </button>
-      </Form>
+      </fetcher.Form>
 
       <p className="text-sm opacity-80">
         Ya tenes cuenta?{' '}

@@ -81,11 +81,10 @@ export function CommentsList({
         onSkipUpdateSubmit();
         deleteFetcher.submit(
           {
-            intent: 'comment-delete',
             commentId,
             redirectTo,
           },
-          { method: 'post', action: '/api/tasks' },
+          { method: 'post', action: '/api/task-comments/delete' },
         );
         handleCancelEdit();
         return;
@@ -109,12 +108,11 @@ export function CommentsList({
             <div className="font-medium">{comment.authorEmail ?? 'Usuario'}</div>
             {editingCommentId === comment.id ? (
               <updateFetcher.Form
-                action="/api/tasks"
+                action="/api/task-comments/update"
                 method="post"
                 className="mt-2 space-y-2"
                 onSubmit={buildHandleUpdateSubmit(comment.id)}
               >
-                <input type="hidden" name="intent" value="comment-update" />
                 <input type="hidden" name="commentId" value={comment.id} />
                 <input type="hidden" name="redirectTo" value={redirectTo} />
                 <RichTextEditor
@@ -147,8 +145,7 @@ export function CommentsList({
                 >
                   Editar
                 </button>
-                <deleteFetcher.Form action="/api/tasks" method="post">
-                  <input type="hidden" name="intent" value="comment-delete" />
+                <deleteFetcher.Form action="/api/task-comments/delete" method="post">
                   <input type="hidden" name="commentId" value={comment.id} />
                   <input type="hidden" name="redirectTo" value={redirectTo} />
                   <button

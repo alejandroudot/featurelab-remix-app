@@ -93,14 +93,13 @@ export function CreateTask({
       />
 
       <Form
-        action="/api/tasks"
+        action="/api/tasks/create"
         method="post"
         className="space-y-3"
         onSubmit={(event) => {
           handleSubmitGuard(event);
         }}
       >
-        <input type="hidden" name="intent" value="create" />
         <input type="hidden" name="projectId" value={resolvedActiveProjectId} />
 
         <TitleField

@@ -49,12 +49,11 @@ export function Actions({
   function submitPartialUpdate(values: Record<string, string>) {
     fetcher.submit(
       {
-        intent: 'update',
         id: task.id,
         redirectTo,
         ...values,
       },
-      { method: 'post', action: '/api/tasks' },
+      { method: 'post', action: '/api/tasks/update' },
     );
   }
 

@@ -40,8 +40,7 @@ export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
         </div>
       </div>
 
-      <fetcher.Form method="post" className="space-y-2">
-        <input type="hidden" name="intent" value="profile-update" />
+      <fetcher.Form method="post" action="/api/account/profile" className="space-y-2">
         <div className="flex flex-col gap-1">
           <label htmlFor="displayName" className="text-sm font-medium">
             Nombre visible

@@ -25,12 +25,11 @@ export function Description({
   function submitDescriptionUpdate(description: string) {
     fetcher.submit(
       {
-        intent: 'update',
         id: task.id,
         description,
         redirectTo,
       },
-      { method: 'post', action: '/api/tasks' },
+      { method: 'post', action: '/api/tasks/update' },
     );
   }
 

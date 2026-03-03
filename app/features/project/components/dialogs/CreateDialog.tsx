@@ -37,11 +37,10 @@ export function CreateDialog({
     const name = newProjectName.trim();
     if (!name) return;
     const formData = new FormData();
-    formData.set('intent', 'project-create');
     formData.set('name', name);
     if (newProjectImageUrl) formData.set('imageUrl', newProjectImageUrl);
     formData.set('redirectTo', `${location.pathname}${location.search}`);
-    submit(formData, { method: 'post', action: '/api/projects' });
+    submit(formData, { method: 'post', action: '/api/projects/create' });
     resetForm();
     onOpenChange(false);
   }

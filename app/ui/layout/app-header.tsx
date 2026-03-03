@@ -58,7 +58,7 @@ export function AppHeader({ user, theme = 'system', hideBrand = false, noBorder 
       </Link>
       <span className="opacity-80">Hola, {user.email}</span>
       <HeaderNotifications />
-      <Form method="post" action="/auth/logout">
+      <Form method="post" action="/api/auth/logout">
         <button type="submit" className="border rounded px-3 py-1 text-sm" onClick={() => setIsMobileMenuOpen(false)}>
           Logout
         </button>

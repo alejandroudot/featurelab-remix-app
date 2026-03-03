@@ -32,10 +32,9 @@ export function DeleteDialog({
     if (!projectToDeleteId) return;
     if (activeProjectId === projectToDeleteId) navigate('/', { replace: true });
     const formData = new FormData();
-    formData.set('intent', 'project-delete');
     formData.set('id', projectToDeleteId);
     formData.set('redirectTo', `${location.pathname}${location.search}`);
-    submit(formData, { method: 'post', action: '/api/projects' });
+    submit(formData, { method: 'post', action: '/api/projects/delete' });
     onOpenChange(false);
   }
 

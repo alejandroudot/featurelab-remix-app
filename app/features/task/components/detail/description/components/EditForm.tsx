@@ -41,8 +41,7 @@ export function EditForm({
   onCancel,
 }: EditFormProps) {
   return (
-    <fetcher.Form action="/api/tasks" method="post" className="space-y-2" onSubmit={onSubmit}>
-      <input type="hidden" name="intent" value="update" />
+    <fetcher.Form action="/api/tasks/update" method="post" className="space-y-2" onSubmit={onSubmit}>
       <input type="hidden" name="id" value={taskId} />
       <input type="hidden" name="redirectTo" value={redirectTo} />
       <RichTextEditor

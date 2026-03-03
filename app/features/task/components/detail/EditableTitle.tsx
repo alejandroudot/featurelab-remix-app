@@ -29,12 +29,11 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
 
     fetcher.submit(
       {
-        intent: 'update',
         id: taskId,
         title: draft,
         redirectTo,
       },
-      { method: 'post', action: '/api/tasks' },
+      { method: 'post', action: '/api/tasks/update' },
     );
     setIsEditing(false);
   }, [closeSignal]);
@@ -66,14 +65,13 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
 
   return (
     <fetcher.Form
-      action="/api/tasks"
+      action="/api/tasks/update"
       method="post"
       className="space-y-2"
       onSubmit={() => {
         setDidSubmit(true);
       }}
     >
-      <input type="hidden" name="intent" value="update" />
       <input type="hidden" name="id" value={taskId} />
       <input type="hidden" name="redirectTo" value={redirectTo} />
       <input

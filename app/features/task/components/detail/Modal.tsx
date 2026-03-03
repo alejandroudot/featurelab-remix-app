@@ -52,8 +52,8 @@ export function Modal() {
 
   function handleDeleteTask(taskId: string) {
     fetcher.submit(
-      { intent: 'delete', id: taskId, redirectTo: `${location.pathname}${location.search}` },
-      { method: 'post', action: '/api/tasks' },
+      { id: taskId, redirectTo: `${location.pathname}${location.search}` },
+      { method: 'post', action: '/api/tasks/delete' },
     );
   }
 
@@ -111,5 +111,4 @@ export function Modal() {
     </Dialog>
   );
 }
-
 

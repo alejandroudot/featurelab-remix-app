@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Form } from 'react-router';
+import { Form, useSubmit } from 'react-router';
 import type { Flag } from './types';
 import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
 
@@ -8,6 +8,7 @@ const ENVIRONMENTS = ['development', 'production'] as const;
 type Env = (typeof ENVIRONMENTS)[number];
 
 export function FlagsList({ flags }: { flags: Flag[] }) {
+  const submit = useSubmit();
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     label: string;
@@ -50,8 +51,7 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
-                      <Form method="post">
-                        <input type="hidden" name="intent" value="toggle" />
+                      <Form method="post" action="/api/flags/toggle">
                         <input type="hidden" name="id" value={flag.id} />
                         <input type="hidden" name="environment" value={environment} />
                         <button
@@ -66,8 +66,7 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
                     </div>
 
                     {flag.type === 'percentage' ? (
-                      <Form method="post" className="flex self items-center gap-2 text-xs">
-                        <input type="hidden" name="intent" value="update-state" />
+                      <Form method="post" action="/api/flags/update-state" className="flex self items-center gap-2 text-xs">
                         <input type="hidden" name="id" value={flag.id} />
                         <input type="hidden" name="environment" value={environment} />
                         <label className="flex items-center gap-1">
@@ -104,6 +103,13 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
         }}
         id={deleteTarget?.id ?? ''}
         name={deleteTarget?.label ?? 'flag'}
+        onConfirm={() => {
+          if (!deleteTarget?.id) return;
+          const formData = new FormData();
+          formData.set('id', deleteTarget.id);
+          submit(formData, { method: 'post', action: '/api/flags/delete' });
+          setDeleteTarget(null);
+        }}
       />
     </section>
   );

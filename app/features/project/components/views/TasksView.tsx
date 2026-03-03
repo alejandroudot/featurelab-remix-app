@@ -40,20 +40,19 @@ export function TasksView() {
     : visibleTasks;
   const searchedTasks = filterTasksBySearch(projectScopedTasks, uiState.searchTerm);
 
-  function submitTask(payload: Record<string, string>) {
+  function submitTask(action: string, payload: Record<string, string>) {
     fetcher.submit(
       { ...payload, redirectTo: `${location.pathname}${location.search}` },
-      { method: 'post', action: '/api/tasks' },
+      { method: 'post', action },
     );
   }
 
   function handleDeleteTask(taskId: string) {
-    submitTask({ intent: 'delete', id: taskId });
+    submitTask('/api/tasks/delete', { id: taskId });
   }
 
   function handleMoveTaskStatus(taskId: string, status: TaskStatus, orderIndex?: number) {
-    submitTask({
-      intent: 'update',
+    submitTask('/api/tasks/update', {
       id: taskId,
       status,
       ...(orderIndex !== undefined ? { orderIndex: orderIndex.toString() } : {}),
@@ -61,8 +60,7 @@ export function TasksView() {
   }
 
   function handleReorderColumn(status: TaskStatus, orderedTaskIds: string[]) {
-    submitTask({
-      intent: 'reorder-column',
+    submitTask('/api/tasks/reorder-column', {
       status,
       orderedTaskIds: JSON.stringify(orderedTaskIds),
     });
