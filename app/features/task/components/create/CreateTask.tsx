@@ -9,7 +9,7 @@ import { useWorkspaceDataStore } from '~/features/project/store/data.store';
 import { FormFooter } from './FormFooter';
 import { TitleField } from './Title';
 import { getFieldError } from './utils/errors';
-import { uploadCreateTaskImage } from './utils/upload';
+import { uploadCreateTaskImage } from './utils/upload-image';
 
 type TaskCreateFetcherData = TaskActionData | { success: true; intent?: 'create' };
 type CreateTaskFormState = {
