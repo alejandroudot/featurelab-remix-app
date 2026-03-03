@@ -6,7 +6,7 @@ Este documento describe la arquitectura tecnica del proyecto y como se organiza 
 ## 1. 🧭 Principios
 
 - `routes/*` orquestan request/response.
-- `features/*/server/*` concentran logica de loader/action e intents.
+- `server/*` concentra logica de loader/action e intents por dominio/feature.
 - `core/*` define dominio, tipos, esquemas y puertos.
 - `infra/*` implementa persistencia e integraciones.
 - `ui/*` contiene componentes compartidos y layout.
@@ -30,7 +30,7 @@ priorizando claridad operativa y velocidad de iteracion para un proyecto de estu
 
 ### 2.1 SOLID en este repo (practico, no dogmatico)
 
-- `S` (Single Responsibility): `routes` orquestan, `features/*/server/*` manejan casos de uso HTTP, `infra` persiste.
+- `S` (Single Responsibility): `routes` orquestan, `server/*` maneja casos de uso HTTP, `infra` persiste.
 - `O` (Open/Closed): actions con dispatch por intent (`intent -> handler`) para extender sin romper el flujo principal.
 - `L` (Liskov): implementaciones de servicios respetan contratos definidos en `core/*`.
 - `I` (Interface Segregation): separacion de puertos de lectura/escritura cuando aporta claridad (`Query`/`Command`).
@@ -41,9 +41,11 @@ priorizando claridad operativa y velocidad de iteracion para un proyecto de estu
 ```text
 app/
   routes/                    # borde HTTP (orquestacion)
-  features/                  # UI de feature + server logic por feature
+  features/                  # UI de feature
     <feature>/
-      server/
+      ...
+  server/                    # logica server por dominio/feature
+    <feature>/
   core/                      # dominio (tipos, schemas, puertos, servicios)
   infra/                     # adapters (sqlite, auth, flags, tasks, theme cookies, etc.)
   ui/                        # design system, primitives y layout compartido
@@ -70,10 +72,15 @@ No define reglas de UI ni manejo de vistas.
 ### 4.3 `features/*` 🧩
 
 - componentes de pantalla por modulo (`tasks`, `flags`, `home`, `auth`);
-- logica server de la feature en `features/*/server/*`;
 - mapeo de errores de action y parseo de intents.
 
-### 4.4 `routes/*` 🌐
+### 4.4 `server/*` 🧩
+
+- logica server por dominio/feature (loaders/actions, parseo de intent, validaciones HTTP);
+- sin UI;
+- llamado desde `routes/*`.
+
+### 4.5 `routes/*` 🌐
 
 - entrada HTTP;
 - autenticacion/autorizacion;

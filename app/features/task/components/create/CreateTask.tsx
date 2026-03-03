@@ -1,64 +1,83 @@
 import { useEffect, useState } from 'react';
 import { useFetcher } from 'react-router';
+import { useShallow } from 'zustand/react/shallow';
 import type { TaskActionData } from '../../types';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
 import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/action-feedback';
+import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
+import { useWorkspaceDataStore } from '~/features/project/store/data.store';
 import { FormFooter } from './FormFooter';
 import { TitleField } from './Title';
-import { useCreateFormState } from './hooks/useCreateFormState';
 import { getFieldError } from './utils/errors';
 import { uploadCreateTaskImage } from './utils/upload';
-import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
+
+type TaskCreateFetcherData = TaskActionData | { success: true; intent?: 'create' };
+type CreateTaskFormState = {
+  title: string;
+  description: string;
+  editorImageError: string | null;
+  hasPendingEditorUploads: boolean;
+};
+
+const INITIAL_FORM_STATE: CreateTaskFormState = {
+  title: '',
+  description: '',
+  editorImageError: null,
+  hasPendingEditorUploads: false,
+};
 
 export function CreateTask({
-  activeProjectId,
-  mentionCandidates,
   className,
 }: {
-  activeProjectId?: string;
-  mentionCandidates: string[];
   className?: string;
 }) {
-  const fetcher = useFetcher<TaskActionData>();
-  const actionData = fetcher.data;
-  const isSubmitting = fetcher.state === 'submitting';
-  const [didSubmitCreate, setDidSubmitCreate] = useState(false);
-  const storeActiveProjectId = useWorkspaceUiStore((state) => state.activeProjectId);
-  const setCreateTaskOpen = useWorkspaceUiStore((state) => state.setCreateTaskOpen);
-  const resolvedActiveProjectId = activeProjectId ?? storeActiveProjectId ?? '';
+  const { data: actionData, state: fetcherState, Form } = useFetcher<TaskCreateFetcherData>();
+  const { activeProjectId, setCreateTaskOpen } = useWorkspaceUiStore(
+    useShallow((state) => ({
+      activeProjectId: state.activeProjectId,
+      setCreateTaskOpen: state.setCreateTaskOpen,
+    })),
+  );
+  const { assignableUsers } = useWorkspaceDataStore(
+    useShallow((state) => ({
+      assignableUsers: state.assignableUsers,
+    })),
+  );
+  const mentionCandidates = [...new Set(assignableUsers.map((user) => user.email.toLowerCase()))];
+  const resolvedActiveProjectId = activeProjectId ?? '';
+  const isSubmitting = fetcherState === 'submitting';
   const createErrorActionData = getErrorActionDataByIntent(actionData, 'create');
-  const createIntentError = getFieldError(createErrorActionData?.fieldErrors, 'intent');
-  const titleError = getFieldError(createErrorActionData?.fieldErrors, 'title');
-  const descriptionError = getFieldError(createErrorActionData?.fieldErrors, 'description');
-  const {
-    title,
-    description,
-    editorImageError,
-    hasPendingEditorUploads,
-    hasInlineBase64Images,
-    setTitle,
-    setDescription,
-    setEditorImageError,
-    setHasPendingEditorUploads,
-    handleSubmitGuard,
-  } = useCreateFormState({ createErrorActionData, isSubmitting });
+  const [formState, setFormState] = useState<CreateTaskFormState>(INITIAL_FORM_STATE);
+  const hasInlineBase64Images = formState.description.includes('data:image/');
 
   useEffect(() => {
-    if (!didSubmitCreate) return;
-    if (fetcher.state !== 'idle') return;
-    if (!createErrorActionData) {
-      setCreateTaskOpen(false);
+    if (fetcherState !== 'idle') return;
+    if (!actionData || actionData.success !== true) return;
+    setFormState(INITIAL_FORM_STATE);
+    setCreateTaskOpen(false);
+  }, [fetcherState, actionData, setCreateTaskOpen]);
+
+  function handleSubmitGuard(event: { preventDefault: () => void }) {
+    if (formState.hasPendingEditorUploads) {
+      event.preventDefault();
+      return;
     }
-    setDidSubmitCreate(false);
-  }, [didSubmitCreate, fetcher.state, createErrorActionData, setCreateTaskOpen]);
+    if (hasInlineBase64Images) {
+      event.preventDefault();
+      setFormState((prev) => ({
+        ...prev,
+        editorImageError: 'Hay imagenes sin subir. Vuelve a cargarlas antes de crear.',
+      }));
+    }
+  }
 
   async function handleEditorImageUpload(file: File) {
-    setEditorImageError(null);
+    setFormState((prev) => ({ ...prev, editorImageError: null }));
     try {
       return await uploadCreateTaskImage(file);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'No se pudo subir la imagen.';
-      setEditorImageError(message);
+      setFormState((prev) => ({ ...prev, editorImageError: message }));
       throw error;
     }
   }
@@ -69,45 +88,52 @@ export function CreateTask({
         actionData={createErrorActionData}
         intent="create"
         showFormError
-        fallbackError={createIntentError}
+        fallbackError={getFieldError(createErrorActionData, 'intent')}
         errorClassName="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700"
       />
 
-      <fetcher.Form
+      <Form
         action="/api/tasks"
         method="post"
         className="space-y-3"
         onSubmit={(event) => {
           handleSubmitGuard(event);
-          if (!event.defaultPrevented) setDidSubmitCreate(true);
         }}
       >
         <input type="hidden" name="intent" value="create" />
         <input type="hidden" name="projectId" value={resolvedActiveProjectId} />
 
-        <TitleField value={title} error={titleError} onChange={setTitle} />
+        <TitleField
+          value={formState.title}
+          error={getFieldError(createErrorActionData, 'title')}
+          onChange={(title) => setFormState((prev) => ({ ...prev, title }))}
+        />
 
         <div className="flex flex-col gap-1">
           <label className="font-medium">Descripcion</label>
           <RichTextEditor
             name="description"
-            value={description}
-            onChange={setDescription}
+            value={formState.description}
+            onChange={(description) => setFormState((prev) => ({ ...prev, description }))}
             mentionCandidates={mentionCandidates}
-            onPendingUploadsChange={setHasPendingEditorUploads}
-            onImageUploadError={setEditorImageError}
+            onPendingUploadsChange={(hasPendingEditorUploads) =>
+              setFormState((prev) => ({ ...prev, hasPendingEditorUploads }))
+            }
+            onImageUploadError={(editorImageError) =>
+              setFormState((prev) => ({ ...prev, editorImageError }))
+            }
             onImageUpload={handleEditorImageUpload}
           />
         </div>
 
         <FormFooter
-          descriptionError={descriptionError}
-          hasPendingEditorUploads={hasPendingEditorUploads}
+          descriptionError={getFieldError(createErrorActionData, 'description')}
+          hasPendingEditorUploads={formState.hasPendingEditorUploads}
           hasInlineBase64Images={hasInlineBase64Images}
-          editorImageError={editorImageError}
+          editorImageError={formState.editorImageError}
           isSubmitting={isSubmitting}
         />
-      </fetcher.Form>
+      </Form>
     </section>
   );
 }

@@ -38,7 +38,7 @@ Este documento es la lista activa de ejecucion.
 - [x] Auth con sesiones y control por rol (`requireUser`/`requireAdmin`)
 - [x] Tasks CRUD basico (list, create, update, delete) con validacion Zod
 - [x] Flags admin (list, create, toggle, delete, rollout update)
-- [x] Rutas como orquestadores + logica de intents en `app/features/*/server/*`
+- [x] Rutas como orquestadores + logica server en `app/server/*`
 - [x] Manejo de errores de actions con `fieldErrors` / `formError` / `values`
 - [x] Persistencia local con SQLite + Drizzle
 - [x] Resolucion de flag integrada en flujo de tasks (`beta-tasks-ui`)
@@ -51,10 +51,10 @@ Este documento es la lista activa de ejecucion.
 - [x] Agregar render de `formError` global en el formulario de crear task
 - [x] Asegurar que todos los errores de actions de tasks sean visibles en UI
 - [x] Validar manualmente create/update/delete con payloads invalidos
-  - [x] Validacion estatica de create: `task.action.ts` devuelve `fieldErrors` y `values` en invalidacion
-  - [x] Validacion estatica de create: `CreateTaskForm.tsx` renderiza error global y preserva `defaultValue`
-  - [x] Validacion estatica de update/delete: `task.action.ts` usa `validationToActionData` y `jsonTaskError`
-  - [x] Validacion estatica de intent invalido: `tasks/server/utils.ts` devuelve `fieldErrors.intent` y `values`
+  - [x] Validacion estatica de create: `server/task/action/*` devuelve `fieldErrors` y `values` en invalidacion
+  - [x] Validacion estatica de create: `CreateTask.tsx` renderiza error global y preserva valores del submit invalido
+  - [x] Validacion estatica de update/delete: `server/task/action/*` usa mapeo de errores consistente
+  - [x] Validacion estatica de intent invalido: `server/task/utils.ts` devuelve `fieldErrors.intent` y `values`
 
 Criterio de cierre:
 
@@ -341,10 +341,11 @@ Criterio de cierre:
 
 Tecnologias a usar: shadcn/ui + Radix + patrones de `ActionData`.
 
-- [ ] Sistema consistente de feedback
+- [~] Sistema consistente de feedback
   - [ ] Toasts success/error/warn (`Radix Toast` + estilo `shadcn`)
   - [ ] Mapeo uniforme `formError`/`fieldErrors`
-  - [ ] Sin redirects silenciosos en errores
+  - [x] Sin redirects silenciosos en `tasks/projects` via API
+  - [ ] Extender misma regla a flags/auth/account
 - [ ] Base visual consistente
   - [ ] Definir set base de componentes `shadcn/ui` permitidos para todo el producto
   - [ ] Paleta, tipografia, spacing, botones
@@ -367,10 +368,10 @@ Tecnologias a usar: TanStack Query + Zustand.
 - [ ] Optimistic updates con rollback confiable
 - [ ] Estrategia de adopcion de TanStack Query (CTO-level)
   - [ ] `Query` para lecturas cliente transversales (primera fase: `/api/notifications` en header)
-  - [ ] Mantener `loader/action` para mutaciones criticas (auth, tasks CUD, flags CUD, permisos y redirects)
+  - [ ] Migrar mutaciones criticas a API dedicada por dominio (sin dependencia de route actions UI)
   - [ ] Evitar doble fuente de verdad por flujo (no mezclar para el mismo caso `loader` y `query` sin contrato)
   - [ ] Expandir `Query` por slices completos (no migracion parcial caotica)
-  - [ ] Documentar query keys por dominio (`notifications`, `tasks`, `flags`) y sus reglas de invalidacion
+  - [ ] Documentar query keys por dominio (`notifications`, `tasks`, `projects`, `flags`, `auth`, `account`) y sus reglas de invalidacion
 - [ ] Mapa de uso por tecnologia (decision-complete)
   - [ ] Query se usa para lecturas transversales y cache/polling (`notifications`, `projects/teams/flags sidebar`, luego `team feed/lists`)
   - [ ] Zustand se usa para estado UI global (sin prop drilling)
@@ -409,6 +410,15 @@ Tecnologias a usar: TanStack Query + Zustand.
   - [ ] Fallback sin `taskId` a vista de actividad/projects
 - [ ] Cola local de acciones pendientes con reintento manual
 - [ ] Sincronia URL <-> store <-> query keys
+- [ ] API por accion (proxima ola para compatibilidad total con Query)
+  - [ ] Fase A: endpoints API para todos los dominios (`auth`, `account`, `flags`, `projects`, `tasks`)
+  - [ ] Fase B: reemplazar `intent` por rutas explicitas por mutacion
+    - [ ] Tasks: `POST /api/tasks/create|update|delete|reorder-column`
+    - [ ] Task comments: `POST /api/task-comments/create|update|delete`
+    - [ ] Projects: `POST /api/projects/create|delete`
+    - [ ] Flags: `POST /api/flags/create|toggle|update-state|delete`
+    - [ ] Auth/Account: endpoints de accion por flujo
+  - [ ] Fase C: migrar mutaciones de todos los dominios a `useMutation` (React Query full)
 
 Criterio de cierre:
 

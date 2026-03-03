@@ -15,7 +15,7 @@ No se agregan features fuera de roadmap. No se omiten bullets del roadmap.
 - Ultimos 30 minutos: QA manual basico + lista de bugs para el dia siguiente.
 - Mantener arquitectura del repo:
   - `routes/*` orquestan
-  - `features/*/server/*` concentra logica server
+  - `server/*` concentra logica server por dominio/feature
   - `core/*` contratos
   - `infra/*` implementaciones
   - `ui/*` compartidos
@@ -51,7 +51,7 @@ Template para cada dia:
   - [ ] Tarea 2
   - [ ] Tarea 3 (opcional)
 - Checkpoint:
-  - [ ] Que va en `route` y que va en `features/*/server/*` hoy?
+  - [ ] Que va en `route` y que va en `server/*` hoy?
   - [ ] Cual fue el contrato/validacion clave del dia?
   - [ ] Cual fue el bug o riesgo principal y como se resolvio?
 
@@ -66,7 +66,7 @@ Tecnologias del dia: React Router, TypeScript, Zod, Drizzle/SQLite.
 
 - [x] Revisar estructura del repo y consolidar convencion de arquitectura
   - [x] `routes/*` como orquestador
-  - [x] `features/*/server/*` para logica de loader/action e intents
+  - [x] `server/*` para logica de loader/action e intents
   - [x] `core/*` y `infra/*` para contratos e implementaciones
 - [x] Alinear criterios para evitar deuda tecnica temprana
   - [x] separar responsabilidad por capa
@@ -365,6 +365,33 @@ Fortalece hoy: refactor estructural, mantenibilidad, disciplina de naming y redu
   - [x] Sin persistencia accidental de logica legacy de adjuntos
   - [x] UX consistente en preview/guardado/cancelacion
   - [x] Mensionador estable: replace correcto del token, navegacion con teclado y cierre por click afuera
+- [x] Addendum refactor (actualizacion 2026-03-03, ligado al mismo bloque tecnico)
+  - [x] Migrar toda la logica server desde `features/*/server/*` a `app/server/*` (`account`, `auth`, `flags`, `task`)
+  - [x] Actualizar wiring de rutas para consumir `~/server/*` y mantener `routes/*` como orquestadores
+  - [x] Crear y registrar endpoints API para workspace mutations (`/api/projects`, `/api/tasks`)
+  - [x] Remover redirects legacy en flujo de tasks API (responses JSON en modo API/fetcher)
+  - [x] Eliminar loop de polling en notificaciones del header
+  - [x] Simplificar `CreateTask` (sin custom hook gigante, estado local acotado y errores server-first)
+  - [ ] Pendiente de refactor (siguiente ola)
+    - [ ] Preparacion API por accion (scope total backend)
+      - [ ] Fase A: migrar todos los dominios a endpoints API dedicados (sin depender de route actions UI)
+        - [ ] Auth (`/api/auth/*`)
+        - [ ] Account (`/api/account/*`)
+        - [ ] Flags (`/api/flags/*`)
+        - [ ] Projects (`/api/projects/*`)
+        - [ ] Tasks + Comments (`/api/tasks/*`, `/api/task-comments/*`)
+      - [ ] Fase B: reemplazar `intent` por rutas explicitas por mutacion
+        - [ ] Tasks: `POST /api/tasks/create|update|delete|reorder-column`
+        - [ ] Task comments: `POST /api/task-comments/create|update|delete`
+        - [ ] Projects: `POST /api/projects/create|delete`
+        - [ ] Flags: `POST /api/flags/create|toggle|update-state|delete`
+        - [ ] Auth/Account: endpoints de accion explicitos por flujo
+      - [ ] Fase C: migrar cliente a React Query full
+        - [ ] `useQuery` para lecturas en todos los dominios
+        - [ ] `useMutation` para mutaciones en todos los dominios
+        - [ ] Invalidaciones por dominio y eliminacion de `fetcher/actionData` legacy donde aplique
+    - [ ] Reducir estado/orquestacion restante en `project` para seguir bajando prop drilling
+    - [ ] Homogeneizar el mismo patron server/API en los dominios restantes (`flags`, `account`, `auth`) donde aplique
 
 ## ?? Dia 11 - Domingo 01/03/2026
 
@@ -408,13 +435,6 @@ Fortalece hoy: auth hardening, seguridad de credenciales, diseno de panel de usu
   - [x] Reglas: token expirado/usado invalido; token valido marca email como verificado
   - [x] Infra de email: adapter por puerto + dev sink/log local (implementado)
   - [ ] Integrar proveedor real de email (dev SMTP inbox / provider prod) -> movido a Dia 16
-- [ ] Preferencias
-  - [x] Definir `density` de UI (`comfortable` | `compact`) y aplicarlo en layouts/listados principales
-  - [x] Definir `defaultTasksView` (`board` | `list`)
-  - [x] Definir `defaultTasksScope` (`all` | `assigned` | `created`)
-  - [x] Aplicar defaults en `/projects` solo cuando la URL no trae query params
-  - [x] Tema (light/dark/system) gestionado desde `Preferencias` (sin toggle en header)
-  - [x] Persistencia base con cookie/storage (sin sobreingenieria en Dia 11)
 - [x] Plan/Billing (pre-Stripe)
   - [x] Mostrar plan actual (`Free`) y limites visibles de uso
   - [x] CTA de upgrade (`coming soon`) sin checkout real en Dia 11
@@ -464,10 +484,11 @@ Fortalece hoy: arquitectura de app shell, navegacion por rol, UX de productivida
   - [ ] Hacer `tasks.project_id` `NOT NULL` (cuando no haya casos legacy)
   - [ ] Activar ACL real por `project_members.role` en actions/loaders
 
-- [ ] Sistema consistente de feedback
+- [~] Sistema consistente de feedback
   - [ ] Toasts success/error/warn (`Radix Toast` + estilo `shadcn`)
   - [ ] Mapeo uniforme `formError`/`fieldErrors`
-  - [ ] Sin redirects silenciosos en errores
+  - [x] Sin redirects silenciosos en errores en flujo `tasks/projects` via API
+  - [ ] Extender misma regla al resto de dominios (flags/auth/account)
 - [ ] Base visual consistente
   - [ ] Definir set base de componentes `shadcn/ui` permitidos para todo el producto
   - [ ] Paleta, tipografia, spacing, botones
@@ -535,7 +556,6 @@ Fortalece hoy: estrategia de estado (server state vs UI state), cache, invalidac
   - [ ] Fallback si falta `taskId`: abrir panel de tasks/actividad sin romper flujo
 - [ ] Cola local de acciones pendientes con reintento manual
 - [ ] Sincronia URL <-> store <-> query keys
-
 ## ?? Dia 14 - Miercoles 04/03/2026
 
 Tecnologias del dia: Vitest, Testing Library, Playwright.
@@ -681,5 +701,3 @@ Dia X - Fecha
 - Bloqueado:
 - Riesgo:
 - Primer tarea de manana:
-
-

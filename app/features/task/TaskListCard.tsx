@@ -1,5 +1,12 @@
 import type { Task } from '~/core/task/task.types';
 import { formatDateUTC, isTaskOverdue } from '~/features/task/utils/task-due-date';
+import {
+  formatChecklistSummary,
+  formatLabelsSummary,
+  formatPlainDescription,
+  formatPriorityLabel,
+  formatStatusLabel,
+} from '~/features/task/utils/formatters';
 import { Badge } from '~/ui/primitives/badge';
 import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
 
@@ -58,52 +65,4 @@ export function TaskListCardItem({ task, assigneeLabel, onDeleteTask }: TaskList
       </div>
     </li>
   );
-}
-
-function formatLabelsSummary(labels: Task['labels']) {
-  return labels.length > 0 ? labels.map((label) => `#${label}`).join(', ') : 'None';
-}
-
-function formatChecklistSummary(checklist: Task['checklist']) {
-  return checklist.length > 0
-    ? `${checklist.filter((item) => item.done).length}/${checklist.length}`
-    : 'None';
-}
-
-function formatPlainDescription(description: string) {
-  return description
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function formatStatusLabel(status: Task['status']) {
-  switch (status) {
-    case 'todo':
-      return 'To Do';
-    case 'in-progress':
-      return 'In Progress';
-    case 'ready-to-go-live':
-      return 'Ready to Go Live';
-    case 'done':
-      return 'Done';
-    case 'discarded':
-      return 'Discarded';
-    default:
-      return 'QA';
-  }
-}
-
-function formatPriorityLabel(priority: Task['priority']) {
-  switch (priority) {
-    case 'low':
-      return 'Low';
-    case 'medium':
-      return 'Medium';
-    case 'high':
-      return 'High';
-    default:
-      return 'Critical';
-  }
 }

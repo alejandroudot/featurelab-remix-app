@@ -99,7 +99,7 @@ Vistas objetivo:
 El producto se considera bien encaminado cuando:
 - no hay errores silenciosos en flows criticos;
 - contratos de datos son estables y tipados;
-- rutas quedan como orquestadores y logica en `features/*/server/*`;
+- rutas quedan como orquestadores y logica server en `app/server/*`;
 - UX principal se percibe de producto real, no CRUD basico;
 - existe base de testing (unit, integration, e2e smoke).
 
