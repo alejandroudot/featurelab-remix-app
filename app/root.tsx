@@ -13,7 +13,6 @@ import type { Route } from './+types/root';
 import './app.css';
 import { getOptionalUser } from '~/infra/auth/require-user';
 import { getThemeFromRequest } from '~/infra/theme/theme-cookie';
-import { getUserPreferencesFromRequest } from '~/infra/preferences/preferences-cookie';
 import { AppHeader } from './ui/layout/app-header';
 import { AppShell } from './ui/layout/app-shell';
 import { Toaster } from './ui/primitives/sonner';
@@ -46,7 +45,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   // auth (optional)
   const user = await getOptionalUser(request);
   const theme = getThemeFromRequest(request);
-  const preferences = getUserPreferencesFromRequest(request);
   const projects = user ? await projectRepository.listByUser(user.id) : [];
 
   return { user, theme, projects };
