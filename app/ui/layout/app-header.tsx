@@ -8,7 +8,7 @@ import type { ThemeMode } from '~/infra/theme/theme-cookie';
 import { ThemeToggle } from './theme-toggle';
 
 type Props = {
-  user: { email: string; role: UserRole } | null;
+  user: { id: string; email: string; role: UserRole } | null;
   theme?: ThemeMode;
   hideBrand?: boolean;
   noBorder?: boolean;
@@ -57,7 +57,7 @@ export function AppHeader({ user, theme = 'system', hideBrand = false, noBorder 
         Account
       </Link>
       <span className="opacity-80">Hola, {user.email}</span>
-      <HeaderNotifications />
+      <HeaderNotifications userId={user.id} />
       <Form method="post" action="/api/auth/logout">
         <button type="submit" className="border rounded px-3 py-1 text-sm" onClick={() => setIsMobileMenuOpen(false)}>
           Logout

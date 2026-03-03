@@ -1,26 +1,25 @@
 import { useMemo, useState } from 'react';
 import { SectionCard } from '../../shared/SectionCard';
 import { PasswordField } from '~/ui/primitives/password-field';
-import { useFetcher } from 'react-router';
 import { getPasswordChecks, isPasswordPolicySatisfied } from '~/core/auth/password-policy';
 import {
   ActionFeedbackText,
 } from '~/ui/forms/feedback/action-feedback';
 import { PasswordChecklist } from '~/ui/forms/security/password-checklist';
 import { useFieldMatchOnBlur } from '~/ui/hooks/use-field-match-on-blur';
-import type { AccountActionData } from '../../types';
+import { usePasswordMutation } from '../../client/mutation';
 
 type SecuritySectionProps = {
   asCard?: boolean;
 };
 
 export function SecuritySection({ asCard = true }: SecuritySectionProps) {
-  const fetcher = useFetcher<AccountActionData>();
+  const passwordMutation = usePasswordMutation();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const isSubmitting = fetcher.state === 'submitting';
-  const actionData = fetcher.data;
+  const isSubmitting = passwordMutation.isPending;
+  const actionData = passwordMutation.data;
   const passwordChecks = useMemo(() => getPasswordChecks(newPassword), [newPassword]);
   const passwordMatch = useFieldMatchOnBlur({
     leftValue: newPassword,
@@ -35,9 +34,22 @@ export function SecuritySection({ asCard = true }: SecuritySectionProps) {
     isPasswordPolicySatisfied(newPassword) &&
     newPassword === confirmPassword;
 
+  async function handleSubmit(event: { preventDefault: () => void }) {
+    event.preventDefault();
+    const data = await passwordMutation.mutateAsync({
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    });
+    if (!data.success || data.intent !== 'password') return;
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+  }
+
   const content = (
     <>
-      <fetcher.Form method="post" action="/api/account/password" className="space-y-2">
+      <form className="space-y-2" onSubmit={handleSubmit}>
 
         <div className="flex flex-col gap-1">
           <label htmlFor="currentPassword" className="text-sm font-medium">
@@ -98,7 +110,7 @@ export function SecuritySection({ asCard = true }: SecuritySectionProps) {
         >
           {isSubmitting ? 'Guardando...' : 'Actualizar password'}
         </button>
-      </fetcher.Form>
+      </form>
     </>
   );
 

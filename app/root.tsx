@@ -17,6 +17,7 @@ import { AppHeader } from './ui/layout/app-header';
 import { AppShell } from './ui/layout/app-shell';
 import { Toaster } from './ui/primitives/sonner';
 import { projectRepository } from './infra/project/project.repository.provider';
+import { AppQueryProvider } from './lib/query/query-provider';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -70,19 +71,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
 
       <body>
-        {shouldRenderAppShell && user ? (
-          <AppShell user={user} theme={theme} projects={projects}>
-            {children}
-          </AppShell>
-        ) : (
-          <>
-            <AppHeader user={user} theme={theme} />
-            {children}
-          </>
-        )}
-        <Toaster position="bottom-right" richColors theme={isDark ? 'dark' : 'light'} />
-        <ScrollRestoration />
-        <Scripts />
+        <AppQueryProvider>
+          {shouldRenderAppShell && user ? (
+            <AppShell user={user} theme={theme} projects={projects}>
+              {children}
+            </AppShell>
+          ) : (
+            <>
+              <AppHeader user={user} theme={theme} />
+              {children}
+            </>
+          )}
+          <Toaster position="bottom-right" richColors theme={isDark ? 'dark' : 'light'} />
+          <ScrollRestoration />
+          <Scripts />
+        </AppQueryProvider>
       </body>
     </html>
   );

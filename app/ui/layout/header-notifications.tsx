@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Bell } from 'lucide-react';
-import { useFetcher } from 'react-router';
 import {
   Dialog,
   DialogContent,
@@ -8,58 +8,37 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/ui/primitives/dialog';
+import { notificationsQueryOptions } from '~/features/notifications/client/query';
 
-type HeaderNotification = {
-  id: string;
-  message: string;
-  createdAt: string | Date;
-};
-
-type NotificationsApiResponse = {
-  currentUserId?: string;
-  notifications?: HeaderNotification[];
-};
-
-function getLatestTimestamp(items: HeaderNotification[]) {
+function getLatestTimestamp(items: Array<{ createdAt: string | Date }>) {
   return items.reduce((latest, item) => {
     const next = new Date(item.createdAt).getTime();
     return Number.isFinite(next) && next > latest ? next : latest;
   }, 0);
 }
 
-export function HeaderNotifications() {
-  const fetcher = useFetcher<NotificationsApiResponse>();
-  const fetcherRef = useRef(fetcher);
-  fetcherRef.current = fetcher;
+export function HeaderNotifications({ userId }: { userId: string }) {
+  const isClient = typeof window !== 'undefined';
+  
+	const { data, isLoading } = useQuery({
+    ...notificationsQueryOptions(userId),
+    enabled: isClient && userId.length > 0,
+  });
+	
   const [open, setOpen] = useState(false);
   const [lastSeenAt, setLastSeenAt] = useState(0);
-  const currentUserId = fetcher.data?.currentUserId ?? 'anonymous';
-  const notifications = fetcher.data?.notifications ?? [];
+  const currentUserId = data?.currentUserId ?? userId;
+  const notifications = data?.notifications ?? [];
 
   const latestNotificationAt = getLatestTimestamp(notifications);
   const hasUnseen = notifications.length > 0 && latestNotificationAt > lastSeenAt;
-
-  useEffect(() => {
-    const loadNotifications = () => {
-      fetcherRef.current.load('/api/notifications');
-    };
-
-    loadNotifications();
-    const intervalId = window.setInterval(() => {
-      loadNotifications();
-    }, 50000);
-
-    return () => {
-      window.clearInterval(intervalId);
-    };
-  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const stored = window.localStorage.getItem(`fl_tasks_notifications_seen:${currentUserId}`);
     const parsed = stored ? Number(stored) : 0;
     setLastSeenAt(Number.isFinite(parsed) ? parsed : 0);
-  }, [currentUserId, latestNotificationAt]);
+  }, [currentUserId]);
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
@@ -95,7 +74,9 @@ export function HeaderNotifications() {
             <DialogDescription>Actividad reciente de tareas.</DialogDescription>
           </DialogHeader>
           <div className="max-h-[60vh] space-y-2 overflow-y-auto px-6 py-4 [scrollbar-gutter:stable]">
-            {notifications.length === 0 ? (
+            {isLoading ? (
+              <p className="text-sm opacity-70">Cargando notificaciones...</p>
+            ) : notifications.length === 0 ? (
               <p className="text-sm opacity-70">No hay notificaciones nuevas.</p>
             ) : (
               notifications.map((item) => (

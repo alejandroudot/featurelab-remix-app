@@ -6,6 +6,7 @@ import { AppSidebar } from './app-sidebar';
 import type { ThemeMode } from '~/infra/theme/theme-cookie';
 
 type AppShellUser = {
+  id: string;
   email: string;
   role: UserRole;
 };

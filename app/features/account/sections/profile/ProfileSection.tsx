@@ -1,9 +1,9 @@
+import { useState } from 'react';
 import { SectionCard } from '../../shared/SectionCard';
-import { useFetcher } from 'react-router';
 import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
-import type { AccountActionData } from '../../types';
 import type { UserRole } from '~/core/auth/auth.types';
 import { Avatar, AvatarFallback } from '~/ui/primitives/avatar';
+import { useProfileMutation } from '../../client/mutation';
 
 type ProfileSectionProps = {
   user: {
@@ -18,12 +18,24 @@ type ProfileSectionProps = {
 };
 
 export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
-  const fetcher = useFetcher<AccountActionData>();
-  const isSubmitting = fetcher.state === 'submitting';
-  const actionData = fetcher.data;
-  const profileName = user.displayName?.trim() || 'Usuario';
+  const profileMutation = useProfileMutation();
+  const isSubmitting = profileMutation.isPending;
+  const actionData = profileMutation.data;
+  const [displayName, setDisplayName] = useState(user.displayName ?? '');
+  const [phone, setPhone] = useState(user.phone ?? '');
+  const [about, setAbout] = useState(user.about ?? '');
+  const profileName = displayName.trim() || 'Usuario';
   const roleLabel = user.role === 'admin' ? 'Admin' : user.role === 'manager' ? 'Manager' : 'User';
   const avatarFallback = buildAvatarFallback(profileName);
+
+  function handleSubmit(event: { preventDefault: () => void }) {
+    event.preventDefault();
+    profileMutation.mutate({
+      displayName,
+      phone,
+      about,
+    });
+  }
 
   const content = (
     <>
@@ -40,7 +52,7 @@ export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
         </div>
       </div>
 
-      <fetcher.Form method="post" action="/api/account/profile" className="space-y-2">
+      <form className="space-y-2" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-1">
           <label htmlFor="displayName" className="text-sm font-medium">
             Nombre visible
@@ -48,9 +60,8 @@ export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
           <input
             id="displayName"
             name="displayName"
-            defaultValue={(actionData && !actionData.success && actionData.intent === 'profile'
-              ? actionData.values?.displayName
-              : undefined) ?? user.displayName ?? ''}
+            value={displayName}
+            onChange={(event) => setDisplayName(event.currentTarget.value)}
             className="rounded border px-2 py-1 text-sm"
           />
           <ActionFeedbackText actionData={actionData} intent="profile" fieldKey="displayName" />
@@ -63,9 +74,8 @@ export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
           <input
             id="phone"
             name="phone"
-            defaultValue={(actionData && !actionData.success && actionData.intent === 'profile'
-              ? actionData.values?.phone
-              : undefined) ?? user.phone ?? ''}
+            value={phone}
+            onChange={(event) => setPhone(event.currentTarget.value)}
             className="rounded border px-2 py-1 text-sm"
           />
           <ActionFeedbackText actionData={actionData} intent="profile" fieldKey="phone" />
@@ -78,9 +88,8 @@ export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
           <textarea
             id="about"
             name="about"
-            defaultValue={(actionData && !actionData.success && actionData.intent === 'profile'
-              ? actionData.values?.about
-              : undefined) ?? user.about ?? ''}
+            value={about}
+            onChange={(event) => setAbout(event.currentTarget.value)}
             className="min-h-24 rounded border px-2 py-1 text-sm"
           />
           <ActionFeedbackText actionData={actionData} intent="profile" fieldKey="about" />
@@ -95,7 +104,7 @@ export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
         >
           {isSubmitting ? 'Guardando...' : 'Guardar perfil'}
         </button>
-      </fetcher.Form>
+      </form>
 
       {!asCard ? (
         <div className="mt-5 grid gap-3 md:grid-cols-2">
