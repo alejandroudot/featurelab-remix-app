@@ -322,7 +322,6 @@ Tecnologias a usar: React Router + Zod + shadcn/ui + Radix (alert dialog/toast).
     - [x] Infra de email base: adapter por puerto + dev sink/log local
     - [ ] Integrar proveedor real de email (dev SMTP inbox + provider prod) -> se implementa en P3.1
 - [x] Preferencias
-  - [x] `density` de UI (`comfortable` | `compact`)
   - [x] `defaultTasksView` (`board` | `list`) y `defaultTasksScope` (`all` | `assigned` | `created`)
   - [x] Aplicar defaults en `/projects` solo cuando no hay query params
   - [x] Tema (light/dark/system) gestionado desde `Preferencias` (sin toggle en header)
@@ -396,7 +395,7 @@ Tecnologias a usar: TanStack Query + Zustand.
     - [ ] Invalidacion selectiva por evento (`invite`, `accept`, `reject`, `project-create`) sin recargar toda la pantalla
     - [ ] Estados por bloque (`loading/error/success`) independientes por lista
 - [ ] Store global de UI/preferencias/seleccion masiva
-- [ ] Store de preferencias reales (`density`, `defaultTasksView`, `defaultTasksScope`)
+- [ ] Store de preferencias reales (`defaultTasksView`, `defaultTasksScope`)
 - [ ] Estado global de task seleccionada/modal abierto
   - [ ] Migrar apertura de modal de task (hoy por props) a store global
   - [ ] Permitir abrir el mismo modal desde card, notificacion y sidebar sin acople entre componentes

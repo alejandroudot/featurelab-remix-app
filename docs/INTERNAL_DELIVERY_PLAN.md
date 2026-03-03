@@ -526,7 +526,7 @@ Fortalece hoy: estrategia de estado (server state vs UI state), cache, invalidac
     - [ ] Reemplazar flujo actual por props para abrir/cerrar modal desde cualquier entrypoint
     - [ ] Evitar prop drilling entre board/list/sidebar y modal
   - [ ] `Preferencias`
-    - [ ] Zustand: `density`, `defaultTasksView`, `defaultTasksScope` + persist
+    - [ ] Zustand: `defaultTasksView`, `defaultTasksScope` + persist
     - [ ] Query: no requerido (preferencias locales de UX)
     - [ ] Loader/Action: aplica defaults al entrar a `/projects` cuando URL no tiene params
   - [ ] `Team panel` (cuando entre en P3.1)
@@ -542,7 +542,7 @@ Fortalece hoy: estrategia de estado (server state vs UI state), cache, invalidac
   - [ ] Fase 2 (opcional): lecturas de tasks solo si hay ganancia clara en UX y mantenibilidad
   - [ ] Si no hay ganancia clara, se mantiene backbone `loader/action`
 - [ ] Store global de UI/preferencias/seleccion masiva
-- [ ] Store de preferencias reales (`density`, `defaultTasksView`, `defaultTasksScope`)
+- [ ] Store de preferencias reales (`defaultTasksView`, `defaultTasksScope`)
 - [ ] Estado global de task seleccionada/modal abierto (sin pasa-manos de props)
 - [ ] Estado de notificaciones leidas/no leidas en cliente (Zustand)
   - [ ] Store `notifications`: `items`, `lastSeenAtByUser`, `unreadCount`, `selectedNotificationId`

@@ -3,7 +3,6 @@ import { getCookieValue } from '~/infra/http/cookies';
 
 // Contrato unico de preferencias permitidas en cliente/server.
 export const userPreferencesSchema = z.object({
-  density: z.enum(['comfortable', 'compact']).default('comfortable'),
   defaultTasksView: z.enum(['board', 'list']).default('board'),
   defaultTasksOrder: z.enum(['manual', 'priority']).default('manual'),
   defaultTasksScope: z.enum(['all', 'assigned', 'created']).default('all'),
@@ -12,7 +11,6 @@ export const userPreferencesSchema = z.object({
 export type UserPreferences = z.infer<typeof userPreferencesSchema>;
 
 export const DEFAULT_USER_PREFERENCES: UserPreferences = {
-  density: 'comfortable',
   defaultTasksView: 'board',
   defaultTasksOrder: 'manual',
   defaultTasksScope: 'all',

@@ -49,7 +49,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const preferences = getUserPreferencesFromRequest(request);
   const projects = user ? await projectRepository.listByUser(user.id) : [];
 
-  return { user, theme, density: preferences.density, projects };
+  return { user, theme, projects };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -57,7 +57,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const user = data?.user ?? null;
   const theme = data?.theme ?? 'system';
-  const density = data?.density ?? 'comfortable';
   const projects = data?.projects ?? [];
   const isDark = theme === 'dark';
   const colorScheme = isDark ? 'dark' : 'light';
@@ -72,7 +71,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
 
-      <body data-density={density}>
+      <body>
         {shouldRenderAppShell && user ? (
           <AppShell user={user} theme={theme} projects={projects}>
             {children}
