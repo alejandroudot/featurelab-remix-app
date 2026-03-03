@@ -1,7 +1,7 @@
 import { asc } from 'drizzle-orm';
 import type { ProjectRepository } from '~/core/project/project.repository.port';
 import type { TaskRepository } from '~/core/task/task.repository.port';
-import type { ProjectViewState } from '../types';
+import type { ProjectViewState } from '~/features/task/types';
 import { db } from '~/infra/db/client.sqlite';
 import { users } from '~/infra/db/schema';
 import { getUserPreferencesFromRequest } from '~/infra/preferences/preferences-cookie';

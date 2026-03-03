@@ -1,11 +1,10 @@
-import { redirect } from 'react-router';
 import {
   taskCommentCreateSchema,
   taskCommentDeleteSchema,
   taskCommentUpdateSchema,
 } from '~/core/task/task.schema';
 import { jsonTaskError, toTaskFormError, zodErrorToActionData } from '../../errors';
-import { getSafeRedirectTo, getTaskFormValues } from '../../utils';
+import { getTaskFormValues } from '../../utils';
 import { getCommentOrNull, getTaskOrNull } from '../shared/helpers';
 import { createMentionActivities } from '../shared/mentions';
 import type { TaskIntentHandler } from '../shared/types';
@@ -49,7 +48,7 @@ export const handleCommentCreate: TaskIntentHandler = async (input) => {
       writer: input.taskRepository,
     });
 
-    return redirect(getSafeRedirectTo(formData, '/'));
+    return Response.json({ success: true });
   } catch (err) {
     return jsonTaskError({
       intent: 'comment-create',
@@ -107,7 +106,7 @@ export const handleCommentUpdate: TaskIntentHandler = async (input) => {
       writer: input.taskRepository,
     });
 
-    return redirect(getSafeRedirectTo(formData, '/'));
+    return Response.json({ success: true });
   } catch (err) {
     return jsonTaskError({
       intent: 'comment-update',
@@ -155,7 +154,7 @@ export const handleCommentDelete: TaskIntentHandler = async (input) => {
       metadata: { commentId: comment.id },
     });
 
-    return redirect(getSafeRedirectTo(formData, '/'));
+    return Response.json({ success: true });
   } catch (err) {
     return jsonTaskError({
       intent: 'comment-delete',

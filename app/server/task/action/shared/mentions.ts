@@ -1,6 +1,6 @@
 import { db } from '~/infra/db/client.sqlite';
 import { users } from '~/infra/db/schema';
-import type { RunTaskActionInput } from '../../../types';
+import type { RunTaskActionInput } from '~/features/task/types';
 
 function extractMentionTokens(text: string | null | undefined): string[] {
   if (!text) return [];

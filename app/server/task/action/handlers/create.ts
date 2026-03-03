@@ -1,10 +1,9 @@
 import { taskCreateSchema } from '~/core/task/task.schema';
 import { finalizeRichTextTempImagesInHtml } from '~/infra/files/rich-text-images.storage';
 import { jsonTaskError, toTaskFormError, zodErrorToActionData } from '../../errors';
-import { getSafeRedirectTo, getTaskFormValues } from '../../utils';
+import { getTaskFormValues } from '../../utils';
 import { createMentionActivities } from '../shared/mentions';
 import type { TaskIntentHandler } from '../shared/types';
-import { redirect } from 'react-router';
 
 export const handleCreate: TaskIntentHandler = async (input) => {
   const { formData } = input;
@@ -35,7 +34,7 @@ export const handleCreate: TaskIntentHandler = async (input) => {
       skipNotificationForUserId: input.userId,
       writer: input.taskRepository,
     });
-    return redirect(getSafeRedirectTo(formData, '/'));
+    return Response.json({ success: true });
   } catch (err) {
     return jsonTaskError({
       intent: 'create',

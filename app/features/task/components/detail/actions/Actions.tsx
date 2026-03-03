@@ -54,7 +54,7 @@ export function Actions({
         redirectTo,
         ...values,
       },
-      { method: 'post' },
+      { method: 'post', action: '/api/tasks' },
     );
   }
 

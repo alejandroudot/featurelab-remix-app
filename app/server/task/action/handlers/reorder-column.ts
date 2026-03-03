@@ -1,7 +1,6 @@
-import { redirect } from 'react-router';
 import { taskReorderColumnSchema } from '~/core/task/task.schema';
 import { jsonTaskError, toTaskFormError, zodErrorToActionData } from '../../errors';
-import { getSafeRedirectTo, getTaskFormValues } from '../../utils';
+import { getTaskFormValues } from '../../utils';
 import type { TaskIntentHandler } from '../shared/types';
 
 export const handleReorderColumn: TaskIntentHandler = async (input) => {
@@ -30,7 +29,7 @@ export const handleReorderColumn: TaskIntentHandler = async (input) => {
       ),
     );
 
-    return redirect(getSafeRedirectTo(formData, '/'));
+    return Response.json({ success: true });
   } catch (err) {
     return jsonTaskError({
       intent: 'reorder-column',

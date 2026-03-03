@@ -3,7 +3,7 @@ import { redirect, useActionData } from 'react-router';
 
 import { RegisterPage } from '~/features/auth/RegisterPage';
 import type { AuthActionData } from '~/features/auth/types';
-import { runRegisterAction } from '~/features/auth/server/register.action';
+import { runRegisterAction } from '~/server/auth/register.action';
 import { getOptionalUser } from '~/infra/auth/require-user';
 
 export async function loader({ request }: Route.LoaderArgs) {

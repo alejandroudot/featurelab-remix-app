@@ -85,7 +85,7 @@ export function CommentsList({
             commentId,
             redirectTo,
           },
-          { method: 'post' },
+          { method: 'post', action: '/api/tasks' },
         );
         handleCancelEdit();
         return;
@@ -109,6 +109,7 @@ export function CommentsList({
             <div className="font-medium">{comment.authorEmail ?? 'Usuario'}</div>
             {editingCommentId === comment.id ? (
               <updateFetcher.Form
+                action="/api/tasks"
                 method="post"
                 className="mt-2 space-y-2"
                 onSubmit={buildHandleUpdateSubmit(comment.id)}
@@ -146,7 +147,7 @@ export function CommentsList({
                 >
                   Editar
                 </button>
-                <deleteFetcher.Form method="post">
+                <deleteFetcher.Form action="/api/tasks" method="post">
                   <input type="hidden" name="intent" value="comment-delete" />
                   <input type="hidden" name="commentId" value={comment.id} />
                   <input type="hidden" name="redirectTo" value={redirectTo} />

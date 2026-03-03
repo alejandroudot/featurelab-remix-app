@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Bell } from 'lucide-react';
 import { useFetcher } from 'react-router';
 import {
@@ -29,6 +29,8 @@ function getLatestTimestamp(items: HeaderNotification[]) {
 
 export function HeaderNotifications() {
   const fetcher = useFetcher<NotificationsApiResponse>();
+  const fetcherRef = useRef(fetcher);
+  fetcherRef.current = fetcher;
   const [open, setOpen] = useState(false);
   const [lastSeenAt, setLastSeenAt] = useState(0);
   const currentUserId = fetcher.data?.currentUserId ?? 'anonymous';
@@ -38,15 +40,19 @@ export function HeaderNotifications() {
   const hasUnseen = notifications.length > 0 && latestNotificationAt > lastSeenAt;
 
   useEffect(() => {
-    fetcher.load('/api/notifications');
+    const loadNotifications = () => {
+      fetcherRef.current.load('/api/notifications');
+    };
+
+    loadNotifications();
     const intervalId = window.setInterval(() => {
-      fetcher.load('/api/notifications');
-    }, 15000);
+      loadNotifications();
+    }, 50000);
 
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [fetcher]);
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

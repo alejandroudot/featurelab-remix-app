@@ -47,7 +47,7 @@ export function CreateForm({
   onMarkCreateSubmit,
 }: CreateFormProps) {
   return (
-    <createFetcher.Form method="post" className="mb-3 space-y-2" onSubmit={onMarkCreateSubmit}>
+    <createFetcher.Form action="/api/tasks" method="post" className="mb-3 space-y-2" onSubmit={onMarkCreateSubmit}>
       <input type="hidden" name="intent" value="comment-create" />
       <input type="hidden" name="id" value={taskId} />
       <input type="hidden" name="redirectTo" value={redirectTo} />

@@ -81,7 +81,7 @@ export function Comments({
             commentId: editingCommentId,
             redirectTo,
           },
-          { method: 'post' },
+          { method: 'post', action: '/api/tasks' },
         );
       } else if (editingBody !== currentBody) {
         updateFetcher.submit(
@@ -91,7 +91,7 @@ export function Comments({
             commentBody: editingBody,
             redirectTo,
           },
-          { method: 'post' },
+          { method: 'post', action: '/api/tasks' },
         );
       }
       setEditingCommentId(null);
@@ -107,7 +107,7 @@ export function Comments({
             commentBody: createBody,
             redirectTo,
           },
-          { method: 'post' },
+          { method: 'post', action: '/api/tasks' },
         );
       }
       setIsCreateOpen(false);

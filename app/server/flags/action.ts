@@ -1,5 +1,5 @@
 import { redirect } from 'react-router';
-import type { FlagActionResult, RunFlagActionInput } from '../types';
+import type { FlagActionResult, RunFlagActionInput } from '~/features/flags/types';
 import {
   flagCreateSchema,
   flagDeleteSchema,
@@ -165,4 +165,3 @@ export async function runFlagAction(input: RunFlagActionInput): Promise<FlagActi
   const handler = intentHandlers[intentResult as Intent];
   return handler(input);
 }
-

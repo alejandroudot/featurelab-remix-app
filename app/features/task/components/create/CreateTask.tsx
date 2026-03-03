@@ -1,4 +1,5 @@
-import { Form } from 'react-router';
+import { useEffect, useState } from 'react';
+import { useFetcher } from 'react-router';
 import type { TaskActionData } from '../../types';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
 import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/action-feedback';
@@ -11,18 +12,19 @@ import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
 
 export function CreateTask({
   activeProjectId,
-  actionData,
-  isSubmitting,
   mentionCandidates,
   className,
 }: {
   activeProjectId?: string;
-  actionData: TaskActionData;
-  isSubmitting: boolean;
   mentionCandidates: string[];
   className?: string;
 }) {
+  const fetcher = useFetcher<TaskActionData>();
+  const actionData = fetcher.data;
+  const isSubmitting = fetcher.state === 'submitting';
+  const [didSubmitCreate, setDidSubmitCreate] = useState(false);
   const storeActiveProjectId = useWorkspaceUiStore((state) => state.activeProjectId);
+  const setCreateTaskOpen = useWorkspaceUiStore((state) => state.setCreateTaskOpen);
   const resolvedActiveProjectId = activeProjectId ?? storeActiveProjectId ?? '';
   const createErrorActionData = getErrorActionDataByIntent(actionData, 'create');
   const createIntentError = getFieldError(createErrorActionData?.fieldErrors, 'intent');
@@ -40,6 +42,15 @@ export function CreateTask({
     setHasPendingEditorUploads,
     handleSubmitGuard,
   } = useCreateFormState({ createErrorActionData, isSubmitting });
+
+  useEffect(() => {
+    if (!didSubmitCreate) return;
+    if (fetcher.state !== 'idle') return;
+    if (!createErrorActionData) {
+      setCreateTaskOpen(false);
+    }
+    setDidSubmitCreate(false);
+  }, [didSubmitCreate, fetcher.state, createErrorActionData, setCreateTaskOpen]);
 
   async function handleEditorImageUpload(file: File) {
     setEditorImageError(null);
@@ -62,7 +73,15 @@ export function CreateTask({
         errorClassName="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700"
       />
 
-      <Form method="post" className="space-y-3" onSubmit={handleSubmitGuard}>
+      <fetcher.Form
+        action="/api/tasks"
+        method="post"
+        className="space-y-3"
+        onSubmit={(event) => {
+          handleSubmitGuard(event);
+          if (!event.defaultPrevented) setDidSubmitCreate(true);
+        }}
+      >
         <input type="hidden" name="intent" value="create" />
         <input type="hidden" name="projectId" value={resolvedActiveProjectId} />
 
@@ -88,7 +107,7 @@ export function CreateTask({
           editorImageError={editorImageError}
           isSubmitting={isSubmitting}
         />
-      </Form>
+      </fetcher.Form>
     </section>
   );
 }

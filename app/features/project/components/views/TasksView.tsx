@@ -1,4 +1,4 @@
-import { useLocation, useSubmit } from 'react-router';
+import { useFetcher, useLocation } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
 import { List } from '../list/List';
 import { Board } from '../board/Board';
@@ -7,9 +7,10 @@ import { useWorkspaceDataStore } from '~/features/project/store/data.store';
 import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
 import { buildAssigneeById, filterTasksBySearch, getVisibleTasks } from '~/features/project/utils/utils';
 import type { TaskStatus } from '~/core/task/task.types';
+import type { TaskActionData } from '~/features/task/types';
 
 export function TasksView() {
-  const submit = useSubmit();
+  const fetcher = useFetcher<TaskActionData>();
   const location = useLocation();
   const dataStore = useWorkspaceDataStore(
     useShallow((state) => ({
@@ -40,7 +41,10 @@ export function TasksView() {
   const searchedTasks = filterTasksBySearch(projectScopedTasks, uiState.searchTerm);
 
   function submitTask(payload: Record<string, string>) {
-    submit({ ...payload, redirectTo: `${location.pathname}${location.search}` }, { method: 'post' });
+    fetcher.submit(
+      { ...payload, redirectTo: `${location.pathname}${location.search}` },
+      { method: 'post', action: '/api/tasks' },
+    );
   }
 
   function handleDeleteTask(taskId: string) {

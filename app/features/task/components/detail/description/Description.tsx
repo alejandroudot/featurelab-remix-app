@@ -30,7 +30,7 @@ export function Description({
         description,
         redirectTo,
       },
-      { method: 'post' },
+      { method: 'post', action: '/api/tasks' },
     );
   }
 

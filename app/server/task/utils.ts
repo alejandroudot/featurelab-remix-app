@@ -1,5 +1,5 @@
 import { taskIntentSchema, type TaskIntentSchema } from '~/core/task/task.schema';
-import type { TaskActionData } from '../types';
+import type { TaskActionData } from '~/features/task/types';
 
 // Extrae valores del form para repintar inputs cuando hay errores de validacion.
 export function getTaskFormValues(formData: FormData): NonNullable<TaskActionData>['values'] {
@@ -34,20 +34,3 @@ export function parseIntent(formData: FormData): TaskIntentSchema | TaskActionDa
   }
   return parsedIntent.data;
 }
-
-// Sanitiza redirectTo para evitar redirecciones externas o paths invalidos.
-export function getSafeRedirectTo(formData: FormData, fallback = '/'): string {
-  const raw = String(formData.get('redirectTo') ?? '').trim();
-  if (!raw) return fallback;
-
-  // Permite solo paths internos absolutos del sitio.
-  if (!raw.startsWith('/')) return fallback;
-  if (raw.startsWith('//')) return fallback;
-
-  return raw;
-}
-
-
-
-
-

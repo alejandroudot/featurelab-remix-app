@@ -1,4 +1,4 @@
-import type { FlagActionData } from "../types";
+import type { FlagActionData } from '~/features/flags/types';
 import { flagIntentSchema, type FlagIntentSchema } from "~/core/flags/contracts/flags.schema";
 
 // Extrae valores del form de create para poder repintar la UI ante errores.

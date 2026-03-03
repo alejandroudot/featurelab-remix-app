@@ -4,6 +4,8 @@ export default [
   index('routes/index.tsx'),
   route('/account', 'routes/account.tsx'),
   route('/api/notifications', 'routes/api/notifications.ts'),
+  route('/api/projects', 'routes/api/projects.ts'),
+  route('/api/tasks', 'routes/api/tasks.ts'),
   route('/api/tasks/attachments', 'routes/api/tasks.attachments.ts'),
   route('/api/tasks/images/cleanup', 'routes/api/tasks.images.cleanup.ts'),
   route('/flags', 'routes/flags.tsx'),

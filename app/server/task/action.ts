@@ -1,4 +1,4 @@
-import type { RunTaskActionInput, TaskActionResult } from '../types';
+import type { RunTaskActionInput, TaskActionResult } from '~/features/task/types';
 import { parseIntent } from './utils';
 import type { Intent, TaskIntentHandler } from './action/shared/types';
 import { handleCreate } from './action/handlers/create';

@@ -1,4 +1,4 @@
-import { useNavigate, useSubmit } from 'react-router';
+import { useLocation, useNavigate, useSubmit } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
 import { DeleteDialog as DeleteDialogBase } from '~/ui/dialogs/delete-dialog';
 import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
@@ -15,6 +15,7 @@ export function DeleteDialog({
 }) {
   const submit = useSubmit();
   const navigate = useNavigate();
+  const location = useLocation();
   const { activeProjectId } = useWorkspaceUiStore(
     useShallow((state) => ({
       activeProjectId: state.activeProjectId,
@@ -33,7 +34,8 @@ export function DeleteDialog({
     const formData = new FormData();
     formData.set('intent', 'project-delete');
     formData.set('id', projectToDeleteId);
-    submit(formData, { method: 'post' });
+    formData.set('redirectTo', `${location.pathname}${location.search}`);
+    submit(formData, { method: 'post', action: '/api/projects' });
     onOpenChange(false);
   }
 

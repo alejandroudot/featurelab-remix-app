@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
-import type { TaskActionData, TaskAssigneeOption, ProjectViewState } from '~/features/task/types';
+import type { TaskAssigneeOption, ProjectViewState } from '~/features/task/types';
 import type { Task, TaskActivity, TaskComment } from '~/core/task/task.types';
 import type { Project } from '~/core/project/project.types';
-import { toast } from 'sonner';
-import { getTaskActionToastError } from '~/features/task/utils/client-errors';
 import { useWorkspaceDataStore } from './store/data.store';
 import { useWorkspaceUiStore } from './store/ui.store';
 import { CreateDialog } from './components/dialogs/CreateDialog';
@@ -24,8 +22,6 @@ export function ProjectWorkspace({
   projects,
   assignableUsers,
   viewState,
-  actionData,
-  isSubmitting,
 }: {
   currentUserId: string;
   tasks: Task[];
@@ -34,8 +30,6 @@ export function ProjectWorkspace({
   projects: Project[];
   assignableUsers: TaskAssigneeOption[];
   viewState: ProjectViewState;
-  actionData: TaskActionData;
-  isSubmitting: boolean;
 }) {
   const [searchParams] = useSearchParams();
   const initialActiveProjectId = searchParams.get('project');
@@ -49,10 +43,9 @@ export function ProjectWorkspace({
       hydratedProjects: state.projects,
     })),
   );
-  const { hydrateViewState, setCreateTaskOpen } = useWorkspaceUiStore(
+  const { hydrateViewState } = useWorkspaceUiStore(
     useShallow((state) => ({
       hydrateViewState: state.hydrateViewState,
-      setCreateTaskOpen: state.setCreateTaskOpen,
     })),
   );
   const uiActiveProjectId = useWorkspaceUiStore((state) => state.activeProjectId);
@@ -76,15 +69,6 @@ export function ProjectWorkspace({
       scope: viewState.scope,
     });
   }, [initialActiveProjectId, viewState.view, viewState.order, viewState.scope, hydrateViewState]);
-
-  useEffect(() => {
-    const message = getTaskActionToastError(actionData);
-    if (message) toast.error(message);
-
-    if (!actionData || (actionData.success === false && actionData.intent === 'create')) {
-      setCreateTaskOpen(Boolean(actionData && actionData.success === false && actionData.intent === 'create'));
-    }
-  }, [actionData, setCreateTaskOpen]);
 
   const openCreateProjectDialog = useCallback(() => {
     setCreateProjectOpen(true);
@@ -133,7 +117,7 @@ export function ProjectWorkspace({
         onOpenChange={handleDeleteProjectOpenChange}
         projectToDeleteId={projectToDeleteId}
       />
-      <TaskCreateDialog actionData={actionData} isSubmitting={isSubmitting} />
+      <TaskCreateDialog />
     </>
   );
 }

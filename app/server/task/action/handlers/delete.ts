@@ -1,7 +1,6 @@
-import { redirect } from 'react-router';
 import { taskDeleteSchema } from '~/core/task/task.schema';
 import { jsonTaskError, toTaskFormError, zodErrorToActionData } from '../../errors';
-import { getSafeRedirectTo, getTaskFormValues } from '../../utils';
+import { getTaskFormValues } from '../../utils';
 import { getTaskOrNull } from '../shared/helpers';
 import type { TaskIntentHandler } from '../shared/types';
 
@@ -43,7 +42,7 @@ export const handleDelete: TaskIntentHandler = async (input) => {
       userId: input.userId,
     });
 
-    return redirect(getSafeRedirectTo(formData, '/'));
+    return Response.json({ success: true });
   } catch (err) {
     return jsonTaskError({
       intent: 'delete',

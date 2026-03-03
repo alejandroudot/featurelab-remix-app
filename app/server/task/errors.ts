@@ -1,6 +1,6 @@
 import {z} from "zod";
 import { getTaskFormValues } from "./utils";
-import type { TaskActionData } from "../types";
+import type { TaskActionData } from '~/features/task/types';
 
 // Convierte un ZodError al contrato de error que entiende la UI de tasks.
 export function zodErrorToActionData(

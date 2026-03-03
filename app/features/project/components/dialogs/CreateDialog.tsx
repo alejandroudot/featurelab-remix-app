@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from 'react';
-import { useSubmit } from 'react-router';
+import { useState } from 'react';
+import { useLocation, useSubmit } from 'react-router';
 import { ContentDialog } from '~/ui/dialogs/ContentDialog';
 
 export function CreateDialog({
@@ -10,6 +10,7 @@ export function CreateDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const submit = useSubmit();
+  const location = useLocation();
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectImageUrl, setNewProjectImageUrl] = useState<string | null>(null);
 
@@ -18,7 +19,7 @@ export function CreateDialog({
     setNewProjectImageUrl(null);
   }
 
-  function handleProjectImageChange(event: FormEvent<HTMLInputElement>) {
+  function handleProjectImageChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.currentTarget.files?.[0];
     if (!file) {
       setNewProjectImageUrl(null);
@@ -31,7 +32,7 @@ export function CreateDialog({
     reader.readAsDataURL(file);
   }
 
-  function handleCreateProject(event: FormEvent<HTMLFormElement>) {
+  function handleCreateProject(event: { preventDefault: () => void }) {
     event.preventDefault();
     const name = newProjectName.trim();
     if (!name) return;
@@ -39,7 +40,8 @@ export function CreateDialog({
     formData.set('intent', 'project-create');
     formData.set('name', name);
     if (newProjectImageUrl) formData.set('imageUrl', newProjectImageUrl);
-    submit(formData, { method: 'post' });
+    formData.set('redirectTo', `${location.pathname}${location.search}`);
+    submit(formData, { method: 'post', action: '/api/projects' });
     resetForm();
     onOpenChange(false);
   }

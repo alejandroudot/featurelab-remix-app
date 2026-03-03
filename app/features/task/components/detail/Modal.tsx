@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useLocation, useSubmit } from 'react-router';
+import { useFetcher, useLocation } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
 import {
   Dialog,
@@ -14,9 +14,10 @@ import { History } from './History';
 import { EditableTitle } from './EditableTitle';
 import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
 import { useWorkspaceDataStore } from '~/features/project/store/data.store';
+import type { TaskActionData } from '../../types';
 
 export function Modal() {
-  const submit = useSubmit();
+  const fetcher = useFetcher<TaskActionData>();
   const location = useLocation();
   const { isDetailOpen, selectedTaskId, setDetailOpen } = useWorkspaceUiStore(
     useShallow((state) => ({
@@ -50,7 +51,10 @@ export function Modal() {
   );
 
   function handleDeleteTask(taskId: string) {
-    submit({ intent: 'delete', id: taskId, redirectTo: `${location.pathname}${location.search}` }, { method: 'post' });
+    fetcher.submit(
+      { intent: 'delete', id: taskId, redirectTo: `${location.pathname}${location.search}` },
+      { method: 'post', action: '/api/tasks' },
+    );
   }
 
   function handleModalOpenChange(nextOpen: boolean) {
@@ -107,7 +111,5 @@ export function Modal() {
     </Dialog>
   );
 }
-
-
 
 

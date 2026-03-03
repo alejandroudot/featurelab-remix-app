@@ -1,5 +1,5 @@
 import type { AuthRepository } from '~/core/auth/auth.port';
-import type { AccountActionData } from '../types';
+import type { AccountActionData } from '~/features/account/types';
 import { handlePasswordUpdate } from './action/handlers/password';
 import { handleProfileUpdate } from './action/handlers/profile';
 

@@ -1,12 +1,11 @@
 import { taskUpdateSchema } from '~/core/task/task.schema';
 import { cleanupRichTextTempImagesNotInPersistedHtml } from '~/infra/files/rich-text-images.storage';
 import { jsonTaskError, toTaskFormError, zodErrorToActionData } from '../../errors';
-import { getSafeRedirectTo, getTaskFormValues } from '../../utils';
+import { getTaskFormValues } from '../../utils';
 import { checklistEqual, labelsEqual } from '../shared/compare';
 import { getTaskOrNull } from '../shared/helpers';
 import { createMentionActivities } from '../shared/mentions';
 import type { TaskIntentHandler } from '../shared/types';
-import { redirect } from 'react-router';
 
 export const handleUpdate: TaskIntentHandler = async (input) => {
   const { formData } = input;
@@ -188,7 +187,7 @@ export const handleUpdate: TaskIntentHandler = async (input) => {
     }
     await Promise.all(activityWrites);
 
-    return redirect(getSafeRedirectTo(formData, '/'));
+    return Response.json({ success: true });
   } catch (err) {
     return jsonTaskError({
       intent: 'update',

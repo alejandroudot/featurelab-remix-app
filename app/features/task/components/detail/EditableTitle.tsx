@@ -34,7 +34,7 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
         title: draft,
         redirectTo,
       },
-      { method: 'post' },
+      { method: 'post', action: '/api/tasks' },
     );
     setIsEditing(false);
   }, [closeSignal]);
@@ -66,6 +66,7 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
 
   return (
     <fetcher.Form
+      action="/api/tasks"
       method="post"
       className="space-y-2"
       onSubmit={() => {

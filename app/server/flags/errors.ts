@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { FlagActionData } from '../types';
+import type { FlagActionData } from '~/features/flags/types';
 import { getCreateFlagFormValues } from './utils';
 
 // Convierte un ZodError al contrato de error que consume la UI de flags.

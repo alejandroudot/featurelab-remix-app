@@ -1,17 +1,10 @@
 import { useShallow } from 'zustand/react/shallow';
 import { ContentDialog } from '~/ui/dialogs/ContentDialog';
 import { CreateTask } from '~/features/task/components/create/CreateTask';
-import type { TaskActionData } from '~/features/task/types';
 import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
 import { useWorkspaceDataStore } from '~/features/project/store/data.store';
 
-export function TaskCreateDialog({
-  actionData,
-  isSubmitting,
-}: {
-  actionData: TaskActionData;
-  isSubmitting: boolean;
-}) {
+export function TaskCreateDialog() {
   const { isCreateTaskOpen, setCreateTaskOpen } = useWorkspaceUiStore(
     useShallow((state) => ({
       isCreateTaskOpen: state.isCreateTaskOpen,
@@ -33,7 +26,7 @@ export function TaskCreateDialog({
       description="Crea una task sin perder contexto del board."
       contentClassName="max-h-[90vh] sm:max-w-3xl"
     >
-      <CreateTask actionData={actionData} isSubmitting={isSubmitting} mentionCandidates={mentionCandidates} className="space-y-3" />
+      <CreateTask mentionCandidates={mentionCandidates} className="space-y-3" />
     </ContentDialog>
   );
 }
