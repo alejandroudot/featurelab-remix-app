@@ -1,9 +1,9 @@
 import type { useFetcher } from 'react-router';
 import type { TaskComment } from '~/core/task/task.types';
 import { RichTextEditor, RichTextViewer } from '~/ui/editors/rich-text/RichTextEditor';
-import { ActionFeedbackText } from '~/ui/forms/action-feedback';
-import type { TaskActionData } from '../../../types';
-import { getMeaningfulTextFromHtml } from './utils';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
+import type { TaskActionData } from '../../../../types';
+import { getMeaningfulTextFromHtml } from '../utils';
 
 type TaskCommentFetcher = ReturnType<typeof useFetcher<TaskActionData>>;
 
@@ -164,6 +164,5 @@ export function CommentsList({
     </ul>
   );
 }
-
 
 

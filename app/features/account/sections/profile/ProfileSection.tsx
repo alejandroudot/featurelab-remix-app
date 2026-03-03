@@ -1,6 +1,6 @@
 import { SectionCard } from '../../shared/SectionCard';
 import { useFetcher } from 'react-router';
-import { ActionFeedbackText } from '~/ui/forms/action-feedback';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import type { AccountActionData } from '../../types';
 import type { UserRole } from '~/core/auth/auth.types';
 import { Avatar, AvatarFallback } from '~/ui/primitives/avatar';

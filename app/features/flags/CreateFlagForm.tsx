@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useFetcher } from 'react-router';
-import { ActionFeedbackText } from '~/ui/forms/action-feedback';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import type { FlagActionData } from './types';
 
 export function CreateFlagForm() {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { Task } from '~/core/task/task.types';
 import type { TaskActionData, TaskAssigneeOption } from '../../../types';
-import { ActionFeedbackText } from '~/ui/forms/action-feedback';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import { Checklist } from './Checklist';
 import { QuickFields } from './QuickFields';
 import { DeleteSection } from './DeleteSection';

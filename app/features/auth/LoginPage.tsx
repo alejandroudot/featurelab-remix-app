@@ -1,5 +1,5 @@
 import { Link, useFetcher } from 'react-router';
-import { ActionFeedbackText } from '~/ui/forms/action-feedback';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import type { AuthActionData } from './types';
 
 export function LoginPage({

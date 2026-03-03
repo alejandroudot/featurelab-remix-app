@@ -1,7 +1,7 @@
 import type { useFetcher } from 'react-router';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
-import { ActionFeedbackText } from '~/ui/forms/action-feedback';
-import type { TaskActionData } from '../../../types';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
+import type { TaskActionData } from '../../../../types';
 
 type TaskCommentFetcher = ReturnType<typeof useFetcher<TaskActionData>>;
 

@@ -3,7 +3,7 @@ import { useFetcher } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
 import type { TaskActionData } from '../../types';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
-import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/action-feedback';
+import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/feedback/action-feedback';
 import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
 import { useWorkspaceDataStore } from '~/features/project/store/data.store';
 import { FormFooter } from './FormFooter';

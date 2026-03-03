@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { TaskComment } from '~/core/task/task.types';
-import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/action-feedback';
+import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/feedback/action-feedback';
 import type { TaskActionData } from '../../../types';
-import { CreateForm } from './CreateForm';
-import { CommentsList } from './List';
+import { CreateForm } from './components/CreateForm';
+import { CommentsList } from './components/List';
 import { getMeaningfulTextFromHtml } from './utils';
 
 type CommentsProps = {

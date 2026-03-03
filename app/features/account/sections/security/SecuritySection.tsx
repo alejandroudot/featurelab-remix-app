@@ -5,8 +5,8 @@ import { useFetcher } from 'react-router';
 import { getPasswordChecks, isPasswordPolicySatisfied } from '~/core/auth/password-policy';
 import {
   ActionFeedbackText,
-} from '~/ui/forms/action-feedback';
-import { PasswordPolicyChecklist } from '~/ui/forms/password-policy-checklist';
+} from '~/ui/forms/feedback/action-feedback';
+import { PasswordChecklist } from '~/ui/forms/security/password-checklist';
 import { useFieldMatchOnBlur } from '~/ui/hooks/use-field-match-on-blur';
 import type { AccountActionData } from '../../types';
 
@@ -66,7 +66,7 @@ export function SecuritySection({ asCard = true }: SecuritySectionProps) {
             onBlur={passwordMatch.markTouched}
           />
           <ActionFeedbackText actionData={actionData} intent="password" fieldKey="newPassword" />
-          <PasswordPolicyChecklist checks={passwordChecks} />
+          <PasswordChecklist checks={passwordChecks} />
         </div>
 
         <div className="flex flex-col gap-1">

@@ -11,7 +11,7 @@ type PasswordPolicyChecklistProps = {
   invalidClassName?: string;
 };
 
-export function PasswordPolicyChecklist({
+export function PasswordChecklist({
   checks,
   className = 'space-y-1 text-xs',
   itemClassName,

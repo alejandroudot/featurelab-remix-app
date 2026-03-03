@@ -1,12 +1,8 @@
-import type { useFetcher } from 'react-router';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
 import type { TaskActionData } from '../../../../types';
 import { FormFooter } from './FormFooter';
 
-type TaskContentFetcher = ReturnType<typeof useFetcher<TaskActionData>>;
-
-type EditFormProps = {
-  fetcher: TaskContentFetcher;
+type DescriptionEditorProps = {
   taskId: string;
   redirectTo: string;
   draftDescription: string;
@@ -15,16 +11,15 @@ type EditFormProps = {
   hasInlineBase64Images: boolean;
   editorImageError: string | null;
   updateErrorActionData: TaskActionData;
+  isSubmitting: boolean;
   onDraftDescriptionChange: (value: string) => void;
   onPendingUploadsChange: (hasPendingUploads: boolean) => void;
-  onEditorImageErrorChange: (value: string | null) => void;
+  onEditorImageErrorChange: (message: string | null) => void;
   onImageUpload: (file: File) => Promise<string>;
-  onSubmit: (event: { preventDefault: () => void }) => void;
   onCancel: () => void;
 };
 
-export function EditForm({
-  fetcher,
+export function DescriptionEditor({
   taskId,
   redirectTo,
   draftDescription,
@@ -33,15 +28,15 @@ export function EditForm({
   hasInlineBase64Images,
   editorImageError,
   updateErrorActionData,
+  isSubmitting,
   onDraftDescriptionChange,
   onPendingUploadsChange,
   onEditorImageErrorChange,
   onImageUpload,
-  onSubmit,
   onCancel,
-}: EditFormProps) {
+}: DescriptionEditorProps) {
   return (
-    <fetcher.Form action="/api/tasks/update" method="post" className="space-y-2" onSubmit={onSubmit}>
+    <>
       <input type="hidden" name="id" value={taskId} />
       <input type="hidden" name="redirectTo" value={redirectTo} />
       <RichTextEditor
@@ -59,9 +54,9 @@ export function EditForm({
         hasInlineBase64Images={hasInlineBase64Images}
         editorImageError={editorImageError}
         updateErrorActionData={updateErrorActionData}
-        isSubmitting={fetcher.state === 'submitting'}
+        isSubmitting={isSubmitting}
         onCancel={onCancel}
       />
-    </fetcher.Form>
+    </>
   );
 }

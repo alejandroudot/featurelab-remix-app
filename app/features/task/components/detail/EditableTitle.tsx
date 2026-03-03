@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useFetcher, useLocation } from 'react-router';
 import type { TaskActionData } from '../../types';
-import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/action-feedback';
+import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/feedback/action-feedback';
 
 type EditableTitleProps = {
   taskId: string;

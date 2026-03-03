@@ -1,5 +1,5 @@
 import type { TaskActionData } from '../../../../types';
-import { ActionFeedbackText } from '~/ui/forms/action-feedback';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 
 type FormFooterProps = {
   hasPendingEditorUploads: boolean;

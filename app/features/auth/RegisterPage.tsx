@@ -1,6 +1,6 @@
 import { Link, useFetcher } from 'react-router';
-import { ActionFeedbackText } from '~/ui/forms/action-feedback';
-import { PasswordPolicyChecklist } from '~/ui/forms/password-policy-checklist';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
+import { PasswordChecklist } from '~/ui/forms/security/password-checklist';
 import { PasswordField } from '~/ui/primitives/password-field';
 import { TimezoneSelect } from '~/ui/primitives/timezone-select';
 import { useRegisterFormState } from './hooks/useRegisterFormState';
@@ -97,7 +97,7 @@ export function RegisterPage() {
             onBlur={passwordMatch.markTouched}
           />
           <ActionFeedbackText actionData={actionData} fieldKey="password" />
-          <PasswordPolicyChecklist checks={passwordChecks} />
+          <PasswordChecklist checks={passwordChecks} />
         </div>
 
         <div className="space-y-1">
