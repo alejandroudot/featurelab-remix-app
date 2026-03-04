@@ -1,8 +1,9 @@
-import { useLocation, useNavigate, useSubmit } from 'react-router';
+import { useLocation } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
 import { DeleteDialog as DeleteDialogBase } from '~/ui/dialogs/delete-dialog';
 import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
 import { useWorkspaceDataStore } from '~/features/project/store/data.store';
+import { useDeleteProjectMutation } from '~/features/project/client/mutation';
 
 export function DeleteDialog({
   open,
@@ -13,8 +14,7 @@ export function DeleteDialog({
   onOpenChange: (open: boolean) => void;
   projectToDeleteId: string | null;
 }) {
-  const submit = useSubmit();
-  const navigate = useNavigate();
+  const { mutateAsync: deleteProject } = useDeleteProjectMutation();
   const location = useLocation();
   const { activeProjectId } = useWorkspaceUiStore(
     useShallow((state) => ({
@@ -28,14 +28,14 @@ export function DeleteDialog({
   );
   const projectToDelete = projects.find((project) => project.id === projectToDeleteId) ?? null;
 
-  function handleDeleteProject() {
+  async function handleDeleteProject() {
     if (!projectToDeleteId) return;
-    if (activeProjectId === projectToDeleteId) navigate('/', { replace: true });
-    const formData = new FormData();
-    formData.set('id', projectToDeleteId);
-    formData.set('redirectTo', `${location.pathname}${location.search}`);
-    submit(formData, { method: 'post', action: '/api/projects/delete' });
+    const deletingActiveProject = activeProjectId === projectToDeleteId;
+    const data = await deleteProject({ id: projectToDeleteId });
+    if (!data || !data.success) return;
     onOpenChange(false);
+    const nextPath = deletingActiveProject ? '/' : `${location.pathname}${location.search}`;
+    window.location.assign(nextPath);
   }
 
   return (

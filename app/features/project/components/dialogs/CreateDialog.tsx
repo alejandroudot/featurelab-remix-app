@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { useLocation, useSubmit } from 'react-router';
+import { useLocation } from 'react-router';
 import { ContentDialog } from '~/ui/dialogs/ContentDialog';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
+import { useCreateProjectMutation } from '~/features/project/client/mutation';
 
 export function CreateDialog({
   open,
@@ -9,7 +11,7 @@ export function CreateDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const submit = useSubmit();
+  const { data: actionData, isPending: isSubmitting, mutateAsync: createProject, reset } = useCreateProjectMutation();
   const location = useLocation();
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectImageUrl, setNewProjectImageUrl] = useState<string | null>(null);
@@ -32,22 +34,26 @@ export function CreateDialog({
     reader.readAsDataURL(file);
   }
 
-  function handleCreateProject(event: { preventDefault: () => void }) {
+  async function handleCreateProject(event: { preventDefault: () => void }) {
     event.preventDefault();
     const name = newProjectName.trim();
     if (!name) return;
-    const formData = new FormData();
-    formData.set('name', name);
-    if (newProjectImageUrl) formData.set('imageUrl', newProjectImageUrl);
-    formData.set('redirectTo', `${location.pathname}${location.search}`);
-    submit(formData, { method: 'post', action: '/api/projects/create' });
+    const data = await createProject({
+      name,
+      imageUrl: newProjectImageUrl,
+    });
+    if (!data || !data.success) return;
     resetForm();
     onOpenChange(false);
+    window.location.assign(`${location.pathname}${location.search}`);
   }
 
   function handleOpenChange(open: boolean) {
     onOpenChange(open);
-    if (!open) resetForm();
+    if (!open) {
+      resetForm();
+      reset();
+    }
   }
 
   return (
@@ -59,6 +65,8 @@ export function CreateDialog({
       contentClassName="sm:max-w-md"
     >
       <form className="space-y-3" onSubmit={handleCreateProject}>
+        <ActionFeedbackText actionData={actionData} showFormError />
+
         <div className="space-y-1">
           <label htmlFor="project-name" className="text-sm font-medium">
             Nombre
@@ -70,6 +78,7 @@ export function CreateDialog({
             placeholder="Ej: Product Core"
             className="h-9 w-full rounded-md border bg-background px-3 text-sm outline-none ring-offset-background transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
           />
+          <ActionFeedbackText actionData={actionData} fieldKey="name" />
         </div>
 
         <div className="space-y-2">
@@ -107,10 +116,10 @@ export function CreateDialog({
           </button>
           <button
             type="submit"
-            disabled={!newProjectName.trim()}
+            disabled={isSubmitting || !newProjectName.trim()}
             className="rounded bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900"
           >
-            Crear proyecto
+            {isSubmitting ? 'Creando...' : 'Crear proyecto'}
           </button>
         </div>
       </form>
