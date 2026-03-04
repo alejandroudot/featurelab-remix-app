@@ -48,123 +48,98 @@ export function Comments({
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const closeSignalRef = useRef(closeSignal);
-
-  const createCommentErrorActionData =
-    createActionData && createActionData.success === false ? createActionData : undefined;
-  const updateCommentErrorActionData =
-    updateActionData && updateActionData.success === false ? updateActionData : undefined;
-  const deleteCommentErrorActionData =
-    deleteActionData && deleteActionData.success === false ? deleteActionData : undefined;
+  const createErrorCommentBody =
+    createActionData && createActionData.success === false ? createActionData.values?.commentBody : undefined;
 
   useEffect(() => {
-    if (!createCommentErrorActionData?.values?.commentBody) return;
-    setCreateBody(createCommentErrorActionData.values.commentBody);
-  }, [createCommentErrorActionData?.values?.commentBody, taskId]);
+    if (!createErrorCommentBody) return;
+    setCreateBody(createErrorCommentBody);
+  }, [createErrorCommentBody, taskId]);
 
-  useEffect(() => {
-    if (closeSignal === closeSignalRef.current) return;
-    closeSignalRef.current = closeSignal;
+  function clearCreateDraft() {
+    setCreateBody('');
+    setIsCreateOpen(false);
+    resetCreate();
+  }
 
-    if (isCreatePending || isUpdatePending || isDeletePending) return;
+  function clearEditingDraft() {
+    setEditingCommentId(null);
+    setEditingBody('');
+    resetUpdate();
+  }
 
-    void (async () => {
-      if (editingCommentId) {
-        const currentComment = comments.find((comment) => comment.id === editingCommentId);
-        const currentBody = currentComment?.body ?? '';
-        const nextMeaningfulBody = getMeaningfulTextFromHtml(editingBody);
-
-        if (!nextMeaningfulBody) {
-          const result = await deleteComment({ commentId: editingCommentId });
-          if (result && result.success) {
-            revalidator.revalidate();
-          }
-        } else if (editingBody !== currentBody) {
-          const result = await updateComment({
-            commentId: editingCommentId,
-            commentBody: editingBody,
-          });
-          if (result && result.success) {
-            revalidator.revalidate();
-          }
-        }
-
-        setEditingCommentId(null);
-        setEditingBody('');
-      }
-
-      if (isCreateOpen) {
-        if (getMeaningfulTextFromHtml(createBody)) {
-          const result = await createComment({
-            id: taskId,
-            commentBody: createBody,
-          });
-          if (result && result.success) {
-            revalidator.revalidate();
-          }
-        }
-        setIsCreateOpen(false);
-        setCreateBody('');
-      }
-    })();
-  }, [
-    closeSignal,
-    comments,
-    createBody,
-    createComment,
-    deleteComment,
-    editingBody,
-    editingCommentId,
-    isCreateOpen,
-    isCreatePending,
-    isDeletePending,
-    isUpdatePending,
-    revalidator,
-    taskId,
-    updateComment,
-  ]);
-
-  async function handleCreateSubmit(event: { preventDefault: () => void }) {
-    event.preventDefault();
-
+  async function persistCreateDraft(closeWhenEmpty: boolean) {
     const meaningfulBody = getMeaningfulTextFromHtml(createBody);
-    if (!meaningfulBody) return;
+    if (!meaningfulBody) {
+      if (closeWhenEmpty) clearCreateDraft();
+      return false;
+    }
 
     const result = await createComment({
       id: taskId,
       commentBody: createBody,
     });
+    if (!result || !result.success) return false;
 
-    if (!result || !result.success) return;
-    setCreateBody('');
-    setIsCreateOpen(false);
-    resetCreate();
+    clearCreateDraft();
     revalidator.revalidate();
+    return true;
+  }
+
+  async function persistEditingDraft(commentId: string, clearOnFinish: boolean) {
+    const currentComment = comments.find((comment) => comment.id === commentId);
+    const currentBody = currentComment?.body ?? '';
+    const nextMeaningfulBody = getMeaningfulTextFromHtml(editingBody);
+    let success = false;
+
+    if (!nextMeaningfulBody) {
+      const result = await deleteComment({ commentId });
+      success = Boolean(result && result.success);
+    } else if (editingBody !== currentBody) {
+      const result = await updateComment({ commentId, commentBody: editingBody });
+      success = Boolean(result && result.success);
+    } else {
+      success = true;
+    }
+
+    if (success) revalidator.revalidate();
+    if (clearOnFinish || success) clearEditingDraft();
+    return success;
+  }
+
+  useEffect(() => {
+    if (closeSignal === closeSignalRef.current) return;
+    closeSignalRef.current = closeSignal;
+    if (isCreatePending || isUpdatePending || isDeletePending) return;
+
+    void (async () => {
+      if (editingCommentId) {
+        await persistEditingDraft(editingCommentId, true);
+      }
+      if (isCreateOpen) {
+        await persistCreateDraft(true);
+      }
+    })();
+  }, [
+    closeSignal,
+    editingCommentId,
+    isCreateOpen,
+    isCreatePending,
+    isDeletePending,
+    isUpdatePending,
+    comments,
+    editingBody,
+    createBody,
+  ]);
+
+  async function handleCreateSubmit(event: { preventDefault: () => void }) {
+    event.preventDefault();
+    await persistCreateDraft(false);
   }
 
   async function handleUpdateSubmit(commentId: string, event: { preventDefault: () => void }) {
     event.preventDefault();
-    const nextMeaningfulBody = getMeaningfulTextFromHtml(editingBody);
-
-    if (!nextMeaningfulBody) {
-      const deleteResult = await deleteComment({ commentId });
-      if (!deleteResult || !deleteResult.success) return;
-      setEditingCommentId(null);
-      setEditingBody('');
-      resetUpdate();
-      revalidator.revalidate();
-      return;
-    }
-
-    const updateResult = await updateComment({
-      commentId,
-      commentBody: editingBody,
-    });
-
-    if (!updateResult || !updateResult.success) return;
-    setEditingCommentId(null);
-    setEditingBody('');
-    resetUpdate();
-    revalidator.revalidate();
+    await persistEditingDraft(commentId, false);
   }
 
   async function handleDeleteComment(commentId: string) {
@@ -181,14 +156,11 @@ export function Comments({
         <button
           type="button"
           onClick={() => {
-            setIsCreateOpen((prev) => {
-              const next = !prev;
-              if (!next) {
-                setCreateBody('');
-                resetCreate();
-              }
-              return next;
-            });
+            if (isCreateOpen) {
+              clearCreateDraft();
+              return;
+            }
+            setIsCreateOpen(true);
           }}
           className="rounded border px-2 py-1 text-xs font-medium"
         >
@@ -200,7 +172,7 @@ export function Comments({
         <CreateForm
           createBody={createBody}
           mentionCandidates={mentionCandidates}
-          createErrorActionData={createCommentErrorActionData}
+          createActionData={createActionData}
           isSubmitting={isCreatePending}
           onCreateBodyChange={setCreateBody}
           onSubmit={handleCreateSubmit}
@@ -213,15 +185,12 @@ export function Comments({
         editingCommentId={editingCommentId}
         editingBody={editingBody}
         mentionCandidates={mentionCandidates}
-        updateErrorActionData={updateCommentErrorActionData}
+        updateActionData={updateActionData}
         isSubmittingUpdate={isUpdatePending}
         isSubmittingDelete={isDeletePending}
         onEditingCommentIdChange={(commentId) => {
           setEditingCommentId(commentId);
-          if (!commentId) {
-            setEditingBody('');
-            resetUpdate();
-          }
+          if (!commentId) clearEditingDraft();
         }}
         onEditingBodyChange={setEditingBody}
         onSubmitUpdate={handleUpdateSubmit}
@@ -229,7 +198,7 @@ export function Comments({
       />
 
       <div className="mt-2">
-        <ActionFeedbackText actionData={deleteCommentErrorActionData} showFormError />
+        <ActionFeedbackText actionData={deleteActionData} showFormError />
       </div>
     </div>
   );

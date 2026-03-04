@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
 import type { TaskAssigneeOption, ProjectViewState } from '~/features/task/types';
@@ -6,6 +6,7 @@ import type { Task, TaskActivity, TaskComment } from '~/core/task/task.types';
 import type { Project } from '~/core/project/project.types';
 import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
 import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
+import { useProjectDialogStore } from '~/features/store/project-dialog.store';
 import { CreateDialog } from './components/dialogs/CreateDialog';
 import { DeleteDialog } from './components/dialogs/DeleteDialog';
 import { TaskCreateDialog } from './components/dialogs/TaskCreateDialog';
@@ -33,9 +34,8 @@ export function ProjectWorkspace({
 }) {
   const [searchParams] = useSearchParams();
   const initialActiveProjectId = searchParams.get('project');
-  const [isCreateProjectOpen, setCreateProjectOpen] = useState(false);
-  const [projectToDeleteId, setProjectToDeleteId] = useState<string | null>(null);
-  const [isProjectDeleteOpen, setProjectDeleteOpen] = useState(false);
+  const setCreateProjectOpen = useProjectDialogStore((state) => state.setCreateProjectOpen);
+  const setProjectDeleteOpen = useProjectDialogStore((state) => state.setProjectDeleteOpen);
   const setWorkspaceData = useWorkspaceDataStore((state) => state.setWorkspaceData);
   const { hydratedUserId, hydratedProjects } = useWorkspaceDataStore(
     useShallow((state) => ({
@@ -49,6 +49,11 @@ export function ProjectWorkspace({
     })),
   );
   const uiActiveProjectId = useWorkspaceUiStore((state) => state.activeProjectId);
+
+  useEffect(() => {
+    setCreateProjectOpen(false);
+    setProjectDeleteOpen(false);
+  }, [setCreateProjectOpen, setProjectDeleteOpen]);
 
   useEffect(() => {
     setWorkspaceData({
@@ -70,24 +75,8 @@ export function ProjectWorkspace({
     });
   }, [initialActiveProjectId, viewState.view, viewState.order, viewState.scope, hydrateViewState]);
 
-  const openCreateProjectDialog = useCallback(() => {
-    setCreateProjectOpen(true);
-  }, []);
-
-  const openProjectDeleteDialog = useCallback((projectId: string) => {
-    setProjectDeleteOpen(true);
-    setProjectToDeleteId(projectId);
-  }, []);
-
-  const handleDeleteProjectOpenChange = useCallback((open: boolean) => {
-    setProjectDeleteOpen(open);
-    if (!open) setProjectToDeleteId(null);
-  }, []);
-
   const projectsToRender = hydratedUserId.length > 0 ? hydratedProjects : projects;
   const resolvedProjectId = uiActiveProjectId ?? initialActiveProjectId;
-  const activeProject = projectsToRender.find((project) => project.id === resolvedProjectId) ?? null;
-  const projectName = activeProject ? activeProject.name : projectsToRender[0]?.name ?? 'Sin proyecto';
   const shouldRenderEntryState = projectsToRender.length === 0 || !resolvedProjectId;
 
   return (
@@ -96,27 +85,20 @@ export function ProjectWorkspace({
         <EntryState
           initialProjects={projects}
           initialActiveProjectId={initialActiveProjectId}
-          onOpenCreateProject={openCreateProjectDialog}
-          onOpenDeleteProject={openProjectDeleteDialog}
         />
       ) : (
         <main className="container mx-auto space-y-6 p-4">
           <Toolbar
+            initialProjects={projects}
             initialViewState={viewState}
             initialActiveProjectId={initialActiveProjectId}
-            onOpenDeleteProject={openProjectDeleteDialog}
-            projectName={projectName}
           />
           <TasksView />
           <Modal />
         </main>
       )}
-      <CreateDialog open={isCreateProjectOpen} onOpenChange={setCreateProjectOpen} />
-      <DeleteDialog
-        open={isProjectDeleteOpen}
-        onOpenChange={handleDeleteProjectOpenChange}
-        projectToDeleteId={projectToDeleteId}
-      />
+      <CreateDialog />
+      <DeleteDialog />
       <TaskCreateDialog />
     </>
   );

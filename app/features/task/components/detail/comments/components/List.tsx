@@ -9,7 +9,7 @@ type CommentsListProps = {
   editingCommentId: string | null;
   editingBody: string;
   mentionCandidates: string[];
-  updateErrorActionData: TaskActionData;
+  updateActionData: TaskActionData;
   isSubmittingUpdate: boolean;
   isSubmittingDelete: boolean;
   onEditingCommentIdChange: (commentId: string | null) => void;
@@ -50,7 +50,7 @@ export function CommentsList({
   editingCommentId,
   editingBody,
   mentionCandidates,
-  updateErrorActionData,
+  updateActionData,
   isSubmittingUpdate,
   isSubmittingDelete,
   onEditingCommentIdChange,
@@ -58,6 +58,9 @@ export function CommentsList({
   onSubmitUpdate,
   onDeleteComment,
 }: CommentsListProps) {
+  const updateErrorActionData =
+    updateActionData && updateActionData.success === false ? updateActionData : undefined;
+
   function handleCancelEdit() {
     onEditingCommentIdChange(null);
     onEditingBodyChange('');

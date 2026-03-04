@@ -8,7 +8,7 @@ type DescriptionEditorProps = {
   hasPendingEditorUploads: boolean;
   hasInlineBase64Images: boolean;
   editorImageError: string | null;
-  updateErrorActionData: TaskActionData;
+  actionData: TaskActionData;
   isSubmitting: boolean;
   onDraftDescriptionChange: (value: string) => void;
   onPendingUploadsChange: (hasPendingUploads: boolean) => void;
@@ -23,7 +23,7 @@ export function DescriptionEditor({
   hasPendingEditorUploads,
   hasInlineBase64Images,
   editorImageError,
-  updateErrorActionData,
+  actionData,
   isSubmitting,
   onDraftDescriptionChange,
   onPendingUploadsChange,
@@ -47,7 +47,7 @@ export function DescriptionEditor({
         hasPendingEditorUploads={hasPendingEditorUploads}
         hasInlineBase64Images={hasInlineBase64Images}
         editorImageError={editorImageError}
-        updateErrorActionData={updateErrorActionData}
+        actionData={actionData}
         isSubmitting={isSubmitting}
         onCancel={onCancel}
       />

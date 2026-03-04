@@ -1,25 +1,20 @@
 import { AlertDialog } from 'radix-ui';
-import { useSubmit } from 'react-router';
 
 type DeleteDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  id: string;
   name: string;
-  onConfirm?: () => void;
+  onConfirm: () => void;
   description?: string;
 };
 
 export function DeleteDialog({
   open,
   onOpenChange,
-  id,
   name,
   onConfirm,
   description = 'Esta accion es permanente. Queres continuar?',
 }: DeleteDialogProps) {
-  const submit = useSubmit();
-
   return (
     <AlertDialog.Root open={open} onOpenChange={onOpenChange}>
       <AlertDialog.Portal>
@@ -44,16 +39,7 @@ export function DeleteDialog({
                 type="button"
                 className="rounded bg-red-600 px-3 py-2 text-sm text-white disabled:opacity-60"
                 onClick={() => {
-                  if (onConfirm) {
-                    onConfirm();
-                    onOpenChange(false);
-                    return;
-                  }
-
-                  const fd = new FormData();
-                  fd.append('intent', 'delete');
-                  fd.append('id', id);
-                  submit(fd, { method: 'post' });
+                  onConfirm();
                   onOpenChange(false);
                 }}
               >

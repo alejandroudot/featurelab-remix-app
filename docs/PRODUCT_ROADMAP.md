@@ -366,8 +366,8 @@ Tecnologias a usar: TanStack Query + Zustand.
 - [ ] Prefetch de vistas clave
 - [ ] Optimistic updates con rollback confiable
 - [ ] Estrategia de adopcion de TanStack Query (CTO-level)
-  - [ ] `Query` para lecturas cliente transversales (primera fase: `/api/notifications` en header)
-  - [ ] Migrar mutaciones criticas a API dedicada por dominio (sin dependencia de route actions UI)
+  - [x] `Query` para lecturas cliente transversales (primera fase: `/api/notifications` en header)
+  - [x] Migrar mutaciones criticas a API dedicada por dominio (sin dependencia de route actions UI)
   - [ ] Evitar doble fuente de verdad por flujo (no mezclar para el mismo caso `loader` y `query` sin contrato)
   - [ ] Expandir `Query` por slices completos (no migracion parcial caotica)
   - [ ] Documentar query keys por dominio (`notifications`, `tasks`, `projects`, `flags`, `auth`, `account`) y sus reglas de invalidacion
@@ -380,9 +380,9 @@ Tecnologias a usar: TanStack Query + Zustand.
   - [ ] Loader/Action queda como backbone para mutaciones y permisos (`auth`, `tasks`, `flags`, `team`)
   - [ ] Regla: no duplicar fuente de verdad del mismo flujo entre Query y loader/action
 - [ ] Fase 1 Query (implementacion concreta)
-  - [ ] `notificationsQuery` con `refetchInterval`, estados de carga/error y cache por usuario
-  - [ ] Header consume `useQuery` (sin `fetch` manual en `useEffect`)
-  - [ ] Definir TTL/staleTime y politica de reintento para notificaciones
+  - [x] `notificationsQuery` con `refetchInterval`, estados de carga/error y cache por usuario
+  - [x] Header consume `useQuery` (sin `fetch` manual en `useEffect`)
+  - [x] Definir TTL/staleTime y politica de reintento para notificaciones
 - [ ] Fase 2 Query (opcional, segun valor real)
   - [ ] Evaluar feed de actividad del Hub con `useQuery`
   - [ ] Solo migrar lecturas de `tasks` si mejora UX/costo de mantenimiento frente a loader actual
@@ -396,8 +396,8 @@ Tecnologias a usar: TanStack Query + Zustand.
     - [ ] Estados por bloque (`loading/error/success`) independientes por lista
 - [ ] Store global de UI/preferencias/seleccion masiva
 - [ ] Store de preferencias reales (`defaultTasksView`, `defaultTasksScope`)
-- [ ] Estado global de task seleccionada/modal abierto
-  - [ ] Migrar apertura de modal de task (hoy por props) a store global
+- [~] Estado global de task seleccionada/modal abierto
+  - [x] Migrar apertura de modal de task (hoy por props) a store global
   - [ ] Permitir abrir el mismo modal desde card, notificacion y sidebar sin acople entre componentes
 - [ ] Estado de notificaciones leidas/no leidas en cliente (Zustand)
   - [ ] Store `notifications`: `items`, `lastSeenAtByUser`, `unreadCount`, `selectedNotificationId`
@@ -409,15 +409,15 @@ Tecnologias a usar: TanStack Query + Zustand.
   - [ ] Fallback sin `taskId` a vista de actividad/projects
 - [ ] Cola local de acciones pendientes con reintento manual
 - [ ] Sincronia URL <-> store <-> query keys
-- [ ] API por accion (proxima ola para compatibilidad total con Query)
-  - [ ] Fase A: endpoints API para todos los dominios (`auth`, `account`, `flags`, `projects`, `tasks`)
-  - [ ] Fase B: reemplazar `intent` por rutas explicitas por mutacion
-    - [ ] Tasks: `POST /api/tasks/create|update|delete|reorder-column`
-    - [ ] Task comments: `POST /api/task-comments/create|update|delete`
-    - [ ] Projects: `POST /api/projects/create|delete`
-    - [ ] Flags: `POST /api/flags/create|toggle|update-state|delete`
-    - [ ] Auth/Account: endpoints de accion por flujo
-  - [ ] Fase C: migrar mutaciones de todos los dominios a `useMutation` (React Query full)
+- [~] API por accion (proxima ola para compatibilidad total con Query)
+  - [x] Fase A: endpoints API para todos los dominios (`auth`, `account`, `flags`, `projects`, `tasks`)
+  - [x] Fase B: reemplazar `intent` por rutas explicitas por mutacion
+    - [x] Tasks: `POST /api/tasks/create|update|delete|reorder-column`
+    - [x] Task comments: `POST /api/task-comments/create|update|delete`
+    - [x] Projects: `POST /api/projects/create|delete`
+    - [x] Flags: `POST /api/flags/create|toggle|update-state|delete`
+    - [x] Auth/Account: endpoints de accion por flujo
+  - [x] Fase C: migrar mutaciones de todos los dominios a `useMutation` (React Query full)
 
 Criterio de cierre:
 

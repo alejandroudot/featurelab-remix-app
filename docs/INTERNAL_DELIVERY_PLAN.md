@@ -368,30 +368,30 @@ Fortalece hoy: refactor estructural, mantenibilidad, disciplina de naming y redu
 - [x] Addendum refactor (actualizacion 2026-03-03, ligado al mismo bloque tecnico)
   - [x] Migrar toda la logica server desde `features/*/server/*` a `app/server/*` (`account`, `auth`, `flags`, `task`)
   - [x] Actualizar wiring de rutas para consumir `~/server/*` y mantener `routes/*` como orquestadores
-  - [x] Crear y registrar endpoints API para workspace mutations (`/api/projects`, `/api/tasks`)
+  - [x] Crear y registrar endpoints API por accion para workspace mutations (`/api/projects/*`, `/api/tasks/*`, `/api/task-comments/*`)
   - [x] Remover redirects legacy en flujo de tasks API (responses JSON en modo API/fetcher)
   - [x] Eliminar loop de polling en notificaciones del header
   - [x] Simplificar `CreateTask` (sin custom hook gigante, estado local acotado y errores server-first)
   - [ ] Pendiente de refactor (siguiente ola)
-    - [ ] Preparacion API por accion (scope total backend)
-      - [ ] Fase A: migrar todos los dominios a endpoints API dedicados (sin depender de route actions UI)
-        - [ ] Auth (`/api/auth/*`)
-        - [ ] Account (`/api/account/*`)
-        - [ ] Flags (`/api/flags/*`)
-        - [ ] Projects (`/api/projects/*`)
-        - [ ] Tasks + Comments (`/api/tasks/*`, `/api/task-comments/*`)
-      - [ ] Fase B: reemplazar `intent` por rutas explicitas por mutacion
-        - [ ] Tasks: `POST /api/tasks/create|update|delete|reorder-column`
-        - [ ] Task comments: `POST /api/task-comments/create|update|delete`
-        - [ ] Projects: `POST /api/projects/create|delete`
-        - [ ] Flags: `POST /api/flags/create|toggle|update-state|delete`
-        - [ ] Auth/Account: endpoints de accion explicitos por flujo
-      - [ ] Fase C: migrar cliente a React Query full
+    - [~] Preparacion API por accion (scope total backend)
+      - [x] Fase A: migrar todos los dominios a endpoints API dedicados (sin depender de route actions UI)
+        - [x] Auth (`/api/auth/*`)
+        - [x] Account (`/api/account/*`)
+        - [x] Flags (`/api/flags/*`)
+        - [x] Projects (`/api/projects/*`)
+        - [x] Tasks + Comments (`/api/tasks/*`, `/api/task-comments/*`)
+      - [x] Fase B: reemplazar `intent` por rutas explicitas por mutacion
+        - [x] Tasks: `POST /api/tasks/create|update|delete|reorder-column`
+        - [x] Task comments: `POST /api/task-comments/create|update|delete`
+        - [x] Projects: `POST /api/projects/create|delete`
+        - [x] Flags: `POST /api/flags/create|toggle|update-state|delete`
+        - [x] Auth/Account: endpoints de accion explicitos por flujo
+      - [~] Fase C: migrar cliente a React Query full
         - [ ] `useQuery` para lecturas en todos los dominios
-        - [ ] `useMutation` para mutaciones en todos los dominios
-        - [ ] Invalidaciones por dominio y eliminacion de `fetcher/actionData` legacy donde aplique
+        - [x] `useMutation` para mutaciones en todos los dominios
+        - [~] Invalidaciones por dominio y eliminacion de `fetcher/actionData` legacy donde aplique
     - [ ] Reducir estado/orquestacion restante en `project` para seguir bajando prop drilling
-    - [ ] Homogeneizar el mismo patron server/API en los dominios restantes (`flags`, `account`, `auth`) donde aplique
+    - [x] Homogeneizar el mismo patron server/API en los dominios restantes (`flags`, `account`, `auth`) donde aplique
 
 ## ?? Dia 11 - Domingo 01/03/2026
 

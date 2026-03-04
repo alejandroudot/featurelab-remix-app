@@ -165,7 +165,6 @@ export function BoardCard({
       <DeleteDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        id={task.id}
         name="task"
         description={`Esta accion es permanente. Queres borrar "${task.title}"?`}
         onConfirm={() => {

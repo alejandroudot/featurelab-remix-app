@@ -28,7 +28,6 @@ export function DeleteSection({
       <DeleteDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        id={taskId}
         name="task"
         description={`Esta accion es permanente. Queres borrar "${taskTitle}"?`}
         onConfirm={() => {
@@ -39,5 +38,4 @@ export function DeleteSection({
     </>
   );
 }
-
 

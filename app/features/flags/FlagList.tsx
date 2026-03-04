@@ -135,7 +135,6 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
         onOpenChange={(open) => {
           if (!open) setDeleteTarget(null);
         }}
-        id={deleteTarget?.id ?? ''}
         name={deleteTarget?.label ?? 'flag'}
         onConfirm={() => {
           if (!deleteTarget?.id) return;

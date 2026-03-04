@@ -1,14 +1,21 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { Link } from 'react-router';
+import { useShallow } from 'zustand/react/shallow';
 import type { Project } from '~/core/project/project.types';
+import { useProjectDialogStore } from '~/features/store/project-dialog.store';
 
 type ProjectsListProps = {
   projects: Project[];
-  onOpenCreateProject: () => void;
-  onOpenDeleteProject: (projectId: string) => void;
 };
 
-export function ProjectsList({ projects, onOpenCreateProject, onOpenDeleteProject }: ProjectsListProps) {
+export function ProjectsList({ projects }: ProjectsListProps) {
+  const { openCreateProjectDialog, openProjectDeleteDialog } = useProjectDialogStore(
+    useShallow((state) => ({
+      openCreateProjectDialog: state.openCreateProjectDialog,
+      openProjectDeleteDialog: state.openProjectDeleteDialog,
+    })),
+  );
+
   return (
     <main className="container mx-auto space-y-4 p-4">
       <header className="flex flex-wrap items-end justify-between gap-3">
@@ -18,7 +25,7 @@ export function ProjectsList({ projects, onOpenCreateProject, onOpenDeleteProjec
         </div>
         <button
           type="button"
-          onClick={onOpenCreateProject}
+          onClick={openCreateProjectDialog}
           className="inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm font-medium transition hover:bg-accent"
         >
           <Plus className="size-4" />
@@ -47,7 +54,7 @@ export function ProjectsList({ projects, onOpenCreateProject, onOpenDeleteProjec
             </Link>
             <button
               type="button"
-              onClick={() => onOpenDeleteProject(project.id)}
+              onClick={() => openProjectDeleteDialog(project.id)}
               className="absolute right-3 top-3 z-10 inline-flex h-7 w-7 items-center justify-center rounded-md border text-destructive transition hover:bg-destructive/10"
               aria-label={`Eliminar proyecto ${project.name}`}
               title="Eliminar proyecto"

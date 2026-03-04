@@ -5,7 +5,7 @@ type FormFooterProps = {
   hasPendingEditorUploads: boolean;
   hasInlineBase64Images: boolean;
   editorImageError: string | null;
-  updateErrorActionData: TaskActionData;
+  actionData: TaskActionData;
   isSubmitting: boolean;
   onCancel: () => void;
 };
@@ -14,10 +14,12 @@ export function FormFooter({
   hasPendingEditorUploads,
   hasInlineBase64Images,
   editorImageError,
-  updateErrorActionData,
+  actionData,
   isSubmitting,
   onCancel,
 }: FormFooterProps) {
+  const updateErrorActionData = actionData && actionData.success === false ? actionData : undefined;
+
   return (
     <>
       {hasPendingEditorUploads ? (

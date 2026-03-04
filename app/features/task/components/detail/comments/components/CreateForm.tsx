@@ -5,18 +5,21 @@ import type { TaskActionData } from '../../../../types';
 type CreateFormProps = {
   createBody: string;
   mentionCandidates: string[];
-  createErrorActionData: TaskActionData;
+  createActionData: TaskActionData;
   isSubmitting: boolean;
   onCreateBodyChange: (value: string) => void;
   onSubmit: (event: { preventDefault: () => void }) => void;
 };
 
 type CreateFooterProps = {
-  createErrorActionData: TaskActionData;
+  createActionData: TaskActionData;
   isSubmitting: boolean;
 };
 
-function CreateFooter({ createErrorActionData, isSubmitting }: CreateFooterProps) {
+function CreateFooter({ createActionData, isSubmitting }: CreateFooterProps) {
+  const createErrorActionData =
+    createActionData && createActionData.success === false ? createActionData : undefined;
+
   return (
     <>
       <ActionFeedbackText actionData={createErrorActionData} fieldKey="commentBody" showFormError />
@@ -34,7 +37,7 @@ function CreateFooter({ createErrorActionData, isSubmitting }: CreateFooterProps
 export function CreateForm({
   createBody,
   mentionCandidates,
-  createErrorActionData,
+  createActionData,
   isSubmitting,
   onCreateBodyChange,
   onSubmit,
@@ -50,7 +53,7 @@ export function CreateForm({
         placeholder="Escribe un comentario..."
       />
       <CreateFooter
-        createErrorActionData={createErrorActionData}
+        createActionData={createActionData}
         isSubmitting={isSubmitting}
       />
     </form>

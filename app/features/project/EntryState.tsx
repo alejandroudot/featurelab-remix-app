@@ -4,19 +4,21 @@ import { ProjectsList } from './ProjectsList';
 import { EmptyState } from './components/empty/EmptyState';
 import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
 import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
+import { useProjectDialogStore } from '~/features/store/project-dialog.store';
 import type { Project } from '~/core/project/project.types';
 
 export function EntryState({
   initialProjects,
   initialActiveProjectId,
-  onOpenCreateProject,
-  onOpenDeleteProject,
 }: {
   initialProjects: Project[];
   initialActiveProjectId: string | null;
-  onOpenCreateProject: () => void;
-  onOpenDeleteProject: (projectId: string) => void;
 }) {
+  const { openCreateProjectDialog } = useProjectDialogStore(
+    useShallow((state) => ({
+      openCreateProjectDialog: state.openCreateProjectDialog,
+    })),
+  );
   const dataStore = useWorkspaceDataStore(
     useShallow((state) => ({
       currentUserId: state.currentUserId,
@@ -41,7 +43,7 @@ export function EntryState({
         />
         <button
           type="button"
-          onClick={onOpenCreateProject}
+          onClick={openCreateProjectDialog}
           className="inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm font-medium transition hover:bg-accent"
         >
           <Plus className="size-4" />
@@ -51,14 +53,8 @@ export function EntryState({
     );
   }
 
-	if (!resolvedProjectId && hasProjects) {
-    return (
-      <ProjectsList
-        projects={projects}
-        onOpenCreateProject={onOpenCreateProject}
-        onOpenDeleteProject={onOpenDeleteProject}
-      />
-    );
+  if (!resolvedProjectId && hasProjects) {
+    return <ProjectsList projects={projects} />;
   }
 
   return null;

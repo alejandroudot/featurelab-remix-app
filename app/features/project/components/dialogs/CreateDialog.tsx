@@ -3,15 +3,17 @@ import { useLocation } from 'react-router';
 import { ContentDialog } from '~/ui/dialogs/ContentDialog';
 import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import { useCreateProjectMutation } from '~/features/project/client/mutation';
+import { useProjectDialogStore } from '~/features/store/project-dialog.store';
+import { useShallow } from 'zustand/react/shallow';
 
-export function CreateDialog({
-  open,
-  onOpenChange,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
+export function CreateDialog() {
   const { data: actionData, isPending: isSubmitting, mutateAsync: createProject, reset } = useCreateProjectMutation();
+  const { isCreateProjectOpen, setCreateProjectOpen } = useProjectDialogStore(
+    useShallow((state) => ({
+      isCreateProjectOpen: state.isCreateProjectOpen,
+      setCreateProjectOpen: state.setCreateProjectOpen,
+    })),
+  );
   const location = useLocation();
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectImageUrl, setNewProjectImageUrl] = useState<string | null>(null);
@@ -44,12 +46,12 @@ export function CreateDialog({
     });
     if (!data || !data.success) return;
     resetForm();
-    onOpenChange(false);
+    setCreateProjectOpen(false);
     window.location.assign(`${location.pathname}${location.search}`);
   }
 
   function handleOpenChange(open: boolean) {
-    onOpenChange(open);
+    setCreateProjectOpen(open);
     if (!open) {
       resetForm();
       reset();
@@ -58,7 +60,7 @@ export function CreateDialog({
 
   return (
     <ContentDialog
-      open={open}
+      open={isCreateProjectOpen}
       onOpenChange={handleOpenChange}
       title="Nuevo proyecto"
       description="Crea un proyecto para organizar tus tareas."

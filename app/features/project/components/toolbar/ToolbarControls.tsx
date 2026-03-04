@@ -5,19 +5,23 @@ import { Button } from '~/ui/primitives/button';
 import { OptionsDropdown } from '~/ui/menus/options-dropdown';
 import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
 import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
+import { useProjectDialogStore } from '~/features/store/project-dialog.store';
 import { persistProjectViewPreferences } from '~/features/project/utils/preferences';
 import type { ProjectViewState } from '~/features/task/types';
 
 export function ToolbarControls({
   initialViewState,
   initialActiveProjectId,
-  onOpenDeleteProject,
 }: {
   initialViewState: ProjectViewState;
   initialActiveProjectId: string | null;
-  onOpenDeleteProject: (projectId: string) => void;
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { openProjectDeleteDialog } = useProjectDialogStore(
+    useShallow((state) => ({
+      openProjectDeleteDialog: state.openProjectDeleteDialog,
+    })),
+  );
   const currentUserId = useWorkspaceDataStore((state) => state.currentUserId);
   const { activeProjectId, view, order, scope } = useWorkspaceUiStore(
     useShallow((state) => ({
@@ -116,7 +120,7 @@ export function ToolbarControls({
       {resolvedActiveProjectId ? (
         <button
           type="button"
-          onClick={() => onOpenDeleteProject(resolvedActiveProjectId)}
+          onClick={() => openProjectDeleteDialog(resolvedActiveProjectId)}
           className="inline-flex h-9 w-9 items-center justify-center rounded-md border text-destructive transition hover:bg-destructive/10"
           aria-label="Eliminar proyecto"
           title="Eliminar proyecto"
