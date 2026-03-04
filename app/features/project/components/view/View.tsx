@@ -1,15 +1,15 @@
 import { useRevalidator } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
-import { List } from '~/features/project/components/list/List';
-import { Board } from '~/features/project/components/board/Board';
-import { EmptyState } from '~/features/project/components/empty/EmptyState';
 import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
 import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 import { buildAssigneeById, filterTasksBySearch, getVisibleTasks } from '~/features/project/utils/utils';
 import type { TaskStatus } from '~/core/task/task.types';
 import { useDeleteTaskMutation, useReorderColumnMutation, useUpdateTaskMutation } from '~/features/task/client/mutation';
+import { EmptyState } from './EmptyState';
+import { Board } from '../board/Board';
+import { List } from '../list/List';
 
-export function TasksView() {
+export function View() {
   const revalidator = useRevalidator();
   const { mutateAsync: deleteTask } = useDeleteTaskMutation();
   const { mutateAsync: updateTask } = useUpdateTaskMutation();
@@ -30,6 +30,7 @@ export function TasksView() {
       searchTerm: state.searchTerm,
     })),
   );
+
   const assigneeById = buildAssigneeById(dataStore.assignableUsers);
   const visibleTasks = getVisibleTasks({
     tasks: dataStore.tasks,
@@ -59,34 +60,24 @@ export function TasksView() {
   }
 
   async function handleReorderColumn(status: TaskStatus, orderedTaskIds: string[]) {
-    const result = await reorderColumn({
-      status,
-      orderedTaskIds,
-    });
+    const result = await reorderColumn({ status, orderedTaskIds });
     if (!result || !result.success) return;
     revalidator.revalidate();
   }
 
-  if (searchedTasks.length === 0 && uiState.searchTerm.trim()) {
-    return <EmptyState title={`No hay resultados para "${uiState.searchTerm.trim()}".`} description="Proba con otra palabra clave." />;
-  }
-
-  if (uiState.activeProjectId && projectScopedTasks.length === 0) {
-    return <EmptyState title="No hay tareas en este proyecto todavia." description="Crea una tarea para empezar." />;
-  }
-
-  if (visibleTasks.length === 0) {
-    return <EmptyState title="Aun no hay tareas." description="Crea tu primera tarea para empezar." />;
+  if (searchedTasks.length === 0) {
+    return (
+      <EmptyState
+        searchTerm={uiState.searchTerm}
+        activeProjectId={uiState.activeProjectId}
+        projectScopedTasksCount={projectScopedTasks.length}
+        visibleTasksCount={visibleTasks.length}
+      />
+    );
   }
 
   if (uiState.view === 'list') {
-    return (
-      <List
-        tasks={searchedTasks}
-        assigneeById={assigneeById}
-        onDeleteTask={handleDeleteTask}
-      />
-    );
+    return <List tasks={searchedTasks} assigneeById={assigneeById} onDeleteTask={handleDeleteTask} />;
   }
 
   return (

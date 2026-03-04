@@ -16,7 +16,7 @@ import {
 
 type TaskBoardColumnId = Extract<TaskStatus, 'todo' | 'in-progress' | 'qa' | 'ready-to-go-live'>;
 
-type BoardCardProps = {
+type TaskBoardCardProps = {
   task: Task;
   columnId: TaskBoardColumnId;
   assigneeLabel?: string | null;
@@ -47,14 +47,14 @@ function priorityBadgeVariant(priority: Task['priority']): 'secondary' | 'outlin
   return 'outline';
 }
 
-export function BoardCard({
+export function TaskBoardCard({
   task,
   columnId,
   assigneeLabel,
   onStartDrag,
   onDropAtTask,
   onDeleteTask,
-}: BoardCardProps) {
+}: TaskBoardCardProps) {
   const openTaskDetail = useWorkspaceUiStore((state) => state.openTaskDetail);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const blockNextOpenRef = useRef(false);

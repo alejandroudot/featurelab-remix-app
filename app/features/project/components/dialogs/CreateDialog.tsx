@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router';
+import { useRevalidator } from 'react-router';
 import { ContentDialog } from '~/ui/dialogs/ContentDialog';
 import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import { useCreateProjectMutation } from '~/features/project/client/mutation';
@@ -8,13 +8,13 @@ import { useShallow } from 'zustand/react/shallow';
 
 export function CreateDialog() {
   const { data: actionData, isPending: isSubmitting, mutateAsync: createProject, reset } = useCreateProjectMutation();
+  const revalidator = useRevalidator();
   const { isCreateProjectOpen, setCreateProjectOpen } = useProjectDialogStore(
     useShallow((state) => ({
       isCreateProjectOpen: state.isCreateProjectOpen,
       setCreateProjectOpen: state.setCreateProjectOpen,
     })),
   );
-  const location = useLocation();
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectImageUrl, setNewProjectImageUrl] = useState<string | null>(null);
 
@@ -47,7 +47,7 @@ export function CreateDialog() {
     if (!data || !data.success) return;
     resetForm();
     setCreateProjectOpen(false);
-    window.location.assign(`${location.pathname}${location.search}`);
+    revalidator.revalidate();
   }
 
   function handleOpenChange(open: boolean) {

@@ -10,13 +10,13 @@ import {
 import { Badge } from '~/ui/primitives/badge';
 import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 
-type TaskListCardItemProps = {
+type TaskListCardProps = {
   task: Task;
   assigneeLabel: string;
   onDeleteTask?: (taskId: string) => void;
 };
 
-export function ListCard({ task, assigneeLabel, onDeleteTask }: TaskListCardItemProps) {
+export function TaskListCard({ task, assigneeLabel, onDeleteTask }: TaskListCardProps) {
   const openTaskDetail = useWorkspaceUiStore((state) => state.openTaskDetail);
   const description = formatPlainDescription(task.description ?? '');
 

@@ -3,14 +3,34 @@ import { Link } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
 import { useProjectDialogStore } from '~/features/store/project-dialog.store';
 import type { Project } from '~/core/project/project.types';
+import { EmptyState } from '~/ui/states/EmptyState';
 
-export function ProjectsList({ projects }: { projects: Project[] }) {
+export function ProjectsOverview({ projects }: { projects: Project[] }) {
   const { openCreateProjectDialog, openProjectDeleteDialog } = useProjectDialogStore(
     useShallow((state) => ({
       openCreateProjectDialog: state.openCreateProjectDialog,
       openProjectDeleteDialog: state.openProjectDeleteDialog,
     })),
   );
+
+  if (projects.length === 0) {
+    return (
+      <main className="container mx-auto space-y-4 p-4">
+        <EmptyState
+          title="Todavia no hay proyectos."
+          description='Crea uno desde "Nuevo proyecto" para empezar.'
+        />
+        <button
+          type="button"
+          onClick={openCreateProjectDialog}
+          className="inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm font-medium transition hover:bg-accent"
+        >
+          <Plus className="size-4" />
+          Nuevo proyecto
+        </button>
+      </main>
+    );
+  }
 
   return (
     <main className="container mx-auto space-y-4 p-4">

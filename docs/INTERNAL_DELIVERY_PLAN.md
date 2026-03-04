@@ -390,7 +390,7 @@ Fortalece hoy: refactor estructural, mantenibilidad, disciplina de naming y redu
         - [ ] `useQuery` para lecturas en todos los dominios
         - [x] `useMutation` para mutaciones en todos los dominios
         - [~] Invalidaciones por dominio y eliminacion de `fetcher/actionData` legacy donde aplique
-    - [ ] Reducir estado/orquestacion restante en `project` para seguir bajando prop drilling
+    - [x] Reducir estado/orquestacion restante en `project` para seguir bajando prop drilling
     - [x] Homogeneizar el mismo patron server/API en los dominios restantes (`flags`, `account`, `auth`) donde aplique
 
 ## ?? Dia 11 - Domingo 01/03/2026
