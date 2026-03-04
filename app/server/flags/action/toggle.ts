@@ -1,29 +1,29 @@
-import { redirect } from 'react-router';
 import { flagToggleSchema } from '~/core/flags/contracts/flags.schema';
 import { jsonFlagsError, toFlagFormError, zodErrorToActionData } from '../utilities/errors';
-import { getCreateFlagFormValues } from '../utilities/utils';
-import type { FlagIntentHandler } from '../types';
+import type { FlagActionHandler } from '../types';
 
-export const handleToggle: FlagIntentHandler = async (input) => {
+export const handleToggle: FlagActionHandler = async (input) => {
   const { formData, flagRepository } = input;
   const parsedToggle = flagToggleSchema.safeParse({
     id: formData.get('id'),
     environment: formData.get('environment'),
   });
 
-  if (!parsedToggle.success) return zodErrorToActionData(parsedToggle.error, formData);
+  if (!parsedToggle.success) return zodErrorToActionData(parsedToggle.error);
 
   try {
     await flagRepository.toggle({
       id: parsedToggle.data.id,
       environment: parsedToggle.data.environment,
     });
-    return redirect('/flags');
+    return Response.json({
+      success: true,
+      message: 'Flag actualizada.',
+    });
   } catch (err) {
     return jsonFlagsError(
       {
         formError: toFlagFormError(err),
-        values: getCreateFlagFormValues(formData),
       },
       500,
     );

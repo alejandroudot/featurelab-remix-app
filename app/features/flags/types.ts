@@ -15,4 +15,8 @@ export type FlagActionData =
         rolloutPercent?: string;
       };
     }
+  | {
+      success: true;
+      message?: string;
+    }
   | undefined;

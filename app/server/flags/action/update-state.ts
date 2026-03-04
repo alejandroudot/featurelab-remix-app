@@ -1,10 +1,8 @@
-import { redirect } from 'react-router';
 import { flagUpdateStateSchema } from '~/core/flags/contracts/flags.schema';
 import { jsonFlagsError, toFlagFormError, zodErrorToActionData } from '../utilities/errors';
-import { getCreateFlagFormValues } from '../utilities/utils';
-import type { FlagIntentHandler } from '../types';
+import type { FlagActionHandler } from '../types';
 
-export const handleUpdateState: FlagIntentHandler = async (input) => {
+export const handleUpdateState: FlagActionHandler = async (input) => {
   const { formData, flagRepository } = input;
   const parsedState = flagUpdateStateSchema.safeParse({
     id: formData.get('id'),
@@ -12,7 +10,7 @@ export const handleUpdateState: FlagIntentHandler = async (input) => {
     rolloutPercent: formData.get('rolloutPercent'),
   });
 
-  if (!parsedState.success) return zodErrorToActionData(parsedState.error, formData);
+  if (!parsedState.success) return zodErrorToActionData(parsedState.error);
 
   try {
     await flagRepository.update({
@@ -23,12 +21,14 @@ export const handleUpdateState: FlagIntentHandler = async (input) => {
         },
       },
     });
-    return redirect('/flags');
+    return Response.json({
+      success: true,
+      message: 'Estado de flag actualizado.',
+    });
   } catch (err) {
     return jsonFlagsError(
       {
         formError: toFlagFormError(err),
-        values: getCreateFlagFormValues(formData),
       },
       500,
     );

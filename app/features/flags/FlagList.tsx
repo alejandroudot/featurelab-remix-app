@@ -1,22 +1,35 @@
 import { useState } from 'react';
-import { Form, useSubmit } from 'react-router';
 import type { Flag } from './types';
 import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
+import { useDeleteFlagMutation, useToggleFlagMutation, useUpdateFlagStateMutation } from './client/mutation';
 
 const ENVIRONMENTS = ['development', 'production'] as const;
 
 type Env = (typeof ENVIRONMENTS)[number];
 
 export function FlagsList({ flags }: { flags: Flag[] }) {
-  const submit = useSubmit();
+  const toggleMutation = useToggleFlagMutation();
+  const updateStateMutation = useUpdateFlagStateMutation();
+  const deleteMutation = useDeleteFlagMutation();
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     label: string;
   } | null>(null);
+  const actionData = deleteMutation.data ?? updateStateMutation.data ?? toggleMutation.data;
+
+  function handleToggle(input: { id: string; environment: Env }) {
+    toggleMutation.mutate(input);
+  }
+
+  function handleUpdateRollout(input: { id: string; environment: Env; rolloutPercent: string }) {
+    updateStateMutation.mutate(input);
+  }
 
   return (
     <section className="space-y-3">
       <h2 className="font-semibold">Listado</h2>
+      <ActionFeedbackText actionData={actionData} showFormError />
 
       <ul className="space-y-2">
         {flags.map((flag) => (
@@ -51,24 +64,32 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
-                      <Form method="post" action="/api/flags/toggle">
-                        <input type="hidden" name="id" value={flag.id} />
-                        <input type="hidden" name="environment" value={environment} />
-                        <button
-                          type="submit"
-                          className="border rounded px-3 py-1 text-xs font-medium"
-                        >
-                          {state.enabled ? 'Apagar' : 'Encender'}
-                        </button>
-                      </Form>
+                      <button
+                        type="button"
+                        onClick={() => handleToggle({ id: flag.id, environment })}
+                        disabled={toggleMutation.isPending}
+                        className="border rounded px-3 py-1 text-xs font-medium"
+                      >
+                        {state.enabled ? 'Apagar' : 'Encender'}
+                      </button>
 
                       <span className="text-xs opacity-80">enabled: {String(state.enabled)}</span>
                     </div>
 
                     {flag.type === 'percentage' ? (
-                      <Form method="post" action="/api/flags/update-state" className="flex self items-center gap-2 text-xs">
-                        <input type="hidden" name="id" value={flag.id} />
-                        <input type="hidden" name="environment" value={environment} />
+                      <form
+                        className="flex self items-center gap-2 text-xs"
+                        onSubmit={(event) => {
+                          event.preventDefault();
+                          const formData = new FormData(event.currentTarget);
+                          const rolloutPercent = String(formData.get('rolloutPercent') ?? '');
+                          handleUpdateRollout({
+                            id: flag.id,
+                            environment,
+                            rolloutPercent,
+                          });
+                        }}
+                      >
                         <label className="flex items-center gap-1">
                           <span className="opacity-70">Rollout %</span>
                           <input
@@ -82,11 +103,12 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
                         </label>
                         <button
                           type="submit"
+                          disabled={updateStateMutation.isPending}
                           className="border rounded px-3 py-1 text-xs font-medium"
                         >
                           Guardar
                         </button>
-                      </Form>
+                      </form>
                     ) : null}
                   </div>
                 );
@@ -105,9 +127,7 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
         name={deleteTarget?.label ?? 'flag'}
         onConfirm={() => {
           if (!deleteTarget?.id) return;
-          const formData = new FormData();
-          formData.set('id', deleteTarget.id);
-          submit(formData, { method: 'post', action: '/api/flags/delete' });
+          deleteMutation.mutate({ id: deleteTarget.id });
           setDeleteTarget(null);
         }}
       />

@@ -1,21 +1,33 @@
-import { useEffect, useState } from 'react';
-import { useFetcher } from 'react-router';
+import { useState } from 'react';
 import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
-import type { FlagActionData } from './types';
+import { useCreateFlagMutation } from './client/mutation';
 
 export function CreateFlagForm() {
-  const fetcher = useFetcher<FlagActionData>();
-  const actionData = fetcher.data;
-  const [currentType, setCurrentType] = useState<string>(
-    actionData?.values?.type ?? 'boolean',
-  );
+  const createFlagMutation = useCreateFlagMutation();
+  const actionData = createFlagMutation.data;
+  const isSubmitting = createFlagMutation.isPending;
+  const [key, setKey] = useState('');
+  const [description, setDescription] = useState('');
+  const [currentType, setCurrentType] = useState<'boolean' | 'percentage'>('boolean');
+  const [rolloutPercent, setRolloutPercent] = useState('');
 
-  useEffect(() => {
-    setCurrentType(actionData?.values?.type ?? 'boolean');
-  }, [actionData?.values?.type]);
+  async function handleSubmit(event: { preventDefault: () => void }) {
+    event.preventDefault();
+    const data = await createFlagMutation.mutateAsync({
+      key,
+      description,
+      type: currentType,
+      rolloutPercent,
+    });
+    if (!data || !data.success) return;
+    setKey('');
+    setDescription('');
+    setCurrentType('boolean');
+    setRolloutPercent('');
+  }
 
   return (
-      <section className="border rounded p-4 space-y-3 max-w-xl">
+    <section className="border rounded p-4 space-y-3 max-w-xl">
       <h2 className="font-semibold">Crear flag</h2>
 
       <ActionFeedbackText
@@ -24,8 +36,7 @@ export function CreateFlagForm() {
         errorClassName="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm"
       />
 
-      <fetcher.Form method="post" action="/api/flags/create" className="space-y-3">
-
+      <form className="space-y-3" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-1">
           <label className="font-medium" htmlFor="key">
             Key
@@ -33,10 +44,11 @@ export function CreateFlagForm() {
           <input
             id="key"
             name="key"
-						autoFocus
+            autoFocus
             className="border rounded px-3 py-2"
             placeholder="dark-theme"
-            defaultValue={actionData?.values?.key ?? ''}
+            value={key}
+            onChange={(event) => setKey(event.currentTarget.value)}
           />
           <ActionFeedbackText actionData={actionData} fieldKey="key" errorClassName="text-sm text-red-600" />
         </div>
@@ -50,7 +62,8 @@ export function CreateFlagForm() {
             name="description"
             className="border rounded px-3 py-2"
             placeholder="Activa modo oscuro"
-            defaultValue={actionData?.values?.description ?? ''}
+            value={description}
+            onChange={(event) => setDescription(event.currentTarget.value)}
           />
           <ActionFeedbackText
             actionData={actionData}
@@ -68,7 +81,7 @@ export function CreateFlagForm() {
             name="type"
             className="border rounded px-3 py-2"
             value={currentType}
-            onChange={(e) => setCurrentType(e.target.value)}
+            onChange={(event) => setCurrentType(event.currentTarget.value as 'boolean' | 'percentage')}
           >
             <option value="boolean">boolean (on/off)</option>
             <option value="percentage">percentage rollout</option>
@@ -89,7 +102,8 @@ export function CreateFlagForm() {
               max={100}
               className="border rounded px-3 py-2"
               placeholder="ej: 20"
-              defaultValue={actionData?.values?.rolloutPercent ?? ''}
+              value={rolloutPercent}
+              onChange={(event) => setRolloutPercent(event.currentTarget.value)}
             />
             <ActionFeedbackText
               actionData={actionData}
@@ -99,10 +113,10 @@ export function CreateFlagForm() {
           </div>
         ) : null}
 
-        <button className="rounded bg-blue-600 text-white px-4 py-2 text-sm font-medium">
-          Crear
+        <button className="rounded bg-blue-600 text-white px-4 py-2 text-sm font-medium" disabled={isSubmitting}>
+          {isSubmitting ? 'Creando...' : 'Crear'}
         </button>
-      </fetcher.Form>
+      </form>
     </section>
   );
 }

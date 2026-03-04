@@ -1,25 +1,25 @@
-import { redirect } from 'react-router';
 import { flagDeleteSchema } from '~/core/flags/contracts/flags.schema';
 import { jsonFlagsError, toFlagFormError, zodErrorToActionData } from '../utilities/errors';
-import { getCreateFlagFormValues } from '../utilities/utils';
-import type { FlagIntentHandler } from '../types';
+import type { FlagActionHandler } from '../types';
 
-export const handleDelete: FlagIntentHandler = async (input) => {
+export const handleDelete: FlagActionHandler = async (input) => {
   const { formData, flagRepository } = input;
   const parsedDelete = flagDeleteSchema.safeParse({
     id: formData.get('id'),
   });
 
-  if (!parsedDelete.success) return zodErrorToActionData(parsedDelete.error, formData);
+  if (!parsedDelete.success) return zodErrorToActionData(parsedDelete.error);
 
   try {
     await flagRepository.remove(parsedDelete.data.id);
-    return redirect('/flags');
+    return Response.json({
+      success: true,
+      message: 'Flag eliminada.',
+    });
   } catch (err) {
     return jsonFlagsError(
       {
         formError: toFlagFormError(err),
-        values: getCreateFlagFormValues(formData),
       },
       500,
     );

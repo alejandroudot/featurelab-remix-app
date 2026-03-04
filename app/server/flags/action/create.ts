@@ -1,11 +1,10 @@
-import { redirect } from 'react-router';
 import { flagCreateSchema } from '~/core/flags/contracts/flags.schema';
 import { DuplicateFeatureFlagError } from '~/core/flags/contracts/errors';
 import { jsonFlagsError, toFlagFormError, zodErrorToActionData } from '../utilities/errors';
 import { getCreateFlagFormValues } from '../utilities/utils';
-import type { FlagIntentHandler } from '../types';
+import type { FlagActionHandler } from '../types';
 
-export const handleCreate: FlagIntentHandler = async (input) => {
+export const handleCreate: FlagActionHandler = async (input) => {
   const { formData, flagRepository } = input;
   const parsedCreate = flagCreateSchema.safeParse({
     key: formData.get('key'),
@@ -32,7 +31,10 @@ export const handleCreate: FlagIntentHandler = async (input) => {
         },
       },
     });
-    return redirect('/flags');
+    return Response.json({
+      success: true,
+      message: 'Flag creada.',
+    });
   } catch (err) {
     if (err instanceof DuplicateFeatureFlagError) {
       return jsonFlagsError(

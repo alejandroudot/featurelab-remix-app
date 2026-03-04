@@ -1,11 +1,27 @@
 import type { FeatureFlagRepository } from '~/core/flags/contracts/flags.port';
-import type { FlagActionData } from '~/features/flags/types';
 
-export type FlagIntentHandlerInput = {
+export type FlagActionResponseData =
+  | {
+      success: false;
+      formError?: string;
+      fieldErrors?: Record<string, string[] | undefined>;
+      values?: {
+        key?: string;
+        description?: string;
+        type?: string;
+        rolloutPercent?: string;
+      };
+    }
+  | {
+      success: true;
+      message?: string;
+    };
+
+export type FlagActionHandlerInput = {
   formData: FormData;
   flagRepository: Pick<FeatureFlagRepository, 'create' | 'toggle' | 'update' | 'remove'>;
 };
 
-export type FlagIntentHandler = (
-  input: FlagIntentHandlerInput,
-) => Promise<Response | FlagActionData>;
+export type FlagActionHandler = (
+  input: FlagActionHandlerInput,
+) => Promise<Response | FlagActionResponseData>;
