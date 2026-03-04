@@ -14,15 +14,21 @@ type RegisterValuesState = {
   confirmEmail: string;
   password: string;
   confirmPassword: string;
+  phone: string;
+  timezone: string;
 };
 
-export function useRegisterFormState(actionData: AuthActionData) {
+export function useRegisterFormState(actionData: AuthActionData, runtimeTimezone: string) {
+  const errorValues = actionData && actionData.success === false ? actionData.values : undefined;
+
   const [values, setValues] = useState<RegisterValuesState>({
-    displayName: actionData?.values?.displayName ?? '',
-    email: actionData?.values?.email ?? '',
-    confirmEmail: actionData?.values?.confirmEmail ?? '',
+    displayName: errorValues?.displayName ?? '',
+    email: errorValues?.email ?? '',
+    confirmEmail: errorValues?.confirmEmail ?? '',
     password: '',
     confirmPassword: '',
+    phone: errorValues?.phone ?? '',
+    timezone: errorValues?.timezone ?? runtimeTimezone,
   });
 
   const passwordChecks = useMemo(() => getPasswordChecks(values.password), [values.password]);
@@ -53,11 +59,20 @@ export function useRegisterFormState(actionData: AuthActionData) {
   useEffect(() => {
     setValues((current) => ({
       ...current,
-      displayName: actionData?.values?.displayName ?? '',
-      email: actionData?.values?.email ?? '',
-      confirmEmail: actionData?.values?.confirmEmail ?? '',
+      displayName: errorValues?.displayName ?? '',
+      email: errorValues?.email ?? '',
+      confirmEmail: errorValues?.confirmEmail ?? '',
+      phone: errorValues?.phone ?? '',
+      timezone: errorValues?.timezone ?? runtimeTimezone,
     }));
-  }, [actionData?.values?.displayName, actionData?.values?.email, actionData?.values?.confirmEmail]);
+  }, [
+    errorValues?.displayName,
+    errorValues?.email,
+    errorValues?.confirmEmail,
+    errorValues?.phone,
+    errorValues?.timezone,
+    runtimeTimezone,
+  ]);
 
   function setFieldValue<Key extends keyof RegisterValuesState>(
     field: Key,

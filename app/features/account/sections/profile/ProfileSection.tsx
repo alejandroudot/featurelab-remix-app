@@ -18,9 +18,7 @@ type ProfileSectionProps = {
 };
 
 export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
-  const profileMutation = useProfileMutation();
-  const isSubmitting = profileMutation.isPending;
-  const actionData = profileMutation.data;
+  const { data: actionData, isPending: isSubmitting, mutate: submitProfile } = useProfileMutation();
   const [displayName, setDisplayName] = useState(user.displayName ?? '');
   const [phone, setPhone] = useState(user.phone ?? '');
   const [about, setAbout] = useState(user.about ?? '');
@@ -30,7 +28,7 @@ export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
 
   function handleSubmit(event: { preventDefault: () => void }) {
     event.preventDefault();
-    profileMutation.mutate({
+    submitProfile({
       displayName,
       phone,
       about,
@@ -64,7 +62,7 @@ export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
             onChange={(event) => setDisplayName(event.currentTarget.value)}
             className="rounded border px-2 py-1 text-sm"
           />
-          <ActionFeedbackText actionData={actionData} intent="profile" fieldKey="displayName" />
+          <ActionFeedbackText actionData={actionData} fieldKey="displayName" />
         </div>
 
         <div className="flex flex-col gap-1">
@@ -78,7 +76,7 @@ export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
             onChange={(event) => setPhone(event.currentTarget.value)}
             className="rounded border px-2 py-1 text-sm"
           />
-          <ActionFeedbackText actionData={actionData} intent="profile" fieldKey="phone" />
+          <ActionFeedbackText actionData={actionData} fieldKey="phone" />
         </div>
 
         <div className="flex flex-col gap-1">
@@ -92,10 +90,10 @@ export function ProfileSection({ user, asCard = true }: ProfileSectionProps) {
             onChange={(event) => setAbout(event.currentTarget.value)}
             className="min-h-24 rounded border px-2 py-1 text-sm"
           />
-          <ActionFeedbackText actionData={actionData} intent="profile" fieldKey="about" />
+          <ActionFeedbackText actionData={actionData} fieldKey="about" />
         </div>
 
-        <ActionFeedbackText actionData={actionData} intent="profile" showFormError showSuccessMessage />
+        <ActionFeedbackText actionData={actionData} showFormError showSuccessMessage />
 
         <button
           type="submit"

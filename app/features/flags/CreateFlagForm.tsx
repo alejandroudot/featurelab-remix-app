@@ -3,9 +3,7 @@ import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import { useCreateFlagMutation } from './client/mutation';
 
 export function CreateFlagForm() {
-  const createFlagMutation = useCreateFlagMutation();
-  const actionData = createFlagMutation.data;
-  const isSubmitting = createFlagMutation.isPending;
+  const { data: actionData, isPending: isSubmitting, mutateAsync: createFlag } = useCreateFlagMutation();
   const [key, setKey] = useState('');
   const [description, setDescription] = useState('');
   const [currentType, setCurrentType] = useState<'boolean' | 'percentage'>('boolean');
@@ -13,7 +11,7 @@ export function CreateFlagForm() {
 
   async function handleSubmit(event: { preventDefault: () => void }) {
     event.preventDefault();
-    const data = await createFlagMutation.mutateAsync({
+    const data = await createFlag({
       key,
       description,
       type: currentType,

@@ -1,16 +1,13 @@
-import { Link, useFetcher } from 'react-router';
+import { Link } from 'react-router';
 import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import { PasswordChecklist } from '~/ui/forms/security/password-checklist';
 import { PasswordField } from '~/ui/primitives/password-field';
 import { TimezoneSelect } from '~/ui/primitives/timezone-select';
 import { useRegisterFormState } from './hooks/useRegisterFormState';
-import type { AuthActionData } from './types';
+import { useRegisterMutation } from './client/mutation';
 
 export function RegisterPage() {
-  const fetcher = useFetcher<AuthActionData>();
-  const actionData = fetcher.data;
-  const { values, setFieldValue, passwordChecks, passwordMatch, emailMatch, isRegisterEnabled } =
-    useRegisterFormState(actionData);
+  const { data: actionData, isPending: isSubmitting, mutateAsync: submitRegister } = useRegisterMutation();
 
   function getRuntimeTimezone() {
     try {
@@ -19,7 +16,28 @@ export function RegisterPage() {
       return '';
     }
   }
-  const timezoneDefaultValue = actionData?.values?.timezone ?? getRuntimeTimezone();
+
+  const runtimeTimezone = getRuntimeTimezone();
+  const { values, setFieldValue, passwordChecks, passwordMatch, emailMatch, isRegisterEnabled } =
+    useRegisterFormState(actionData, runtimeTimezone);
+
+  async function handleSubmit(event: { preventDefault: () => void }) {
+    event.preventDefault();
+
+    const result = await submitRegister({
+      displayName: values.displayName,
+      email: values.email,
+      confirmEmail: values.confirmEmail,
+      password: values.password,
+      confirmPassword: values.confirmPassword,
+      phone: values.phone,
+      timezone: values.timezone,
+    });
+
+    if (!result || !result.success) return;
+    const target = result.redirectTo ?? '/auth/login?emailVerification=sent';
+    window.location.assign(target);
+  }
 
   return (
     <main className="container mx-auto p-4 max-w-md space-y-4">
@@ -31,7 +49,7 @@ export function RegisterPage() {
         errorClassName="border rounded p-3 text-sm bg-red-50 border-red-200 text-red-700 dark:bg-red-950/30 dark:border-red-900 dark:text-red-200"
       />
 
-      <fetcher.Form method="post" action="/api/auth/register" className="space-y-3">
+      <form className="space-y-3" onSubmit={handleSubmit}>
         <div className="space-y-1">
           <label className="text-sm font-medium" htmlFor="displayName">
             Nombre visible
@@ -127,7 +145,8 @@ export function RegisterPage() {
           <input
             id="phone"
             name="phone"
-            defaultValue={actionData?.values?.phone ?? ''}
+            value={values.phone}
+            onChange={(event) => setFieldValue('phone', event.currentTarget.value)}
             className="w-full border rounded px-3 py-2"
             autoComplete="tel"
           />
@@ -141,7 +160,8 @@ export function RegisterPage() {
           <TimezoneSelect
             id="timezone"
             name="timezone"
-            defaultValue={timezoneDefaultValue}
+            value={values.timezone}
+            onChange={(event) => setFieldValue('timezone', event.currentTarget.value)}
             className="w-full border rounded px-3 py-2"
           />
           <ActionFeedbackText actionData={actionData} fieldKey="timezone" />
@@ -149,12 +169,12 @@ export function RegisterPage() {
 
         <button
           type="submit"
-          disabled={!isRegisterEnabled}
+          disabled={!isRegisterEnabled || isSubmitting}
           className="rounded bg-blue-600 text-white px-4 py-2 text-sm font-medium disabled:opacity-60"
         >
-          Registrarme
+          {isSubmitting ? 'Registrando...' : 'Registrarme'}
         </button>
-      </fetcher.Form>
+      </form>
 
       <p className="text-sm opacity-80">
         Ya tenes cuenta?{' '}

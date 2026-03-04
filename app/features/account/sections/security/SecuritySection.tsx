@@ -14,12 +14,10 @@ type SecuritySectionProps = {
 };
 
 export function SecuritySection({ asCard = true }: SecuritySectionProps) {
-  const passwordMutation = usePasswordMutation();
+  const { data: actionData, isPending: isSubmitting, mutateAsync: submitPassword } = usePasswordMutation();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const isSubmitting = passwordMutation.isPending;
-  const actionData = passwordMutation.data;
   const passwordChecks = useMemo(() => getPasswordChecks(newPassword), [newPassword]);
   const passwordMatch = useFieldMatchOnBlur({
     leftValue: newPassword,
@@ -36,12 +34,12 @@ export function SecuritySection({ asCard = true }: SecuritySectionProps) {
 
   async function handleSubmit(event: { preventDefault: () => void }) {
     event.preventDefault();
-    const data = await passwordMutation.mutateAsync({
+    const data = await submitPassword({
       currentPassword,
       newPassword,
       confirmPassword,
     });
-    if (!data.success || data.intent !== 'password') return;
+    if (!data.success) return;
     setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
@@ -62,7 +60,7 @@ export function SecuritySection({ asCard = true }: SecuritySectionProps) {
             onChange={(event) => setCurrentPassword(event.currentTarget.value)}
             className="w-full rounded border px-2 py-1 pr-10 text-sm"
           />
-          <ActionFeedbackText actionData={actionData} intent="password" fieldKey="currentPassword" />
+          <ActionFeedbackText actionData={actionData} fieldKey="currentPassword" />
         </div>
 
         <div className="flex flex-col gap-1">
@@ -77,7 +75,7 @@ export function SecuritySection({ asCard = true }: SecuritySectionProps) {
             className="w-full rounded border px-2 py-1 pr-10 text-sm"
             onBlur={passwordMatch.markTouched}
           />
-          <ActionFeedbackText actionData={actionData} intent="password" fieldKey="newPassword" />
+          <ActionFeedbackText actionData={actionData} fieldKey="newPassword" />
           <PasswordChecklist checks={passwordChecks} />
         </div>
 
@@ -95,13 +93,12 @@ export function SecuritySection({ asCard = true }: SecuritySectionProps) {
           />
           <ActionFeedbackText
             actionData={actionData}
-            intent="password"
             fieldKey="confirmPassword"
             fallbackError={passwordMatch.mismatchError}
           />
         </div>
 
-        <ActionFeedbackText actionData={actionData} intent="password" showFormError showSuccessMessage />
+        <ActionFeedbackText actionData={actionData} showFormError showSuccessMessage />
 
         <button
           type="submit"

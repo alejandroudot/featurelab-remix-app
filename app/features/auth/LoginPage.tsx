@@ -1,6 +1,7 @@
-import { Link, useFetcher } from 'react-router';
+import { useState } from 'react';
+import { Link } from 'react-router';
 import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
-import type { AuthActionData } from './types';
+import { useLoginMutation } from './client/mutation';
 
 export function LoginPage({
   infoMessage,
@@ -9,8 +10,22 @@ export function LoginPage({
   infoMessage?: string;
   redirectTo?: string;
 }) {
-  const fetcher = useFetcher<AuthActionData>();
-  const actionData = fetcher.data;
+  const { data: actionData, isPending: isSubmitting, mutateAsync: submitLogin } = useLoginMutation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  async function handleSubmit(event: { preventDefault: () => void }) {
+    event.preventDefault();
+    const result = await submitLogin({
+      email,
+      password,
+      redirectTo,
+    });
+    if (!result || !result.success) return;
+
+    const target = result.redirectTo ?? '/';
+    window.location.assign(target);
+  }
 
   return (
     <main className="container mx-auto p-4 max-w-md space-y-4">
@@ -28,8 +43,7 @@ export function LoginPage({
         errorClassName="border rounded p-3 text-sm bg-red-50 border-red-200 text-red-700 dark:bg-red-950/30 dark:border-red-900 dark:text-red-200"
       />
 
-      <fetcher.Form method="post" action="/api/auth/login" className="space-y-3">
-        {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
+      <form className="space-y-3" onSubmit={handleSubmit}>
         <div className="space-y-1">
           <label className="text-sm font-medium" htmlFor="email">
             Email
@@ -37,7 +51,8 @@ export function LoginPage({
           <input
             id="email"
             name="email"
-            defaultValue={actionData?.values?.email ?? ''}
+            value={email}
+            onChange={(event) => setEmail(event.currentTarget.value)}
             className="w-full border rounded px-3 py-2"
             autoComplete="email"
           />
@@ -52,14 +67,22 @@ export function LoginPage({
             id="password"
             name="password"
             type="password"
+            value={password}
+            onChange={(event) => setPassword(event.currentTarget.value)}
             className="w-full border rounded px-3 py-2"
             autoComplete="current-password"
           />
           <ActionFeedbackText actionData={actionData} fieldKey="password" />
         </div>
 
-        <button className="rounded bg-blue-600 text-white px-4 py-2 text-sm font-medium">Entrar</button>
-      </fetcher.Form>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="rounded bg-blue-600 text-white px-4 py-2 text-sm font-medium disabled:opacity-60"
+        >
+          {isSubmitting ? 'Entrando...' : 'Entrar'}
+        </button>
+      </form>
 
       <p className="text-sm opacity-80">
         No tenes cuenta?{' '}

@@ -2,28 +2,40 @@ import { useState } from 'react';
 import type { Flag } from './types';
 import { DeleteDialog } from '~/ui/dialogs/delete-dialog';
 import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
-import { useDeleteFlagMutation, useToggleFlagMutation, useUpdateFlagStateMutation } from './client/mutation';
+import {
+  useDeleteFlagMutation,
+  useToggleFlagMutation,
+  useUpdateFlagStateMutation,
+} from './client/mutation';
 
 const ENVIRONMENTS = ['development', 'production'] as const;
 
 type Env = (typeof ENVIRONMENTS)[number];
 
 export function FlagsList({ flags }: { flags: Flag[] }) {
-  const toggleMutation = useToggleFlagMutation();
-  const updateStateMutation = useUpdateFlagStateMutation();
-  const deleteMutation = useDeleteFlagMutation();
+  const {
+    data: toggleActionData,
+    isPending: isTogglePending,
+    mutate: toggleFlag,
+  } = useToggleFlagMutation();
+  const {
+    data: updateActionData,
+    isPending: isUpdatePending,
+    mutate: updateFlagState,
+  } = useUpdateFlagStateMutation();
+  const { data: deleteActionData, mutate: deleteFlag } = useDeleteFlagMutation();
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     label: string;
   } | null>(null);
-  const actionData = deleteMutation.data ?? updateStateMutation.data ?? toggleMutation.data;
+  const actionData = deleteActionData ?? updateActionData ?? toggleActionData;
 
   function handleToggle(input: { id: string; environment: Env }) {
-    toggleMutation.mutate(input);
+    toggleFlag(input);
   }
 
   function handleUpdateRollout(input: { id: string; environment: Env; rolloutPercent: string }) {
-    updateStateMutation.mutate(input);
+    updateFlagState(input);
   }
 
   return (
@@ -46,7 +58,7 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
               <div>
                 <button
                   type="button"
-                  onClick={() => setDeleteTarget({ id: flag.id, label: `\"${flag.key}\"` })}
+                  onClick={() => setDeleteTarget({ id: flag.id, label: `"${flag.key}"` })}
                   className="border rounded px-3 py-1 text-xs font-medium text-red-600"
                 >
                   Eliminar
@@ -67,7 +79,7 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
                       <button
                         type="button"
                         onClick={() => handleToggle({ id: flag.id, environment })}
-                        disabled={toggleMutation.isPending}
+                        disabled={isTogglePending}
                         className="border rounded px-3 py-1 text-xs font-medium"
                       >
                         {state.enabled ? 'Apagar' : 'Encender'}
@@ -78,7 +90,7 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
 
                     {flag.type === 'percentage' ? (
                       <form
-                        className="flex self items-center gap-2 text-xs"
+                        className="flex items-center gap-2 text-xs"
                         onSubmit={(event) => {
                           event.preventDefault();
                           const formData = new FormData(event.currentTarget);
@@ -103,7 +115,7 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
                         </label>
                         <button
                           type="submit"
-                          disabled={updateStateMutation.isPending}
+                          disabled={isUpdatePending}
                           className="border rounded px-3 py-1 text-xs font-medium"
                         >
                           Guardar
@@ -127,7 +139,7 @@ export function FlagsList({ flags }: { flags: Flag[] }) {
         name={deleteTarget?.label ?? 'flag'}
         onConfirm={() => {
           if (!deleteTarget?.id) return;
-          deleteMutation.mutate({ id: deleteTarget.id });
+          deleteFlag({ id: deleteTarget.id });
           setDeleteTarget(null);
         }}
       />
