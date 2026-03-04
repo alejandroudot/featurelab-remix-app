@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
-import { useShallow } from 'zustand/react/shallow';
 import type { TaskAssigneeOption, ProjectViewState } from '~/features/task/types';
 import type { Task, TaskActivity, TaskComment } from '~/core/task/task.types';
 import type { Project } from '~/core/project/project.types';
@@ -37,17 +36,8 @@ export function ProjectWorkspace({
   const setCreateProjectOpen = useProjectDialogStore((state) => state.setCreateProjectOpen);
   const setProjectDeleteOpen = useProjectDialogStore((state) => state.setProjectDeleteOpen);
   const setWorkspaceData = useWorkspaceDataStore((state) => state.setWorkspaceData);
-  const { hydratedUserId, hydratedProjects } = useWorkspaceDataStore(
-    useShallow((state) => ({
-      hydratedUserId: state.currentUserId,
-      hydratedProjects: state.projects,
-    })),
-  );
-  const { hydrateViewState } = useWorkspaceUiStore(
-    useShallow((state) => ({
-      hydrateViewState: state.hydrateViewState,
-    })),
-  );
+  const hydratedProjects = useWorkspaceDataStore((state) => state.projects);
+  const hydrateViewState = useWorkspaceUiStore((state) => state.hydrateViewState);
   const uiActiveProjectId = useWorkspaceUiStore((state) => state.activeProjectId);
 
   useEffect(() => {
@@ -64,7 +54,7 @@ export function ProjectWorkspace({
       taskComments,
       assignableUsers,
     });
-  }, [currentUserId, projects, tasks, taskActivities, taskComments, assignableUsers, setWorkspaceData]);
+  }, [assignableUsers, currentUserId, projects, setWorkspaceData, taskActivities, taskComments, tasks]);
 
   useEffect(() => {
     hydrateViewState({
@@ -73,26 +63,22 @@ export function ProjectWorkspace({
       order: viewState.order,
       scope: viewState.scope,
     });
-  }, [initialActiveProjectId, viewState.view, viewState.order, viewState.scope, hydrateViewState]);
+  }, [hydrateViewState, initialActiveProjectId, viewState.order, viewState.scope, viewState.view]);
 
-  const projectsToRender = hydratedUserId.length > 0 ? hydratedProjects : projects;
-  const resolvedProjectId = uiActiveProjectId ?? initialActiveProjectId;
-  const shouldRenderEntryState = projectsToRender.length === 0 || !resolvedProjectId;
+  const projectsToRender = hydratedProjects.length > 0 ? hydratedProjects : projects;
+  const resolvedActiveProjectId = uiActiveProjectId ?? initialActiveProjectId;
+  const hasActiveProject = projectsToRender.some((project) => project.id === resolvedActiveProjectId);
+  const shouldRenderEntryState = projectsToRender.length === 0 || !hasActiveProject;
+  const activeProject = projectsToRender.find((project) => project.id === resolvedActiveProjectId) ?? null;
+  const projectName = activeProject?.name ?? projectsToRender[0]?.name ?? 'Sin proyecto';
 
   return (
     <>
       {shouldRenderEntryState ? (
-        <EntryState
-          initialProjects={projects}
-          initialActiveProjectId={initialActiveProjectId}
-        />
+        <EntryState projects={projectsToRender} activeProjectId={resolvedActiveProjectId} />
       ) : (
         <main className="container mx-auto space-y-6 p-4">
-          <Toolbar
-            initialProjects={projects}
-            initialViewState={viewState}
-            initialActiveProjectId={initialActiveProjectId}
-          />
+          <Toolbar projectName={projectName} />
           <TasksView />
           <Modal />
         </main>

@@ -1,14 +1,10 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { Link } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
-import type { Project } from '~/core/project/project.types';
 import { useProjectDialogStore } from '~/features/store/project-dialog.store';
+import type { Project } from '~/core/project/project.types';
 
-type ProjectsListProps = {
-  projects: Project[];
-};
-
-export function ProjectsList({ projects }: ProjectsListProps) {
+export function ProjectsList({ projects }: { projects: Project[] }) {
   const { openCreateProjectDialog, openProjectDeleteDialog } = useProjectDialogStore(
     useShallow((state) => ({
       openCreateProjectDialog: state.openCreateProjectDialog,

@@ -3,26 +3,17 @@ import { useShallow } from 'zustand/react/shallow';
 import { Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
 import { Button } from '~/ui/primitives/button';
 import { OptionsDropdown } from '~/ui/menus/options-dropdown';
-import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
 import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 import { useProjectDialogStore } from '~/features/store/project-dialog.store';
 import { persistProjectViewPreferences } from '~/features/project/utils/preferences';
-import type { ProjectViewState } from '~/features/task/types';
 
-export function ToolbarControls({
-  initialViewState,
-  initialActiveProjectId,
-}: {
-  initialViewState: ProjectViewState;
-  initialActiveProjectId: string | null;
-}) {
+export function ToolbarControls() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { openProjectDeleteDialog } = useProjectDialogStore(
     useShallow((state) => ({
       openProjectDeleteDialog: state.openProjectDeleteDialog,
     })),
   );
-  const currentUserId = useWorkspaceDataStore((state) => state.currentUserId);
   const { activeProjectId, view, order, scope } = useWorkspaceUiStore(
     useShallow((state) => ({
       activeProjectId: state.activeProjectId,
@@ -39,11 +30,6 @@ export function ToolbarControls({
       setScope: state.setScope,
     })),
   );
-  const isHydrated = currentUserId.length > 0;
-  const resolvedView = isHydrated ? view : initialViewState.view;
-  const resolvedOrder = isHydrated ? order : initialViewState.order;
-  const resolvedScope = isHydrated ? scope : initialViewState.scope;
-  const resolvedActiveProjectId = activeProjectId ?? initialActiveProjectId;
 
   function updateViewParam(key: 'view' | 'order' | 'scope', value: string) {
     const next = new URLSearchParams(searchParams);
@@ -64,12 +50,12 @@ export function ToolbarControls({
         sections={[
           {
             label: 'View',
-            value: resolvedView,
+            value: view,
             onValueChange: (value) => {
               if (value === 'board' || value === 'list') {
                 setView(value);
                 updateViewParam('view', value);
-                persistProjectViewPreferences({ view: value, order: resolvedOrder, scope: resolvedScope });
+                persistProjectViewPreferences({ view: value, order, scope });
               }
             },
             options: [
@@ -79,12 +65,12 @@ export function ToolbarControls({
           },
           {
             label: 'Order',
-            value: resolvedOrder,
+            value: order,
             onValueChange: (value) => {
               if (value === 'manual' || value === 'priority') {
                 setOrder(value);
                 updateViewParam('order', value);
-                persistProjectViewPreferences({ view: resolvedView, order: value, scope: resolvedScope });
+                persistProjectViewPreferences({ view, order: value, scope });
               }
             },
             options: [
@@ -100,12 +86,12 @@ export function ToolbarControls({
         contentClassName="w-48"
         sections={[
           {
-            value: resolvedScope,
+            value: scope,
             onValueChange: (value) => {
               if (value === 'all' || value === 'assigned' || value === 'created') {
                 setScope(value);
                 updateViewParam('scope', value);
-                persistProjectViewPreferences({ view: resolvedView, order: resolvedOrder, scope: value });
+                persistProjectViewPreferences({ view, order, scope: value });
               }
             },
             options: [
@@ -117,10 +103,10 @@ export function ToolbarControls({
         ]}
       />
 
-      {resolvedActiveProjectId ? (
+      {activeProjectId ? (
         <button
           type="button"
-          onClick={() => openProjectDeleteDialog(resolvedActiveProjectId)}
+          onClick={() => openProjectDeleteDialog(activeProjectId)}
           className="inline-flex h-9 w-9 items-center justify-center rounded-md border text-destructive transition hover:bg-destructive/10"
           aria-label="Eliminar proyecto"
           title="Eliminar proyecto"

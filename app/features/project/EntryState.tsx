@@ -2,37 +2,23 @@ import { Plus } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
 import { ProjectsList } from './ProjectsList';
 import { EmptyState } from './components/empty/EmptyState';
-import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
-import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 import { useProjectDialogStore } from '~/features/store/project-dialog.store';
 import type { Project } from '~/core/project/project.types';
 
 export function EntryState({
-  initialProjects,
-  initialActiveProjectId,
+  projects,
+  activeProjectId,
 }: {
-  initialProjects: Project[];
-  initialActiveProjectId: string | null;
+  projects: Project[];
+  activeProjectId: string | null;
 }) {
   const { openCreateProjectDialog } = useProjectDialogStore(
     useShallow((state) => ({
       openCreateProjectDialog: state.openCreateProjectDialog,
     })),
   );
-  const dataStore = useWorkspaceDataStore(
-    useShallow((state) => ({
-      currentUserId: state.currentUserId,
-      projects: state.projects,
-    })),
-  );
-  const { activeProjectId } = useWorkspaceUiStore(
-    useShallow((state) => ({
-      activeProjectId: state.activeProjectId,
-    })),
-  );
-  const projects = dataStore.currentUserId.length > 0 ? dataStore.projects : initialProjects;
-  const resolvedProjectId = activeProjectId ?? initialActiveProjectId;
   const hasProjects = projects.length > 0;
+  const hasActiveProject = projects.some((project) => project.id === activeProjectId);
 
   if (!hasProjects) {
     return (
@@ -53,7 +39,7 @@ export function EntryState({
     );
   }
 
-  if (!resolvedProjectId && hasProjects) {
+  if (!hasActiveProject && hasProjects) {
     return <ProjectsList projects={projects} />;
   }
 
