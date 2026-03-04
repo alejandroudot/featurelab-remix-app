@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useFetcher, useLocation } from 'react-router';
+import { useRevalidator } from 'react-router';
 import type { Task } from '~/core/task/task.types';
-import type { TaskActionData, TaskAssigneeOption } from '../../../types';
+import type { TaskAssigneeOption } from '../../../types';
 import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import { Checklist } from './Checklist';
 import { QuickFields } from './QuickFields';
 import { DeleteSection } from './DeleteSection';
+import { useUpdateTaskMutation } from '~/features/task/client/mutation';
 
 type ActionsProps = {
   task: Task;
@@ -20,11 +21,9 @@ export function Actions({
   assignableUsers,
   onDeleteTask,
 }: ActionsProps) {
-	const fetcher = useFetcher<TaskActionData>();
-  const location = useLocation();
-  const redirectTo = `${location.pathname}${location.search}`;
+  const { data: actionData, mutateAsync: updateTask } = useUpdateTaskMutation();
+  const revalidator = useRevalidator();
   const isCreator = task.userId === currentUserId;
-  const latestActionData = fetcher.data;
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
   const [checklist, setChecklist] = useState(task.checklist);
   const [newChecklistText, setNewChecklistText] = useState('');
@@ -46,15 +45,13 @@ export function Actions({
     setAssigneeDraft(task.assigneeId ?? '');
   }, [task]);
 
-  function submitPartialUpdate(values: Record<string, string>) {
-    fetcher.submit(
-      {
-        id: task.id,
-        redirectTo,
-        ...values,
-      },
-      { method: 'post', action: '/api/tasks/update' },
-    );
+  async function submitPartialUpdate(values: Record<string, string>) {
+    const result = await updateTask({
+      id: task.id,
+      ...values,
+    });
+    if (!result || !result.success) return;
+    revalidator.revalidate();
   }
 
   function addChecklistItem() {
@@ -67,7 +64,7 @@ export function Actions({
     const nextChecklist = [...checklist, { id, text, done: false }];
     setChecklist(nextChecklist);
     setNewChecklistText('');
-    submitPartialUpdate({ checklist: JSON.stringify(nextChecklist) });
+    void submitPartialUpdate({ checklist: JSON.stringify(nextChecklist) });
   }
 
   function toggleChecklistItem(itemId: string) {
@@ -75,13 +72,13 @@ export function Actions({
       item.id === itemId ? { ...item, done: !item.done } : item,
     );
     setChecklist(nextChecklist);
-    submitPartialUpdate({ checklist: JSON.stringify(nextChecklist) });
+    void submitPartialUpdate({ checklist: JSON.stringify(nextChecklist) });
   }
 
   function removeChecklistItem(itemId: string) {
     const nextChecklist = checklist.filter((item) => item.id !== itemId);
     setChecklist(nextChecklist);
-    submitPartialUpdate({ checklist: JSON.stringify(nextChecklist) });
+    void submitPartialUpdate({ checklist: JSON.stringify(nextChecklist) });
   }
 
   return (
@@ -123,7 +120,7 @@ export function Actions({
           />
 
           <ActionFeedbackText
-            actionData={latestActionData}
+            actionData={actionData}
             showFormError
             errorClassName="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700"
           />
@@ -136,6 +133,5 @@ export function Actions({
     </aside>
   );
 }
-
 
 

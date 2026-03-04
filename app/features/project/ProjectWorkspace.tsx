@@ -4,14 +4,14 @@ import { useShallow } from 'zustand/react/shallow';
 import type { TaskAssigneeOption, ProjectViewState } from '~/features/task/types';
 import type { Task, TaskActivity, TaskComment } from '~/core/task/task.types';
 import type { Project } from '~/core/project/project.types';
-import { useWorkspaceDataStore } from './store/data.store';
-import { useWorkspaceUiStore } from './store/ui.store';
+import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
+import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 import { CreateDialog } from './components/dialogs/CreateDialog';
 import { DeleteDialog } from './components/dialogs/DeleteDialog';
 import { TaskCreateDialog } from './components/dialogs/TaskCreateDialog';
 import { EntryState } from './EntryState';
 import { Toolbar } from './components/toolbar/Toolbar';
-import { TasksView } from './components/views/TasksView';
+import { TasksView } from '~/features/task/TasksView';
 import { Modal } from '~/features/task/components/detail/Modal';
 
 export function ProjectWorkspace({

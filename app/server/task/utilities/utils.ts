@@ -1,5 +1,7 @@
 import type { TaskActionData } from '~/features/task/types';
 
+type TaskErrorActionData = Extract<NonNullable<TaskActionData>, { success: false }>;
+
 const TASK_FORM_VALUE_KEYS = [
   'title',
   'description',
@@ -17,7 +19,7 @@ const TASK_FORM_VALUE_KEYS = [
   'orderedTaskIds',
 ] as const;
 
-export function getTaskFormValues(formData: FormData): NonNullable<TaskActionData>['values'] {
+export function getTaskFormValues(formData: FormData): TaskErrorActionData['values'] {
   const values: Record<string, string> = {};
 
   for (const key of TASK_FORM_VALUE_KEYS) {

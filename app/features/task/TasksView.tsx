@@ -1,17 +1,19 @@
-import { useFetcher, useLocation } from 'react-router';
+import { useRevalidator } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
-import { List } from '../list/List';
-import { Board } from '../board/Board';
-import { EmptyState } from '../empty/EmptyState';
-import { useWorkspaceDataStore } from '~/features/project/store/data.store';
-import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
+import { List } from '~/features/project/components/list/List';
+import { Board } from '~/features/project/components/board/Board';
+import { EmptyState } from '~/features/project/components/empty/EmptyState';
+import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
+import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 import { buildAssigneeById, filterTasksBySearch, getVisibleTasks } from '~/features/project/utils/utils';
 import type { TaskStatus } from '~/core/task/task.types';
-import type { TaskActionData } from '~/features/task/types';
+import { useDeleteTaskMutation, useReorderColumnMutation, useUpdateTaskMutation } from '~/features/task/client/mutation';
 
 export function TasksView() {
-  const fetcher = useFetcher<TaskActionData>();
-  const location = useLocation();
+  const revalidator = useRevalidator();
+  const { mutateAsync: deleteTask } = useDeleteTaskMutation();
+  const { mutateAsync: updateTask } = useUpdateTaskMutation();
+  const { mutateAsync: reorderColumn } = useReorderColumnMutation();
   const dataStore = useWorkspaceDataStore(
     useShallow((state) => ({
       currentUserId: state.currentUserId,
@@ -40,30 +42,29 @@ export function TasksView() {
     : visibleTasks;
   const searchedTasks = filterTasksBySearch(projectScopedTasks, uiState.searchTerm);
 
-  function submitTask(action: string, payload: Record<string, string>) {
-    fetcher.submit(
-      { ...payload, redirectTo: `${location.pathname}${location.search}` },
-      { method: 'post', action },
-    );
+  async function handleDeleteTask(taskId: string) {
+    const result = await deleteTask({ id: taskId });
+    if (!result || !result.success) return;
+    revalidator.revalidate();
   }
 
-  function handleDeleteTask(taskId: string) {
-    submitTask('/api/tasks/delete', { id: taskId });
-  }
-
-  function handleMoveTaskStatus(taskId: string, status: TaskStatus, orderIndex?: number) {
-    submitTask('/api/tasks/update', {
+  async function handleMoveTaskStatus(taskId: string, status: TaskStatus, orderIndex?: number) {
+    const result = await updateTask({
       id: taskId,
       status,
       ...(orderIndex !== undefined ? { orderIndex: orderIndex.toString() } : {}),
     });
+    if (!result || !result.success) return;
+    revalidator.revalidate();
   }
 
-  function handleReorderColumn(status: TaskStatus, orderedTaskIds: string[]) {
-    submitTask('/api/tasks/reorder-column', {
+  async function handleReorderColumn(status: TaskStatus, orderedTaskIds: string[]) {
+    const result = await reorderColumn({
       status,
-      orderedTaskIds: JSON.stringify(orderedTaskIds),
+      orderedTaskIds,
     });
+    if (!result || !result.success) return;
+    revalidator.revalidate();
   }
 
   if (searchedTasks.length === 0 && uiState.searchTerm.trim()) {

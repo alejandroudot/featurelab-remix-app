@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Task, TaskStatus } from '~/core/task/task.types';
-import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
+import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 import { Column } from './Column';
 import {
   BOARD_COLUMNS,
@@ -110,6 +110,5 @@ export function Board({
     </section>
   );
 }
-
 
 

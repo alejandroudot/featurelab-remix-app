@@ -3,8 +3,6 @@ import type { TaskActionData } from '../../../../types';
 import { FormFooter } from './FormFooter';
 
 type DescriptionEditorProps = {
-  taskId: string;
-  redirectTo: string;
   draftDescription: string;
   mentionCandidates: string[];
   hasPendingEditorUploads: boolean;
@@ -20,8 +18,6 @@ type DescriptionEditorProps = {
 };
 
 export function DescriptionEditor({
-  taskId,
-  redirectTo,
   draftDescription,
   mentionCandidates,
   hasPendingEditorUploads,
@@ -37,8 +33,6 @@ export function DescriptionEditor({
 }: DescriptionEditorProps) {
   return (
     <>
-      <input type="hidden" name="id" value={taskId} />
-      <input type="hidden" name="redirectTo" value={redirectTo} />
       <RichTextEditor
         name="description"
         value={draftDescription}

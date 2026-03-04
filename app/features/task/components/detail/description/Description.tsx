@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { useFetcher, useLocation } from 'react-router';
+import { useRevalidator } from 'react-router';
 import type { Task } from '~/core/task/task.types';
-import { getErrorActionDataByIntent } from '~/ui/forms/feedback/action-feedback';
-import type { TaskActionData } from '../../../types';
 import {
   cleanupDescriptionTempImages,
   uploadDescriptionAttachment,
 } from './utils';
 import { DescriptionEditor } from './components/DescriptionEditor';
 import { Preview } from './components/Preview';
+import { useUpdateTaskMutation } from '~/features/task/client/mutation';
 
 type DescriptionProps = {
   task: Task;
@@ -21,10 +20,9 @@ export function Description({
   mentionCandidates,
   closeSignal = 0,
 }: DescriptionProps) {
-  const fetcher = useFetcher<TaskActionData>();
-  const location = useLocation();
-  const redirectTo = `${location.pathname}${location.search}`;
-  const updateErrorActionData = getErrorActionDataByIntent(fetcher.data, 'update');
+  const { data: actionData, isPending: isSubmitting, mutateAsync: updateTask, reset } = useUpdateTaskMutation();
+  const revalidator = useRevalidator();
+  const updateErrorActionData = actionData && actionData.success === false ? actionData : undefined;
   const closeSignalRef = useRef(closeSignal);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [draftDescription, setDraftDescription] = useState(task.description ?? '');
@@ -56,52 +54,60 @@ export function Description({
         return;
       }
 
-      fetcher.submit(
-        {
-          id: task.id,
-          description: draftDescription,
-          redirectTo,
-        },
-        { method: 'post', action: '/api/tasks/update' },
-      );
-      setIsEditingDescription(false);
+      const result = await updateTask({
+        id: task.id,
+        description: draftDescription,
+      });
+      if (result && result.success) {
+        revalidator.revalidate();
+        setIsEditingDescription(false);
+      }
     };
 
     void persistDraftOnClose();
   }, [
     closeSignal,
     draftDescription,
-    fetcher,
     hasInlineBase64Images,
     hasPendingEditorUploads,
     isEditingDescription,
-    redirectTo,
     task.description,
     task.id,
+    updateTask,
+    revalidator,
   ]);
 
   function handleStartEdit() {
+    reset();
     setDraftDescription(task.description ?? '');
     setEditorImageError(null);
     setHasPendingEditorUploads(false);
     setIsEditingDescription(true);
   }
 
-  function handleSubmit(event: { preventDefault: () => void }) {
+  async function handleSubmit(event: { preventDefault: () => void }) {
+    event.preventDefault();
+
     if (draftDescription === (task.description ?? '')) {
-      event.preventDefault();
       setEditorImageError(null);
       setIsEditingDescription(false);
       return;
     }
     if (hasPendingEditorUploads) {
-      event.preventDefault();
       return;
     }
     if (hasInlineBase64Images) {
-      event.preventDefault();
       setEditorImageError('Hay imagenes sin subir en la descripcion. Reintenta la carga antes de guardar.');
+      return;
     }
+
+    const result = await updateTask({
+      id: task.id,
+      description: draftDescription,
+    });
+    if (!result || !result.success) return;
+    setIsEditingDescription(false);
+    revalidator.revalidate();
   }
 
   async function handleCancel() {
@@ -115,7 +121,7 @@ export function Description({
   async function handleImageUpload(file: File) {
     setEditorImageError(null);
     try {
-      return await uploadDescriptionAttachment({ taskId: task.id, file, redirectTo });
+      return await uploadDescriptionAttachment({ taskId: task.id, file });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'No se pudo subir la imagen.';
       setEditorImageError(message);
@@ -127,24 +133,22 @@ export function Description({
     <div className="rounded border p-3">
       <h3 className="mb-2 text-sm font-semibold">Descripcion</h3>
       {isEditingDescription ? (
-        <fetcher.Form action="/api/tasks/update" method="post" className="space-y-2" onSubmit={handleSubmit}>
+        <form className="space-y-2" onSubmit={handleSubmit}>
           <DescriptionEditor
-            taskId={task.id}
-            redirectTo={redirectTo}
             draftDescription={draftDescription}
             mentionCandidates={mentionCandidates}
             hasPendingEditorUploads={hasPendingEditorUploads}
             hasInlineBase64Images={hasInlineBase64Images}
             editorImageError={editorImageError}
             updateErrorActionData={updateErrorActionData}
-            isSubmitting={fetcher.state === 'submitting'}
+            isSubmitting={isSubmitting}
             onDraftDescriptionChange={setDraftDescription}
             onPendingUploadsChange={setHasPendingEditorUploads}
             onEditorImageErrorChange={setEditorImageError}
             onImageUpload={handleImageUpload}
             onCancel={handleCancel}
           />
-        </fetcher.Form>
+        </form>
       ) : (
         <Preview
           description={task.description}
@@ -154,6 +158,4 @@ export function Description({
     </div>
   );
 }
-
-
 

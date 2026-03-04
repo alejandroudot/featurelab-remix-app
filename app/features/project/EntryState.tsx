@@ -2,8 +2,8 @@ import { Plus } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
 import { ProjectsList } from './ProjectsList';
 import { EmptyState } from './components/empty/EmptyState';
-import { useWorkspaceDataStore } from '~/features/project/store/data.store';
-import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
+import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
+import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 import type { Project } from '~/core/project/project.types';
 
 export function EntryState({

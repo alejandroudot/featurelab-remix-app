@@ -52,12 +52,10 @@ export async function cleanupDescriptionTempImages(input: { taskId: string; html
 export async function uploadDescriptionAttachment(input: {
   taskId: string;
   file: File;
-  redirectTo: string;
 }): Promise<string> {
   const formData = new FormData();
   formData.set('taskId', input.taskId);
   formData.set('attachmentFile', input.file);
-  formData.set('redirectTo', input.redirectTo);
 
   const response = await fetch('/api/tasks/attachments', {
     method: 'POST',
@@ -79,4 +77,3 @@ export async function uploadDescriptionAttachment(input: {
 
   return storagePath;
 }
-

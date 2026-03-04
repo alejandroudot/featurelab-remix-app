@@ -1,6 +1,6 @@
 import { Search, X } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
-import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
+import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 
 export function ToolbarSearch() {
   const { searchTerm, setSearchTerm } = useWorkspaceUiStore(

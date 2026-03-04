@@ -3,8 +3,8 @@ import { useShallow } from 'zustand/react/shallow';
 import { Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
 import { Button } from '~/ui/primitives/button';
 import { OptionsDropdown } from '~/ui/menus/options-dropdown';
-import { useWorkspaceDataStore } from '~/features/project/store/data.store';
-import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
+import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
+import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 import { persistProjectViewPreferences } from '~/features/project/utils/preferences';
 import type { ProjectViewState } from '~/features/task/types';
 

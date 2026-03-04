@@ -1,5 +1,5 @@
 import type { Task } from '~/core/task/task.types';
-import { TaskListCardItem } from '~/features/task/TaskListCard';
+import { ListCard } from '~/features/task/components/card/ListCard';
 
 type ListProps = {
   tasks: Task[];
@@ -12,7 +12,7 @@ export function List({ tasks, assigneeById, onDeleteTask }: ListProps) {
     <section>
       <ul className="space-y-2">
         {tasks.map((task) => (
-          <TaskListCardItem
+          <ListCard
             key={task.id}
             task={task}
             assigneeLabel={task.assigneeId ? assigneeById[task.assigneeId] ?? 'Unknown user' : 'Unassigned'}
@@ -23,6 +23,5 @@ export function List({ tasks, assigneeById, onDeleteTask }: ListProps) {
     </section>
   );
 }
-
 
 

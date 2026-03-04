@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useFetcher } from 'react-router';
+import { useRevalidator } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
-import type { TaskActionData } from '../../types';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
-import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/feedback/action-feedback';
-import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
-import { useWorkspaceDataStore } from '~/features/project/store/data.store';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
+import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
+import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
 import { FormFooter } from './FormFooter';
 import { TitleField } from './Title';
 import { getFieldError } from './utils/errors';
 import { uploadCreateTaskImage } from './utils/upload-image';
+import { useCreateTaskMutation } from '~/features/task/client/mutation';
 
-type TaskCreateFetcherData = TaskActionData | { success: true; intent?: 'create' };
 type CreateTaskFormState = {
   title: string;
   description: string;
@@ -31,7 +30,8 @@ export function CreateTask({
 }: {
   className?: string;
 }) {
-  const { data: actionData, state: fetcherState, Form } = useFetcher<TaskCreateFetcherData>();
+  const { data: actionData, isPending: isSubmitting, mutateAsync: createTask, reset } = useCreateTaskMutation();
+  const revalidator = useRevalidator();
   const { activeProjectId, setCreateTaskOpen } = useWorkspaceUiStore(
     useShallow((state) => ({
       activeProjectId: state.activeProjectId,
@@ -45,30 +45,40 @@ export function CreateTask({
   );
   const mentionCandidates = [...new Set(assignableUsers.map((user) => user.email.toLowerCase()))];
   const resolvedActiveProjectId = activeProjectId ?? '';
-  const isSubmitting = fetcherState === 'submitting';
-  const createErrorActionData = getErrorActionDataByIntent(actionData, 'create');
+  const createErrorActionData = actionData && actionData.success === false ? actionData : undefined;
   const [formState, setFormState] = useState<CreateTaskFormState>(INITIAL_FORM_STATE);
   const hasInlineBase64Images = formState.description.includes('data:image/');
 
   useEffect(() => {
-    if (fetcherState !== 'idle') return;
     if (!actionData || actionData.success !== true) return;
     setFormState(INITIAL_FORM_STATE);
     setCreateTaskOpen(false);
-  }, [fetcherState, actionData, setCreateTaskOpen]);
+    reset();
+  }, [actionData, reset, setCreateTaskOpen]);
 
-  function handleSubmitGuard(event: { preventDefault: () => void }) {
+  async function handleSubmit(event: { preventDefault: () => void }) {
+    event.preventDefault();
+
     if (formState.hasPendingEditorUploads) {
-      event.preventDefault();
       return;
     }
+
     if (hasInlineBase64Images) {
-      event.preventDefault();
       setFormState((prev) => ({
         ...prev,
         editorImageError: 'Hay imagenes sin subir. Vuelve a cargarlas antes de crear.',
       }));
+      return;
     }
+
+    const data = await createTask({
+      projectId: resolvedActiveProjectId,
+      title: formState.title,
+      description: formState.description,
+    });
+
+    if (!data || !data.success) return;
+    revalidator.revalidate();
   }
 
   async function handleEditorImageUpload(file: File) {
@@ -86,22 +96,11 @@ export function CreateTask({
     <section id="create-task" className={className ?? 'max-w-xl space-y-3 rounded border p-4'}>
       <ActionFeedbackText
         actionData={createErrorActionData}
-        intent="create"
         showFormError
-        fallbackError={getFieldError(createErrorActionData, 'intent')}
         errorClassName="rounded border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700"
       />
 
-      <Form
-        action="/api/tasks/create"
-        method="post"
-        className="space-y-3"
-        onSubmit={(event) => {
-          handleSubmitGuard(event);
-        }}
-      >
-        <input type="hidden" name="projectId" value={resolvedActiveProjectId} />
-
+      <form className="space-y-3" onSubmit={handleSubmit}>
         <TitleField
           value={formState.title}
           error={getFieldError(createErrorActionData, 'title')}
@@ -132,7 +131,7 @@ export function CreateTask({
           editorImageError={formState.editorImageError}
           isSubmitting={isSubmitting}
         />
-      </Form>
+      </form>
     </section>
   );
 }

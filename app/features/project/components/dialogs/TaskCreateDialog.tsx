@@ -1,7 +1,7 @@
 import { useShallow } from 'zustand/react/shallow';
 import { ContentDialog } from '~/ui/dialogs/ContentDialog';
 import { CreateTask } from '~/features/task/components/create/CreateTask';
-import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
+import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 
 export function TaskCreateDialog() {
   const { isCreateTaskOpen, setCreateTaskOpen } = useWorkspaceUiStore(

@@ -1,35 +1,26 @@
-import type { useFetcher } from 'react-router';
 import type { TaskComment } from '~/core/task/task.types';
 import { RichTextEditor, RichTextViewer } from '~/ui/editors/rich-text/RichTextEditor';
 import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import type { TaskActionData } from '../../../../types';
-import { getMeaningfulTextFromHtml } from '../utils';
-
-type TaskCommentFetcher = ReturnType<typeof useFetcher<TaskActionData>>;
 
 type CommentsListProps = {
   comments: TaskComment[];
   currentUserId: string;
   editingCommentId: string | null;
   editingBody: string;
-  redirectTo: string;
   mentionCandidates: string[];
-  updateFetcher: TaskCommentFetcher;
-  deleteFetcher: TaskCommentFetcher;
   updateErrorActionData: TaskActionData;
+  isSubmittingUpdate: boolean;
+  isSubmittingDelete: boolean;
   onEditingCommentIdChange: (commentId: string | null) => void;
   onEditingBodyChange: (value: string) => void;
-  onMarkUpdateSubmit: () => void;
-  onSkipUpdateSubmit: () => void;
+  onSubmitUpdate: (commentId: string, event: { preventDefault: () => void }) => void;
+  onDeleteComment: (commentId: string) => void;
 };
 
 type EditActionsProps = {
   isSubmitting: boolean;
   onCancel: () => void;
-};
-
-type UpdateSubmitEvent = {
-  preventDefault: () => void;
 };
 
 function EditActions({ isSubmitting, onCancel }: EditActionsProps) {
@@ -58,39 +49,18 @@ export function CommentsList({
   currentUserId,
   editingCommentId,
   editingBody,
-  redirectTo,
   mentionCandidates,
-  updateFetcher,
-  deleteFetcher,
   updateErrorActionData,
+  isSubmittingUpdate,
+  isSubmittingDelete,
   onEditingCommentIdChange,
   onEditingBodyChange,
-  onMarkUpdateSubmit,
-  onSkipUpdateSubmit,
+  onSubmitUpdate,
+  onDeleteComment,
 }: CommentsListProps) {
   function handleCancelEdit() {
     onEditingCommentIdChange(null);
     onEditingBodyChange('');
-  }
-
-  function buildHandleUpdateSubmit(commentId: string) {
-    return (event: UpdateSubmitEvent) => {
-      const nextMeaningfulBody = getMeaningfulTextFromHtml(editingBody);
-      if (!nextMeaningfulBody) {
-        event.preventDefault();
-        onSkipUpdateSubmit();
-        deleteFetcher.submit(
-          {
-            commentId,
-            redirectTo,
-          },
-          { method: 'post', action: '/api/task-comments/delete' },
-        );
-        handleCancelEdit();
-        return;
-      }
-      onMarkUpdateSubmit();
-    };
   }
 
   function handleStartEdit(comment: TaskComment) {
@@ -107,14 +77,10 @@ export function CommentsList({
           <li key={comment.id} className="rounded border p-2 text-sm">
             <div className="font-medium">{comment.authorEmail ?? 'Usuario'}</div>
             {editingCommentId === comment.id ? (
-              <updateFetcher.Form
-                action="/api/task-comments/update"
-                method="post"
+              <form
                 className="mt-2 space-y-2"
-                onSubmit={buildHandleUpdateSubmit(comment.id)}
+                onSubmit={(event) => onSubmitUpdate(comment.id, event)}
               >
-                <input type="hidden" name="commentId" value={comment.id} />
-                <input type="hidden" name="redirectTo" value={redirectTo} />
                 <RichTextEditor
                   name="commentBody"
                   value={editingBody}
@@ -123,11 +89,8 @@ export function CommentsList({
                   enableImageUpload={false}
                 />
                 <ActionFeedbackText actionData={updateErrorActionData} fieldKey="commentBody" showFormError />
-                <EditActions
-                  isSubmitting={updateFetcher.state === 'submitting'}
-                  onCancel={handleCancelEdit}
-                />
-              </updateFetcher.Form>
+                <EditActions isSubmitting={isSubmittingUpdate} onCancel={handleCancelEdit} />
+              </form>
             ) : (
               <div className="opacity-90">
                 <RichTextViewer content={comment.body} />
@@ -145,17 +108,14 @@ export function CommentsList({
                 >
                   Editar
                 </button>
-                <deleteFetcher.Form action="/api/task-comments/delete" method="post">
-                  <input type="hidden" name="commentId" value={comment.id} />
-                  <input type="hidden" name="redirectTo" value={redirectTo} />
-                  <button
-                    type="submit"
-                    disabled={deleteFetcher.state === 'submitting'}
-                    className="rounded border border-red-300 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-60"
-                  >
-                    {deleteFetcher.state === 'submitting' ? 'Borrando...' : 'Borrar'}
-                  </button>
-                </deleteFetcher.Form>
+                <button
+                  type="button"
+                  onClick={() => onDeleteComment(comment.id)}
+                  disabled={isSubmittingDelete}
+                  className="rounded border border-red-300 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-60"
+                >
+                  {isSubmittingDelete ? 'Borrando...' : 'Borrar'}
+                </button>
               </div>
             ) : null}
           </li>
@@ -164,5 +124,3 @@ export function CommentsList({
     </ul>
   );
 }
-
-

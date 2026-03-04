@@ -1,8 +1,8 @@
 import { useLocation } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
 import { DeleteDialog as DeleteDialogBase } from '~/ui/dialogs/delete-dialog';
-import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
-import { useWorkspaceDataStore } from '~/features/project/store/data.store';
+import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
+import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
 import { useDeleteProjectMutation } from '~/features/project/client/mutation';
 
 export function DeleteDialog({

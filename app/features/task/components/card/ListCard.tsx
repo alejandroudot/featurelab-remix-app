@@ -8,7 +8,7 @@ import {
   formatStatusLabel,
 } from '~/features/task/utils/formatters';
 import { Badge } from '~/ui/primitives/badge';
-import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
+import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 
 type TaskListCardItemProps = {
   task: Task;
@@ -16,7 +16,7 @@ type TaskListCardItemProps = {
   onDeleteTask?: (taskId: string) => void;
 };
 
-export function TaskListCardItem({ task, assigneeLabel, onDeleteTask }: TaskListCardItemProps) {
+export function ListCard({ task, assigneeLabel, onDeleteTask }: TaskListCardItemProps) {
   const openTaskDetail = useWorkspaceUiStore((state) => state.openTaskDetail);
   const description = formatPlainDescription(task.description ?? '');
 

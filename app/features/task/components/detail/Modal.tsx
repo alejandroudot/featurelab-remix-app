@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useFetcher, useLocation } from 'react-router';
+import { useRevalidator } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
 import {
   Dialog,
@@ -12,13 +12,13 @@ import { Description } from './description/Description';
 import { Comments } from './comments/Comments';
 import { History } from './History';
 import { EditableTitle } from './EditableTitle';
-import { useWorkspaceUiStore } from '~/features/project/store/ui.store';
-import { useWorkspaceDataStore } from '~/features/project/store/data.store';
-import type { TaskActionData } from '../../types';
+import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
+import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
+import { useDeleteTaskMutation } from '~/features/task/client/mutation';
 
 export function Modal() {
-  const fetcher = useFetcher<TaskActionData>();
-  const location = useLocation();
+  const revalidator = useRevalidator();
+  const { mutateAsync: deleteTask } = useDeleteTaskMutation();
   const { isDetailOpen, selectedTaskId, setDetailOpen } = useWorkspaceUiStore(
     useShallow((state) => ({
       isDetailOpen: state.isDetailOpen,
@@ -50,11 +50,11 @@ export function Modal() {
     [assignableUsers],
   );
 
-  function handleDeleteTask(taskId: string) {
-    fetcher.submit(
-      { id: taskId, redirectTo: `${location.pathname}${location.search}` },
-      { method: 'post', action: '/api/tasks/delete' },
-    );
+  async function handleDeleteTask(taskId: string) {
+    const result = await deleteTask({ id: taskId });
+    if (!result || !result.success) return;
+    setDetailOpen(false);
+    revalidator.revalidate();
   }
 
   function handleModalOpenChange(nextOpen: boolean) {
@@ -111,4 +111,3 @@ export function Modal() {
     </Dialog>
   );
 }
-

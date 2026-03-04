@@ -1,5 +1,5 @@
 import type { Task } from '~/core/task/task.types';
-import { TaskBoardCard } from '~/features/task/TaskBoardCard';
+import { BoardCard } from '~/features/task/components/card/BoardCard';
 import type { BoardColumn, BoardColumnId } from './utils';
 
 type ColumnProps = {
@@ -38,7 +38,7 @@ export function Column({
       ) : (
         <ul className="space-y-2">
           {tasks.map((task, index) => (
-            <TaskBoardCard
+            <BoardCard
               key={task.id}
               task={task}
               columnId={column.id}
@@ -55,7 +55,6 @@ export function Column({
     </article>
   );
 }
-
 
 
 

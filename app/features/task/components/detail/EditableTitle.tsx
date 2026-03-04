@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useFetcher, useLocation } from 'react-router';
-import type { TaskActionData } from '../../types';
-import { ActionFeedbackText, getErrorActionDataByIntent } from '~/ui/forms/feedback/action-feedback';
+import { useRevalidator } from 'react-router';
+import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
+import { useUpdateTaskMutation } from '~/features/task/client/mutation';
 
 type EditableTitleProps = {
   taskId: string;
@@ -10,13 +10,11 @@ type EditableTitleProps = {
 };
 
 export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleProps) {
-  const fetcher = useFetcher<TaskActionData>();
-  const location = useLocation();
+  const { data: actionData, isPending: isSubmitting, mutateAsync: updateTask, reset } = useUpdateTaskMutation();
+  const revalidator = useRevalidator();
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(title);
-  const [didSubmit, setDidSubmit] = useState(false);
-  const redirectTo = `${location.pathname}${location.search}`;
-  const updateErrorActionData = getErrorActionDataByIntent(fetcher.data, 'update');
+  const updateErrorActionData = actionData && actionData.success === false ? actionData : undefined;
 
   useEffect(() => {
     if (!isEditing) return;
@@ -27,32 +25,34 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
       return;
     }
 
-    fetcher.submit(
-      {
+    void (async () => {
+      const result = await updateTask({
         id: taskId,
         title: draft,
-        redirectTo,
-      },
-      { method: 'post', action: '/api/tasks/update' },
-    );
-    setIsEditing(false);
+      });
+      if (!result || !result.success) return;
+      setIsEditing(false);
+      revalidator.revalidate();
+    })();
   }, [closeSignal]);
 
-  useEffect(() => {
-    if (!didSubmit) return;
-    if (fetcher.state !== 'idle') return;
-
-    if (!updateErrorActionData) {
-      setIsEditing(false);
-    }
-    setDidSubmit(false);
-  }, [didSubmit, fetcher.state, updateErrorActionData]);
+  async function handleSubmit(event: { preventDefault: () => void }) {
+    event.preventDefault();
+    const result = await updateTask({
+      id: taskId,
+      title: draft,
+    });
+    if (!result || !result.success) return;
+    setIsEditing(false);
+    revalidator.revalidate();
+  }
 
   if (!isEditing) {
     return (
       <button
         type="button"
         onClick={() => {
+          reset();
           setDraft(title);
           setIsEditing(true);
         }}
@@ -64,40 +64,33 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
   }
 
   return (
-    <fetcher.Form
-      action="/api/tasks/update"
-      method="post"
-      className="space-y-2"
-      onSubmit={() => {
-        setDidSubmit(true);
-      }}
-    >
-      <input type="hidden" name="id" value={taskId} />
-      <input type="hidden" name="redirectTo" value={redirectTo} />
+    <form className="space-y-2" onSubmit={handleSubmit}>
       <input
-        name="title"
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
         className="w-full rounded border px-2 py-1 text-lg font-semibold"
         autoFocus
       />
-      <ActionFeedbackText actionData={updateErrorActionData} intent="update" fieldKey="title" />
+      <ActionFeedbackText actionData={updateErrorActionData} fieldKey="title" />
       <div className="flex gap-2">
         <button
           type="submit"
-          disabled={fetcher.state === 'submitting'}
+          disabled={isSubmitting}
           className="rounded bg-slate-900 px-2 py-1 text-xs font-medium text-white disabled:opacity-60"
         >
           Guardar
         </button>
         <button
           type="button"
-          onClick={() => setIsEditing(false)}
+          onClick={() => {
+            reset();
+            setIsEditing(false);
+          }}
           className="rounded border px-2 py-1 text-xs font-medium"
         >
           Cancelar
         </button>
       </div>
-    </fetcher.Form>
+    </form>
   );
 }

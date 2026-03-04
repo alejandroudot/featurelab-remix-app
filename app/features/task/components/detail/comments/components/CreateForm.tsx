@@ -1,19 +1,14 @@
-import type { useFetcher } from 'react-router';
 import { RichTextEditor } from '~/ui/editors/rich-text/RichTextEditor';
 import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import type { TaskActionData } from '../../../../types';
 
-type TaskCommentFetcher = ReturnType<typeof useFetcher<TaskActionData>>;
-
 type CreateFormProps = {
-  createFetcher: TaskCommentFetcher;
-  taskId: string;
-  redirectTo: string;
   createBody: string;
   mentionCandidates: string[];
   createErrorActionData: TaskActionData;
+  isSubmitting: boolean;
   onCreateBodyChange: (value: string) => void;
-  onMarkCreateSubmit: () => void;
+  onSubmit: (event: { preventDefault: () => void }) => void;
 };
 
 type CreateFooterProps = {
@@ -37,19 +32,15 @@ function CreateFooter({ createErrorActionData, isSubmitting }: CreateFooterProps
 }
 
 export function CreateForm({
-  createFetcher,
-  taskId,
-  redirectTo,
   createBody,
   mentionCandidates,
   createErrorActionData,
+  isSubmitting,
   onCreateBodyChange,
-  onMarkCreateSubmit,
+  onSubmit,
 }: CreateFormProps) {
   return (
-    <createFetcher.Form action="/api/task-comments/create" method="post" className="mb-3 space-y-2" onSubmit={onMarkCreateSubmit}>
-      <input type="hidden" name="id" value={taskId} />
-      <input type="hidden" name="redirectTo" value={redirectTo} />
+    <form className="mb-3 space-y-2" onSubmit={onSubmit}>
       <RichTextEditor
         name="commentBody"
         value={createBody}
@@ -60,8 +51,8 @@ export function CreateForm({
       />
       <CreateFooter
         createErrorActionData={createErrorActionData}
-        isSubmitting={createFetcher.state === 'submitting'}
+        isSubmitting={isSubmitting}
       />
-    </createFetcher.Form>
+    </form>
   );
 }

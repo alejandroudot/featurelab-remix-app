@@ -42,6 +42,10 @@ export type TaskActionData =
 			orderedTaskIds?: string;
 		}
 	}
+  | {
+    success: true;
+    message?: string;
+  }
 	| undefined;
 
 export type TaskActionResult = Response | TaskActionData;
