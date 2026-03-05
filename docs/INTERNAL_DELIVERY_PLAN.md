@@ -372,6 +372,8 @@ Fortalece hoy: refactor estructural, mantenibilidad, disciplina de naming y redu
   - [x] Remover redirects legacy en flujo de tasks API (responses JSON en modo API/fetcher)
   - [x] Eliminar loop de polling en notificaciones del header
   - [x] Simplificar `CreateTask` (sin custom hook gigante, estado local acotado y errores server-first)
+  - [x] Reordenar ownership UI entre `project` y `task` (vista/orquestacion en `project`, cards de task en `task`)
+  - [x] Corregir flujo de entrada a proyectos: `/` muestra overview y el detalle abre solo por seleccion explicita de proyecto
   - [ ] Pendiente de refactor (siguiente ola)
     - [~] Preparacion API por accion (scope total backend)
       - [x] Fase A: migrar todos los dominios a endpoints API dedicados (sin depender de route actions UI)
@@ -386,10 +388,13 @@ Fortalece hoy: refactor estructural, mantenibilidad, disciplina de naming y redu
         - [x] Projects: `POST /api/projects/create|delete`
         - [x] Flags: `POST /api/flags/create|toggle|update-state|delete`
         - [x] Auth/Account: endpoints de accion explicitos por flujo
-      - [~] Fase C: migrar cliente a React Query full
-        - [ ] `useQuery` para lecturas en todos los dominios
+      - [~] Fase C: migrar cliente a React Query selectivo (solo donde aporte valor real)
+        - [~] `useQuery` para lecturas selectivas (no en todos los dominios por defecto)
+          - [x] Notifications header
+          - [ ] Teams panel (listas remotas por bloque)
         - [x] `useMutation` para mutaciones en todos los dominios
-        - [~] Invalidaciones por dominio y eliminacion de `fetcher/actionData` legacy donde aplique
+        - [x] Invalidaciones por dominio y eliminacion de `fetcher/actionData` legacy donde aplique
+        - [x] Regla de arquitectura: lecturas por `loader` por defecto; `useQuery` solo por excepcion justificada
     - [x] Reducir estado/orquestacion restante en `project` para seguir bajando prop drilling
     - [x] Homogeneizar el mismo patron server/API en los dominios restantes (`flags`, `account`, `auth`) donde aplique
 
@@ -460,10 +465,10 @@ Fortalece hoy: arquitectura de app shell, navegacion por rol, UX de productivida
     - [x] `View settings` (dropdown)
     - [x] `Scope` (dropdown) para alternar alcance rapido
   - [ ] Agregar sidebar izquierdo de proyectos
-    - [ ] Crear proyecto desde sidebar (decision actual: se crea desde overview)
     - [x] Estado vacio con CTA `Crea tu primer proyecto`
     - [x] Header `Projects` con icono y accion rapida
     - [x] Soporte de icono/imagen por proyecto
+    - [x] Flujo de navegacion consistente: overview en `/` + acceso a proyecto por click (card/sidebar)
     - [ ] Mostrar icono en lista lateral y en vista de proyecto (solo lateral implementado)
     - [x] Seleccionar proyecto y filtrar tasks por proyecto activo
   - [ ] Sidebar con secciones desplegables

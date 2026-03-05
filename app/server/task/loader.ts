@@ -51,6 +51,7 @@ export async function runTaskLoader({ request, userId, taskRepository, projectRe
     order: urlFilters.order ?? preferences.defaultTasksOrder,
     scope: urlFilters.scope ?? preferences.defaultTasksScope,
   };
+  const activeProjectId = url.searchParams.get('project');
 
   return {
     currentUserId: userId,
@@ -60,6 +61,7 @@ export async function runTaskLoader({ request, userId, taskRepository, projectRe
     taskComments,
     assignableUsers,
     viewState,
+    activeProjectId,
   };
 }
 

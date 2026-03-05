@@ -5,6 +5,7 @@ import { cleanupDescriptionTempImages, uploadDescriptionAttachment } from './uti
 import { DescriptionEditor } from './components/DescriptionEditor';
 import { Preview } from './components/Preview';
 import { useUpdateTaskMutation } from '~/features/task/client/mutation';
+import { revalidateAfterSuccess } from '~/lib/query/mutation-result';
 
 type DescriptionProps = {
   task: Task;
@@ -55,9 +56,8 @@ export function Description({
       id: task.id,
       description: draftDescription,
     });
-    if (!result || !result.success) return false;
+    if (!revalidateAfterSuccess(result, revalidator.revalidate)) return false;
 
-    revalidator.revalidate();
     if (closeOnSuccess) setIsEditingDescription(false);
     return true;
   }

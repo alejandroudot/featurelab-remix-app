@@ -218,6 +218,7 @@ Tecnologias a usar: React Router loaders/actions + shadcn/ui (`Dialog`, `Dropdow
   - [x] Estado vacio de proyectos: CTA `Crea tu primer proyecto` con iconografia clara
   - [x] Header del bloque `Projects` con icono visual (estilo marcador/cohete) y accion rapida
   - [x] Cada proyecto puede tener icono/imagen personalizada
+  - [x] Flujo de navegacion consistente: `/` lista proyectos (overview) y el detalle abre por seleccion explicita (card/sidebar)
   - [ ] Render del icono del proyecto en sidebar y en encabezado de vista del proyecto
   - [x] Al seleccionar proyecto, Tasks muestra solo tasks de ese proyecto
   - [x] Contexto visual por proyecto en el header de Tasks
@@ -372,12 +373,13 @@ Tecnologias a usar: TanStack Query + Zustand.
   - [ ] Expandir `Query` por slices completos (no migracion parcial caotica)
   - [ ] Documentar query keys por dominio (`notifications`, `tasks`, `projects`, `flags`, `auth`, `account`) y sus reglas de invalidacion
 - [ ] Mapa de uso por tecnologia (decision-complete)
-  - [ ] Query se usa para lecturas transversales y cache/polling (`notifications`, `projects/teams/flags sidebar`, luego `team feed/lists`)
+  - [~] Query se usa para lecturas transversales y cache/polling de forma selectiva (`notifications`, luego `team feed/lists` donde aporte)
   - [ ] Zustand se usa para estado UI global (sin prop drilling)
     - [ ] `taskDetailModalStore`: `selectedTaskId`, `isTaskModalOpen`
     - [ ] `teamsPanelStore`: `activeTeamId`, `activeTab` (`members|invites|projects`), filtros UI locales
     - [ ] `notificationsPanelStore`: `unreadCount`, `panelOpen`, `selectedNotificationId`
-  - [ ] Loader/Action queda como backbone para mutaciones y permisos (`auth`, `tasks`, `flags`, `team`)
+  - [x] Loader/Action queda como backbone para mutaciones y permisos (`auth`, `tasks`, `flags`, `team`)
+  - [x] Regla base: lecturas por `loader` por defecto; `useQuery` solo cuando hay ganancia real de UX/caching
   - [ ] Regla: no duplicar fuente de verdad del mismo flujo entre Query y loader/action
 - [ ] Fase 1 Query (implementacion concreta)
   - [x] `notificationsQuery` con `refetchInterval`, estados de carga/error y cache por usuario

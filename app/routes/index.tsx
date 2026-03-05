@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLoaderData, useSearchParams } from 'react-router';
+import { useLoaderData } from 'react-router';
 import { Project } from '~/features/project/Project';
 import { ProjectsOverview } from '~/features/project/ProjectsOverview';
 import type { Route } from './+types/index';
@@ -25,11 +25,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function IndexRoute() {
-  const { currentUserId, projects, tasks, taskActivities, taskComments, assignableUsers, viewState } =
+  const { currentUserId, projects, tasks, taskActivities, taskComments, assignableUsers, viewState, activeProjectId } =
     useLoaderData<typeof loader>();
-  const [searchParams] = useSearchParams();
-  const projectFromQuery = searchParams.get('project');
-  const selectedProject = projects.find((project) => project.id === projectFromQuery) ?? null;
+  const selectedProject = projects.find((project) => project.id === activeProjectId) ?? null;
   const setCreateProjectOpen = useProjectDialogStore((state) => state.setCreateProjectOpen);
   const setProjectDeleteOpen = useProjectDialogStore((state) => state.setProjectDeleteOpen);
   const setWorkspaceData = useWorkspaceDataStore((state) => state.setWorkspaceData);
@@ -62,7 +60,20 @@ export default function IndexRoute() {
 
   return (
     <>
-      {selectedProject ? <Project project={selectedProject} /> : <ProjectsOverview projects={projects} />}
+      {selectedProject ? (
+        <Project
+          project={selectedProject}
+          initialState={{
+            currentUserId,
+            tasks,
+            assignableUsers,
+            activeProjectId: selectedProject.id,
+            viewState,
+          }}
+        />
+      ) : (
+        <ProjectsOverview projects={projects} />
+      )}
       <CreateDialog />
       <DeleteDialog />
       <TaskCreateDialog />

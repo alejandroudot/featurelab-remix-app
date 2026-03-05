@@ -5,6 +5,7 @@ import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import { useCreateProjectMutation } from '~/features/project/client/mutation';
 import { useProjectDialogStore } from '~/features/store/project-dialog.store';
 import { useShallow } from 'zustand/react/shallow';
+import { isSuccessfulMutation } from '~/lib/query/mutation-result';
 
 export function CreateDialog() {
   const { data: actionData, isPending: isSubmitting, mutateAsync: createProject, reset } = useCreateProjectMutation();
@@ -44,7 +45,7 @@ export function CreateDialog() {
       name,
       imageUrl: newProjectImageUrl,
     });
-    if (!data || !data.success) return;
+    if (!isSuccessfulMutation(data)) return;
     resetForm();
     setCreateProjectOpen(false);
     revalidator.revalidate();

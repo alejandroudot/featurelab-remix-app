@@ -4,6 +4,7 @@ import { DeleteDialog as DeleteDialogBase } from '~/ui/dialogs/delete-dialog';
 import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
 import { useProjectDialogStore } from '~/features/store/project-dialog.store';
 import { useDeleteProjectMutation } from '~/features/project/client/mutation';
+import { revalidateAfterSuccess } from '~/lib/query/mutation-result';
 
 export function DeleteDialog() {
   const { mutateAsync: deleteProject } = useDeleteProjectMutation();
@@ -25,9 +26,8 @@ export function DeleteDialog() {
   async function handleDeleteProject() {
     if (!projectToDeleteId) return;
     const data = await deleteProject({ id: projectToDeleteId });
-    if (!data || !data.success) return;
+    if (!revalidateAfterSuccess(data, revalidator.revalidate)) return;
     setProjectDeleteOpen(false);
-    revalidator.revalidate();
   }
 
   return (

@@ -15,6 +15,7 @@ import { EditableTitle } from './EditableTitle';
 import { useWorkspaceUiStore } from '~/features/store/workspace-ui.store';
 import { useWorkspaceDataStore } from '~/features/store/workspace-data.store';
 import { useDeleteTaskMutation } from '~/features/task/client/mutation';
+import { revalidateAfterSuccess } from '~/lib/query/mutation-result';
 
 export function Modal() {
   const revalidator = useRevalidator();
@@ -52,9 +53,8 @@ export function Modal() {
 
   async function handleDeleteTask(taskId: string) {
     const result = await deleteTask({ id: taskId });
-    if (!result || !result.success) return;
+    if (!revalidateAfterSuccess(result, revalidator.revalidate)) return;
     setDetailOpen(false);
-    revalidator.revalidate();
   }
 
   function handleModalOpenChange(nextOpen: boolean) {

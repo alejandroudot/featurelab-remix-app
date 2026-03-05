@@ -10,6 +10,7 @@ import { TitleField } from './Title';
 import { getFieldError } from './utils/errors';
 import { uploadCreateTaskImage } from './utils/upload-image';
 import { useCreateTaskMutation } from '~/features/task/client/mutation';
+import { revalidateAfterSuccess } from '~/lib/query/mutation-result';
 
 type CreateTaskFormState = {
   title: string;
@@ -77,8 +78,7 @@ export function CreateTask({
       description: formState.description,
     });
 
-    if (!data || !data.success) return;
-    revalidator.revalidate();
+    revalidateAfterSuccess(data, revalidator.revalidate);
   }
 
   async function handleEditorImageUpload(file: File) {

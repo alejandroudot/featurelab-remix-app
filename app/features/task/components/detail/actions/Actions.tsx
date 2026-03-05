@@ -7,6 +7,7 @@ import { Checklist } from './Checklist';
 import { QuickFields } from './QuickFields';
 import { DeleteSection } from './DeleteSection';
 import { useUpdateTaskMutation } from '~/features/task/client/mutation';
+import { revalidateAfterSuccess } from '~/lib/query/mutation-result';
 
 type ActionsProps = {
   task: Task;
@@ -50,8 +51,7 @@ export function Actions({
       id: task.id,
       ...values,
     });
-    if (!result || !result.success) return;
-    revalidator.revalidate();
+    revalidateAfterSuccess(result, revalidator.revalidate);
   }
 
   function addChecklistItem() {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRevalidator } from 'react-router';
 import { ActionFeedbackText } from '~/ui/forms/feedback/action-feedback';
 import { useUpdateTaskMutation } from '~/features/task/client/mutation';
+import { revalidateAfterSuccess } from '~/lib/query/mutation-result';
 
 type EditableTitleProps = {
   taskId: string;
@@ -30,9 +31,8 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
         id: taskId,
         title: draft,
       });
-      if (!result || !result.success) return;
+      if (!revalidateAfterSuccess(result, revalidator.revalidate)) return;
       setIsEditing(false);
-      revalidator.revalidate();
     })();
   }, [closeSignal]);
 
@@ -42,9 +42,8 @@ export function EditableTitle({ taskId, title, closeSignal = 0 }: EditableTitleP
       id: taskId,
       title: draft,
     });
-    if (!result || !result.success) return;
+    if (!revalidateAfterSuccess(result, revalidator.revalidate)) return;
     setIsEditing(false);
-    revalidator.revalidate();
   }
 
   if (!isEditing) {

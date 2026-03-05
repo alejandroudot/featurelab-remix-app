@@ -6,6 +6,7 @@ import { useCreateTaskCommentMutation, useDeleteTaskCommentMutation, useUpdateTa
 import { CreateForm } from './components/CreateForm';
 import { CommentsList } from './components/List';
 import { getMeaningfulTextFromHtml } from './utils';
+import { isSuccessfulMutation, revalidateAfterSuccess } from '~/lib/query/mutation-result';
 
 type CommentsProps = {
   taskId: string;
@@ -79,10 +80,9 @@ export function Comments({
       id: taskId,
       commentBody: createBody,
     });
-    if (!result || !result.success) return false;
+    if (!revalidateAfterSuccess(result, revalidator.revalidate)) return false;
 
     clearCreateDraft();
-    revalidator.revalidate();
     return true;
   }
 
@@ -94,10 +94,10 @@ export function Comments({
 
     if (!nextMeaningfulBody) {
       const result = await deleteComment({ commentId });
-      success = Boolean(result && result.success);
+      success = isSuccessfulMutation(result);
     } else if (editingBody !== currentBody) {
       const result = await updateComment({ commentId, commentBody: editingBody });
-      success = Boolean(result && result.success);
+      success = isSuccessfulMutation(result);
     } else {
       success = true;
     }
@@ -144,9 +144,8 @@ export function Comments({
 
   async function handleDeleteComment(commentId: string) {
     const result = await deleteComment({ commentId });
-    if (!result || !result.success) return;
+    if (!revalidateAfterSuccess(result, revalidator.revalidate)) return;
     resetDelete();
-    revalidator.revalidate();
   }
 
   return (

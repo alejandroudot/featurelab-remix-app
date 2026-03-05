@@ -8,8 +8,21 @@ import { useDeleteTaskMutation, useReorderColumnMutation, useUpdateTaskMutation 
 import { EmptyState } from './EmptyState';
 import { Board } from '../board/Board';
 import { List } from '../list/List';
+import type { Task } from '~/core/task/task.types';
+import type { TaskAssigneeOption, ProjectViewState } from '~/features/task/types';
+import { revalidateAfterSuccess } from '~/lib/query/mutation-result';
 
-export function View() {
+type ViewProps = {
+  initialState: {
+    currentUserId: string;
+    tasks: Task[];
+    assignableUsers: TaskAssigneeOption[];
+    activeProjectId: string;
+    viewState: ProjectViewState;
+  };
+};
+
+export function View({ initialState }: ViewProps) {
   const revalidator = useRevalidator();
   const { mutateAsync: deleteTask } = useDeleteTaskMutation();
   const { mutateAsync: updateTask } = useUpdateTaskMutation();
@@ -30,23 +43,39 @@ export function View() {
       searchTerm: state.searchTerm,
     })),
   );
+  const isHydrated = dataStore.currentUserId.length > 0;
+  const data = isHydrated
+    ? dataStore
+    : {
+        currentUserId: initialState.currentUserId,
+        tasks: initialState.tasks,
+        assignableUsers: initialState.assignableUsers,
+      };
+  const workspaceUi = isHydrated
+    ? uiState
+    : {
+        ...uiState,
+        activeProjectId: initialState.activeProjectId,
+        view: initialState.viewState.view,
+        order: initialState.viewState.order,
+        scope: initialState.viewState.scope,
+      };
 
-  const assigneeById = buildAssigneeById(dataStore.assignableUsers);
+  const assigneeById = buildAssigneeById(data.assignableUsers);
   const visibleTasks = getVisibleTasks({
-    tasks: dataStore.tasks,
-    currentUserId: dataStore.currentUserId,
-    scope: uiState.scope,
-    order: uiState.order,
+    tasks: data.tasks,
+    currentUserId: data.currentUserId,
+    scope: workspaceUi.scope,
+    order: workspaceUi.order,
   });
-  const projectScopedTasks = uiState.activeProjectId
-    ? visibleTasks.filter((task) => task.projectId === uiState.activeProjectId)
+  const projectScopedTasks = workspaceUi.activeProjectId
+    ? visibleTasks.filter((task) => task.projectId === workspaceUi.activeProjectId)
     : visibleTasks;
-  const searchedTasks = filterTasksBySearch(projectScopedTasks, uiState.searchTerm);
+  const searchedTasks = filterTasksBySearch(projectScopedTasks, workspaceUi.searchTerm);
 
   async function handleDeleteTask(taskId: string) {
     const result = await deleteTask({ id: taskId });
-    if (!result || !result.success) return;
-    revalidator.revalidate();
+    revalidateAfterSuccess(result, revalidator.revalidate);
   }
 
   async function handleMoveTaskStatus(taskId: string, status: TaskStatus, orderIndex?: number) {
@@ -55,28 +84,26 @@ export function View() {
       status,
       ...(orderIndex !== undefined ? { orderIndex: orderIndex.toString() } : {}),
     });
-    if (!result || !result.success) return;
-    revalidator.revalidate();
+    revalidateAfterSuccess(result, revalidator.revalidate);
   }
 
   async function handleReorderColumn(status: TaskStatus, orderedTaskIds: string[]) {
     const result = await reorderColumn({ status, orderedTaskIds });
-    if (!result || !result.success) return;
-    revalidator.revalidate();
+    revalidateAfterSuccess(result, revalidator.revalidate);
   }
 
   if (searchedTasks.length === 0) {
     return (
       <EmptyState
-        searchTerm={uiState.searchTerm}
-        activeProjectId={uiState.activeProjectId}
+        searchTerm={workspaceUi.searchTerm}
+        activeProjectId={workspaceUi.activeProjectId}
         projectScopedTasksCount={projectScopedTasks.length}
         visibleTasksCount={visibleTasks.length}
       />
     );
   }
 
-  if (uiState.view === 'list') {
+  if (workspaceUi.view === 'list') {
     return <List tasks={searchedTasks} assigneeById={assigneeById} onDeleteTask={handleDeleteTask} />;
   }
 
