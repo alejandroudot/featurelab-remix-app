@@ -27,6 +27,9 @@ export default [
   // API - Projects
   route('/api/projects/create', 'routes/api/projects/create.ts'),
   route('/api/projects/delete', 'routes/api/projects/delete.ts'),
+  route('/api/projects/pin', 'routes/api/projects/pin.ts'),
+  route('/api/projects/reorder-sidebar', 'routes/api/projects/reorder-sidebar.ts'),
+  route('/api/projects/update', 'routes/api/projects/update.ts'),
 
   // API - Tasks
   route('/api/tasks/create', 'routes/api/tasks/create.ts'),

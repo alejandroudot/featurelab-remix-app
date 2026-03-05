@@ -7,6 +7,9 @@ export type ProjectActionResponseData =
         id?: string;
         name?: string;
         imageUrl?: string;
+        description?: string;
+        pinned?: string;
+        orderedProjectIds?: string;
       };
     }
   | {

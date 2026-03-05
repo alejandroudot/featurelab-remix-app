@@ -1,0 +1,13 @@
+import { requireUser } from '~/infra/auth/require-user';
+import { runProjectReorderSidebarAction } from '~/server/project/reorder-sidebar.action';
+
+export async function action({ request }: { request: Request }) {
+  const user = await requireUser(request);
+  const formData = await request.formData();
+  return runProjectReorderSidebarAction({ formData, userId: user.id });
+}
+
+export async function loader() {
+  return Response.json({ success: false, formError: 'Method not allowed' }, { status: 405 });
+}
+

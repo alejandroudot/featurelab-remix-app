@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { Menu, UserRound } from 'lucide-react';
 import { Form, Link, useLocation } from 'react-router';
 import type { UserRole } from '~/core/auth/auth.types';
-import { HeaderNotifications } from './header-notifications';
+import { HeaderNotifications } from './HeaderNotifications';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/ui/primitives/sheet';
 import type { ThemeMode } from '~/infra/theme/theme-cookie';
-import { ThemeToggle } from './theme-toggle';
+import { ThemeToggle } from './ThemeToggle';
 
 type Props = {
   user: { id: string; email: string; role: UserRole } | null;

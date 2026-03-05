@@ -22,7 +22,7 @@ export function Project({ project, initialState }: ProjectProps) {
   return (
     <main className="container mx-auto space-y-6 p-4">
       <header className="space-y-3">
-        <ToolbarTitle projectName={project.name} />
+        <ToolbarTitle project={project} />
         <div className="flex flex-wrap items-center gap-2">
           <ToolbarSearch />
           <ToolbarControls />

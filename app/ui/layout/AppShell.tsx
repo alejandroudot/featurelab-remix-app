@@ -1,8 +1,8 @@
 import { Link } from 'react-router';
 import type { UserRole } from '~/core/auth/auth.types';
 import type { Project } from '~/core/project/project.types';
-import { AppHeader } from './app-header';
-import { AppSidebar } from './app-sidebar';
+import { AppHeader } from './header/AppHeader';
+import { AppSidebar } from './sidebar/AppSidebar';
 import type { ThemeMode } from '~/infra/theme/theme-cookie';
 
 type AppShellUser = {
